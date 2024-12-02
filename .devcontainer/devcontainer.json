@@ -3,8 +3,9 @@
 {
 	"name": "Gorenas Frontend",
 	"image": "harrison237/node-angular:v2",
-	"forwardPorts": [4200],
-	"runArgs": ["--name", "Gorenas-Front"]
+	"forwardPorts": [4200, 9222],
+	"runArgs": ["--name", "Gorenas-Front", "--network", "host"],
+	"mounts": ["source=/snap/bin,target=/dev/bin,type=bind,consistency=cached"]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
