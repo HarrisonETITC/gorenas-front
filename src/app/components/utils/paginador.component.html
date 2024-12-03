@@ -1,0 +1,24 @@
+<div class="paginador-container">
+    <div class="paginador-botones">
+        <button
+            type="button"
+            class="paginador-button izquierda"
+            [disabled]="!botonAnterior"
+            (click)="paginaAnterior()"
+        >back</button>
+            @for(numero of paginas; track $index){
+                <button
+                    type="button"
+                    class="paginador-button centro {{(numero == paginaActual)? 'focus' : ''}}"
+                    [disabled]="paginaActual == numero"
+                    (click)="irPagina(numero)"
+                >{{ numero }}</button>
+            }
+        <button
+            type="button"
+            class="paginador-button derecha"
+            [disabled]="!botonSiguiente"
+            (click)="paginaSiguiente()"    
+        >next</button>
+    </div>
+</div>

@@ -5,20 +5,30 @@ import { apiUrl, basicHeaders } from '../environment';
 import { AppUtil } from '@utils/app.util';
 import { Observable } from 'rxjs';
 
+export type createSucursalData = { direccion: string, mes: number, restId: number };
+
 @Injectable({
   providedIn: 'root'
 })
 export class SucursalesService {
-  private http: HttpClient = inject(HttpClient);
+  private readonly http: HttpClient = inject(HttpClient);
   constructor() { }
 
   getSucursales(): Observable<Array<Sucursal>> {
     return this.http.get<Array<Sucursal>>(
-      `${apiUrl}/sucursal/todos?userId=${AppUtil.getUserId()}&rol=${AppUtil.getRol()}`,
+      `${apiUrl}/sucursal/todos-restringido?userId=${AppUtil.getUserId()}&rol=${AppUtil.getRol()}`,
       {
         headers: basicHeaders
       }
     );
+  }
+
+  crearSucursal(data: createSucursalData) {
+    return this.http.post<Sucursal>(
+      `${apiUrl}/sucursal/crear`,
+      { direccion: data.direccion, mes: data.mes, restauranteId: data.restId },
+      { headers: basicHeaders }
+    )
   }
 
 }

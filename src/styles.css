@@ -34,6 +34,10 @@ body {
     height: 100%;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -52,3 +56,11 @@ body {
     font-size: .9em;
     color: var(--error-color);
 }
+
+.data-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

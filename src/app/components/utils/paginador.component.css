@@ -1,0 +1,55 @@
+.paginador-container {
+    width: 100%;
+    padding: .5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.paginador-botones {
+    height: 100%;
+    display: flex;
+    gap: 1em;
+    padding: .5em;
+    border-radius: 50px;
+    background-color: rgb(42 55 79);
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
+.paginador-button {
+    border: none;
+    outline: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    background-color: rgb(42 55 79);
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    cursor: pointer;
+}
+
+.paginador-button.focus {
+    background-color: var(--action-color);
+}
+
+.paginador-button:disabled {
+    cursor: default;
+    box-shadow: none;
+}
+
+
+.paginador-button.centro:disabled {
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
+.paginador-button.derecha {
+    border-radius: 2px 40px 40px 2px;
+}
+
+.paginador-button.izquierda {
+    border-radius: 40px 2px 2px 40px;
+}
+
+.paginador-button.centro {
+    border-radius: 4px;
+}
+

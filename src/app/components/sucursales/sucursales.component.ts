@@ -14,6 +14,7 @@ import { map, Observable } from 'rxjs';
 export class SucursalesComponent implements OnInit {
   sucursales$: Observable<Array<Sucursal>>;
   columnas$: Observable<Array<string>>;
+  mapeos = Sucursal.mapeoCols;
 
   constructor(
     private readonly sucursalService: SucursalesService
@@ -22,7 +23,7 @@ export class SucursalesComponent implements OnInit {
   ngOnInit(): void {
     this.sucursales$ = this.sucursalService.getSucursales();
     this.columnas$ = this.sucursales$.pipe(
-      map(suc => Object.keys(suc))
+      map(suc => { return suc.length > 0 ? Object.keys(suc[0]) : [] })
     );
   }
 
