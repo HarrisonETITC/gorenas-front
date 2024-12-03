@@ -23,4 +23,12 @@ export class AppUtil {
 
         return resultado;
     }
+
+    public static getUserId() {
+        return sessionStorage.getItem('user_id');
+    }
+
+    public static getRol() {
+        return sessionStorage.getItem('rol');
+    }
 }

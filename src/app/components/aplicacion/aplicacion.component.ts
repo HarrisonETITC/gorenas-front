@@ -35,6 +35,7 @@ export class AplicacionComponent implements OnInit {
     this.usuario$ = this.aplicacionService.getPersonaInfo(parseInt(sessionStorage.getItem('user_id')))
       .pipe(
         map((usuario): vistaPersona => {
+          sessionStorage.setItem('rol', usuario.rol)
           return {
             nombre: AppUtil.procesarNombre(usuario.nombres, usuario.apellidos),
             cargo: usuario.rol,

@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Usuario } from '@models/usuario.model';
 import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
 import { AppUtil } from '@utils/app.util';
-import { apiUrl } from '../environment';
+import { apiUrl, basicHeaders } from '../environment';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +20,16 @@ export class LoginService {
 
   iniciarSesion(email: string, contrasena: string): Observable<string> {
     this.cambiarProcesando();
-    return this.http.post<{ token: string, usuario: { id: number } }>(`${apiUrl}/usuario/autenticar`, { username: email, password: contrasena }).pipe(
-      catchError((err: HttpErrorResponse) => { this.cambiarProcesando(); return throwError(() => new Error(err.error.message)) }),
+    return this.http.post<{ token: string, usuario: { id: number } }>(
+      `${apiUrl}/usuario/autenticar`,
+      { username: email, password: contrasena },
+      { headers: basicHeaders }
+    ).pipe(
+      catchError((err: HttpErrorResponse) => {
+        this.cambiarProcesando(); return throwError(() => {
+          return new Error(err.error.message)
+        })
+      }),
       map((data) => {
         this.cambiarProcesando()
         sessionStorage.setItem('token', data.token);
