@@ -1,0 +1,32 @@
+
+<div class="app-container">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="app-icon">
+        <ion-icon name="restaurant-outline" class="menu-icono"></ion-icon>
+      </div>
+    </div>
+    <ul class="sidebar-list">
+      @for (item of items; track $index) {
+        <li class="sidebar-list-item" [classList]="'sidebar-list-item' + (item.activo? ' active' : '')">
+          <button (click)="activarItem(item.nombre);" [routerLink]="item.direccion" type="button" class="menu-item">
+            <ion-icon name="{{item.icono}}" class="menu-icono"></ion-icon>
+            <span>{{ item.nombre }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+    <div class="account-info">
+      <div class="account-info-picture">
+        <img src="https://images.unsplash.com/photo-1527736947477-2790e28f3443?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTE2fHx3b21hbnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60" alt="Account">
+      </div>
+      <div class="account-info-name">Monica G.</div>
+      <button class="account-info-more" (click)="salir()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </button>
+    </div>
+  </div>
+  <div style="width: 100%;">
+    <router-outlet></router-outlet>
+  </div>
+</div>
