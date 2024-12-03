@@ -5,11 +5,11 @@
     {
       "name": "ng serve",
       "type": "chrome",
-      "request": "attach",
-      "address": "192.168.1.6",
-      "port": 9222,
+      "request": "launch",
+      "preLaunchTask": "npm: start",
+      "webRoot": "${workspaceFolder}",
       "url": "http://localhost:4200",
-      "sourceMaps": true
+      "port": 9222
     },
     {
       "name": "ng test",
