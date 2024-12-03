@@ -17,13 +17,20 @@
       }
     </ul>
     <div class="account-info">
-      <div class="account-info-picture">
-        <img src="https://images.unsplash.com/photo-1527736947477-2790e28f3443?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTE2fHx3b21hbnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60" alt="Account">
+      <div class="info-container">
+        <div class="account-info-picture">
+          <svg width="30px" height="30px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="m 8 1 c -1.65625 0 -3 1.34375 -3 3 s 1.34375 3 3 3 s 3 -1.34375 3 -3 s -1.34375 -3 -3 -3 z m -1.5 7 c -2.492188 0 -4.5 2.007812 -4.5 4.5 v 0.5 c 0 1.109375 0.890625 2 2 2 h 8 c 1.109375 0 2 -0.890625 2 -2 v -0.5 c 0 -2.492188 -2.007812 -4.5 -4.5 -4.5 z m 0 0" fill="#2e3436"/>
+          </svg>
+        </div>
+        <div class="profile-info">
+          <div class="account-info-name">{{ (usuario$ | async).nombre }}</div>
+          <p class="account-range">{{ (usuario$ | async).cargo }}</p>
+        </div>
+        <button class="account-info-more" (click)="salir()">
+          <ion-icon name="log-out-outline"></ion-icon>
+        </button>
       </div>
-      <div class="account-info-name">Monica G.</div>
-      <button class="account-info-more" (click)="salir()">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </button>
     </div>
   </div>
   <div style="width: 100%;">

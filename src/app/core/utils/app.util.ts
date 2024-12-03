@@ -14,4 +14,13 @@ export class AppUtil {
             return basic;
         }
     }
+
+    public static procesarNombre(nombres: string, apellidos: string) {
+        let resultado = '';
+
+        resultado += `${nombres.trim().split(" ")[0]} `;
+        resultado += `${apellidos.trim().split(" ")[0].charAt(0).toUpperCase()}.`;
+
+        return resultado;
+    }
 }

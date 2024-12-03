@@ -1,10 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Inject, inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Usuario } from '@models/usuario.model';
 import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
-import { apiUrl } from '../environment';
 import { AppUtil } from '@utils/app.util';
-import { StorageService } from './storage/storage.service';
+import { apiUrl } from '../environment';
 
 @Injectable({
   providedIn: 'root',
@@ -12,23 +11,21 @@ import { StorageService } from './storage/storage.service';
 export class LoginService {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly procesando: BehaviorSubject<boolean>;
-  private readonly logeado: BehaviorSubject<boolean>;
+  private logeado: BehaviorSubject<boolean>;
 
-  constructor(
-    @Inject(StorageService) private readonly storage: StorageService
-  ) {
+  constructor() {
     this.procesando = new BehaviorSubject(false);
-    this.logeado = new BehaviorSubject(!AppUtil.verificarVacio(this.storage.get('token')));
-    console.log(this.storage.get('token'));
+    this.logeado = new BehaviorSubject(!AppUtil.verificarVacio(sessionStorage.getItem('token')));
   }
 
   iniciarSesion(email: string, contrasena: string): Observable<string> {
     this.cambiarProcesando();
-    return this.http.post<{ token: string }>(`${apiUrl}/usuario/autenticar`, { username: email, password: contrasena }).pipe(
+    return this.http.post<{ token: string, usuario: { id: number } }>(`${apiUrl}/usuario/autenticar`, { username: email, password: contrasena }).pipe(
       catchError((err: HttpErrorResponse) => { this.cambiarProcesando(); return throwError(() => new Error(err.error.message)) }),
       map((data) => {
         this.cambiarProcesando()
-        this.storage.set('token', data.token);
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('user_id', `${data.usuario.id}`);
         this.logeado.next(true);
         return 'Inicio de sesión correcto';
       })
@@ -36,7 +33,7 @@ export class LoginService {
   }
 
   cerrarSesion(): void {
-    this.storage.clear();
+    sessionStorage.clear();
     this.logeado.next(false);
   }
 
@@ -53,6 +50,7 @@ export class LoginService {
   }
 
   getLogeado(): Observable<boolean> {
+    this.logeado = new BehaviorSubject(!AppUtil.verificarVacio(sessionStorage.getItem('token')));
     return this.logeado.asObservable();
   }
 

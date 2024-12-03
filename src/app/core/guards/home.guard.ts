@@ -9,7 +9,7 @@ export const homeGuard: CanActivateFn = (route, state) => {
 
   return loginService.getLogeado().pipe(
     map((logeado) => {
-      if (logeado) return router.createUrlTree([`/app`]);
+      if (logeado) return router.createUrlTree([`/app/dashboard`]);
 
       return true;
     })

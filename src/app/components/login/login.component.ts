@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
 
       this.loginService.iniciarSesion(usuario, contra).subscribe({
         next: (val) => {
-          this.router.navigate([`app`])
+          this.router.navigate([`/app/dashboard`])
         },
         error: (err) => {
           alert(err.message)
