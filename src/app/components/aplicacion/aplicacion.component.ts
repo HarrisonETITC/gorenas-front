@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { MenuItem } from '@models/menu/menu-item.model';
 import { Usuario } from '@models/usuario.model';
 import { AplicacionService } from '@services/aplicacion.service';
@@ -31,7 +31,14 @@ export class AplicacionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+  const urlTree = this.router.parseUrl(this.router.url);
+  const segments = urlTree.root.children['primary']?.segments || [];
+  const componenteActivo = segments[segments.length - 1]?.path;
+
     this.items = this.aplicacionService.menu.getItems();
+    this.items.forEach((item) => {
+      item.activo = item.direccion.includes(componenteActivo);
+    })
     this.usuario$ = this.aplicacionService.getPersonaInfo(parseInt(sessionStorage.getItem('user_id')))
       .pipe(
         map((usuario): vistaPersona => {

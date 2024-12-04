@@ -1,12 +1,61 @@
 <div class="form-generico-container">
-    <form class="form-generico">
-        <div class="campos-container">
-            <label for="" class="campo-label">Email</label>
-            <div class="form-campo">
-                <ion-icon name="mail-outline"></ion-icon>
-                <input type="text" class="campo-input text">
+    <form class="form-generico" [formGroup]="form">
+        @if(config!== undefined && config.titulo !== undefined) {
+            <h3>{{ config.titulo }}</h3>
+        }
+        @for(item of campos; track $index) {
+            <div class="campos-container">
+                <label [htmlFor]="item.id" class="campo-label">{{ item.label }}</label>
+                <div class="form-campo">
+                    <ion-icon name="{{ item.icono }}"></ion-icon>
+                    @if(item.tipo == 'text' || item.tipo == 'passowrd' || item.tipo == 'number') {
+                        <input
+                            [type]="item.tipo"
+                            [id]="item.id"
+                            class="campo-input text"
+                            formControlName="{{ item.id }}"
+                        >
+                    }
+                    @if(item.tipo == 'select') {
+                        <div class="select-container">
+                            <select class="select-box" formControlName="{{ item.id }}">
+                                @for(opt of item.opciones; track $index) {
+                                    <option [value]="opt.valor">{{ opt.nombre }}</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    @if(item.tipo == 'autocomplete') {
+                        <div class="autocomplete-container">
+                            <input
+                                [type]="'text'"
+                                class="campo-input"
+                                formControlName="{{ item.id }}"
+                            >
+                            @if (item.dataAutocomplete !== undefined && (item.dataAutocomplete | async).length > 0 && item.activarPanel) {
+                                <div class="opciones-autocomplete">
+                                    @for(auto of (item.dataAutocomplete | async); track $index) {
+                                        <div class="opc-autocomplete" (click)="cambiarValor(item.id, auto.valor, auto.nombre)" >{{auto.nombre}}</div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="campo-separador"></div>
             </div>
-            <div class="campo-separador"></div>
+        }
+        <div class="buttons-container">
+            <button
+                type="button"
+                class="button btn-cancelar"
+                [style]="config.botonCancelar? 'display: block' : 'display: none'"
+                (click)="cerrarDialogo()"
+            >Cancelar</button>
+            <button
+                type="button"
+                class="button btn-accion"
+            >{{ config.nombreBoton }}</button>
         </div>
     </form>
 </div>

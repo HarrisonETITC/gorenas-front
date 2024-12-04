@@ -8,7 +8,7 @@ export class Menu {
     private constructor() {
         this.items = new Array();
         this.items.push(
-            new MenuItem('Dashboard', 'dashboard', 'home-outline', true),
+            new MenuItem('Dashboard', 'dashboard', 'home-outline'),
             new MenuItem('Sucursales', 'sucursales', 'business-outline'),
             new MenuItem('Empleados', 'empleados', 'people-outline'),
             new MenuItem('Ventas', 'ventas', 'cash-outline')

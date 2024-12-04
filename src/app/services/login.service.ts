@@ -1,14 +1,17 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Usuario } from '@models/usuario.model';
-import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, concatMap, filter, map, Observable, Subscription, tap, throttleTime, throwError } from 'rxjs';
 import { AppUtil } from '@utils/app.util';
 import { apiUrl, basicHeaders } from '../environment';
+import { UsuarioSendData } from '@models/sendData/usuario.senddata';
+import { GenerarCampoAutoComplete } from '../core/interfaces/generar-auto-complete.interface';
+import { FormItem } from '@models/formulario/form-item.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LoginService {
+export class LoginService implements GenerarCampoAutoComplete {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly procesando: BehaviorSubject<boolean>;
   private logeado: BehaviorSubject<boolean>;
@@ -53,6 +56,14 @@ export class LoginService {
     );
   }
 
+  buscarDisponibles(filtro: string): Observable<Array<Usuario>> {
+    return this.http.get<Array<Usuario>>(`${apiUrl}/usuario/disponibles?consulta=${filtro}`, { headers: basicHeaders });
+  }
+
+  crearUsuario(nuevo: UsuarioSendData) {
+    return this.http.post<UsuarioSendData>(`${apiUrl}/usuario/crear`, nuevo, { headers: basicHeaders });
+  }
+
   getProcesando(): Observable<boolean> {
     return this.procesando.asObservable();
   }
@@ -64,6 +75,26 @@ export class LoginService {
 
   private cambiarProcesando(): void {
     this.procesando.next(!this.procesando.value)
+  }
+
+
+  generarAutoComplete(nombre: string, mostrar: string, icono: string): { item: FormItem; sub: Subscription; } {
+    const disponibles = new BehaviorSubject<Array<Usuario>>([]);
+    const nuevoSource = disponibles.pipe(map((usuarios) => usuarios.map((usuario) => { return { valor: usuario.id, nombre: usuario.email } })));
+    const manejador = new BehaviorSubject<string>('');
+
+    const sub = manejador.asObservable().pipe(
+      throttleTime(300, null, { leading: true, trailing: true }),
+      filter((val) => !AppUtil.verificarVacio(val)),
+      concatMap((filtro: string) => this.buscarDisponibles(filtro))
+    ).subscribe((vals) => {
+      disponibles.next(vals);
+    });
+
+    return {
+      item: new FormItem(nombre, FormItem.TIPO_AUTOCOMPLETE, mostrar, icono, null, nuevoSource, manejador),
+      sub
+    }
   }
 
 }

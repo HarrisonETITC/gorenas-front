@@ -6,7 +6,6 @@ import { LoginService } from '@services/login.service';
 import { FormsUtil } from '@utils/forms.util';
 import { Observable } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FormgenericoComponent } from '@components/utils/formgenerico.component';
 
 @Component({
   selector: 'app-login',
@@ -23,12 +22,11 @@ export class LoginComponent implements OnInit {
   loginForm = new FormGroup({
     username: new FormControl<string>('', [Validators.required, Validators.email]),
     password: new FormControl<string>('', [Validators.required, Validators.maxLength(40)])
-  })
+  });
 
   constructor(
     private readonly loginService: LoginService,
     private readonly router: Router,
-    private readonly dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -59,10 +57,6 @@ export class LoginComponent implements OnInit {
 
   tieneError(campo: string): boolean {
     return FormsUtil.hasError(this.loginForm, campo);
-  }
-
-  abrirModal() {
-    this.dialog.open(FormgenericoComponent);
   }
 
 }

@@ -1,5 +1,5 @@
 import { FormGroup } from "@angular/forms";
-import { AppUtil } from "@utils/app.util"
+import { AppUtil } from "@utils/app.util";
 
 export class FormsUtil {
     static errorMessage(group: FormGroup, formControl: string): string {
