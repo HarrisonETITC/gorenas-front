@@ -6,7 +6,7 @@ export class Sucursal {
         this.mapeoCols.set('direccion', 'Dirección');
         this.mapeoCols.set('estado', 'Estado');
         this.mapeoCols.set('ganancias', 'Ganancias del mes');
-        this.mapeoCols.set('creacion', 'Registado (Diá - Hora)');
+        this.mapeoCols.set('creacion', 'Registado (Día - Hora)');
     }
 
     id: number;

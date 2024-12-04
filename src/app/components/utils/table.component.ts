@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Usuario } from '@models/usuario.model';
 import { AppUtil } from '@utils/app.util';
 import { Observable } from 'rxjs';
@@ -15,6 +15,11 @@ export class TableComponent<T extends { id: number }> {
   @Input({ required: true }) cabeceras$: Observable<Array<string>>;
   @Input({ required: true }) informacion$: Observable<Array<T>>;
   @Input({ required: true }) mapeos: Map<string, string>;
+  @ViewChild(PaginadorComponent) paginador: PaginadorComponent;
+
+  @Output() protected btnInactivar = new EventEmitter<T>();
+  @Output() protected btnEditar = new EventEmitter<T>();
+
   mapaEstados = Usuario.MAPEOS_ESTADOS;
   headersDinero = ['ganancias', 'mes', 'total', 'totales'];
 
@@ -36,7 +41,19 @@ export class TableComponent<T extends { id: number }> {
     return valor;
   }
 
-  refrescarInformacion(data: Observable<Array<T>>) {
+  protected refrescarInformacion(data: Observable<Array<T>>) {
     this.informacion$ = data;
+  }
+
+  refrescarManual(data: Array<T>) {
+    this.paginador.refrescarManual(data);
+  }
+
+  protected botonInactivar(registro: T) {
+    this.btnInactivar.emit(registro);
+  }
+
+  protected botonEditar(registro: T) {
+    this.btnEditar.emit(registro);
   }
 }

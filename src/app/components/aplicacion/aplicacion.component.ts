@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule, RouterOutlet } from '@angular/router';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { MenuItem } from '@models/menu/menu-item.model';
-import { Usuario } from '@models/usuario.model';
 import { AplicacionService } from '@services/aplicacion.service';
 import { AppUtil } from '@utils/app.util';
 import { map, Observable } from 'rxjs';

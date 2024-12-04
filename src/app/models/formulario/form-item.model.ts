@@ -11,6 +11,7 @@ export class FormItem {
     public static readonly TIPO_SELECT = 'select';
     public static readonly TIPO_AUTOCOMPLETE = 'autocomplete';
     public static readonly TIPO_DATE = 'date';
+    public static readonly TIPO_NUMBER = 'number';
 
     id: string;
     tipo: string;

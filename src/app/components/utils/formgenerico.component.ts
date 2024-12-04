@@ -6,6 +6,7 @@ import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
 import { AppUtil } from '@utils/app.util';
 import { Subscription } from 'rxjs';
+import { INotificarGuardar } from 'src/app/core/interfaces/notificar-guardar.interface';
 
 @Component({
   selector: 'app-formgenerico',
@@ -20,12 +21,12 @@ export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input({ required: true }) config: FormConfig;
 
   subs: Map<string, Subscription> = new Map();
-
   activo: boolean = true;
+  servicio: INotificarGuardar;
 
   constructor(
     private readonly dialogRef: MatDialogRef<FormgenericoComponent>,
-    @Inject(MAT_DIALOG_DATA) private readonly data: { form: FormGroup, campos: Array<FormItem>, config: FormConfig }
+    @Inject(MAT_DIALOG_DATA) private readonly data: { form: FormGroup, campos: Array<FormItem>, config: FormConfig, servicio: INotificarGuardar }
   ) { }
 
   ngOnInit(): void {
@@ -33,6 +34,7 @@ export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
       this.form = this.data.form;
       this.campos = this.data.campos;
       this.config = this.data.config;
+      this.servicio = this.data.servicio;
     }
   }
 
@@ -74,5 +76,9 @@ export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     )
     this.subs.set(campo.id, nuevaSub);
+  }
+
+  notificarComponente() {
+    this.servicio.notificarGuardar();
   }
 }

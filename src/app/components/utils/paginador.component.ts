@@ -12,7 +12,7 @@ import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
 export class PaginadorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) registros: number = 15;
   @Input({ required: true }) data: Observable<Array<any>>;
-  @Output() cambioPagina = new EventEmitter<Observable<Array<any>>>();
+  @Output() protected cambioPagina = new EventEmitter<Observable<Array<any>>>();
 
   private readonly dataHandler: BehaviorSubject<Array<any>> = new BehaviorSubject([]);
   protected itemsMostrados$: Observable<Array<any>>;
@@ -45,28 +45,41 @@ export class PaginadorComponent implements OnInit, OnDestroy {
     this.dataSub?.unsubscribe();
   }
 
-  irPagina(pagina: number) {
+  protected irPagina(pagina: number) {
     this.paginaActual = pagina;
     this.refrescarInformacion();
   }
 
-  paginaSiguiente() {
+  protected paginaSiguiente() {
     this.paginaActual++;
     this.refrescarInformacion();
   }
   
-  paginaAnterior() {
+  protected paginaAnterior() {
     this.paginaActual--;
     this.refrescarInformacion();
   }
 
-  refrescarInformacion() {
+  protected refrescarInformacion() {
     this.botonAnterior = (this.paginaActual != 1);
     this.botonSiguiente = (this.paginaActual < this.totalPaginas);
 
     const indexInicio = (this.paginaActual - 1) * this.registros;
     const indexFin = indexInicio + this.registros;
     const paginatedItems = this.items.slice(indexInicio, indexFin);
+
+    this.dataHandler.next(paginatedItems);
+    this.itemsMostrados$ = this.dataHandler.asObservable();
+    this.cambioPagina.emit(this.itemsMostrados$);
+  }
+
+  refrescarManual(nuevosItems: Array<any>) {
+    this.botonAnterior = (this.paginaActual != 1);
+    this.botonSiguiente = (this.paginaActual < this.totalPaginas);
+
+    const indexInicio = (this.paginaActual - 1) * this.registros;
+    const indexFin = indexInicio + this.registros;
+    const paginatedItems = nuevosItems.slice(indexInicio, indexFin);
 
     this.dataHandler.next(paginatedItems);
     this.itemsMostrados$ = this.dataHandler.asObservable();

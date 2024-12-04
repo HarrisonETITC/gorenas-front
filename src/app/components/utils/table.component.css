@@ -142,3 +142,31 @@
 .status.disabled:before {
     background-color: #59719d;
 }
+
+.app-content-headerButton {
+    color: #fff;
+    font-size: 14px;
+    line-height: 24px;
+    border: none;
+    border-radius: 4px;
+    height: 32px;
+    padding: 0 16px;
+    transition: 0.2s;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-editar {
+    background-color: var(--action-color);
+}
+
+.btn-inactivar {
+    background-color: var(--error-color);
+}
+
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    gap: .4em;
+    padding: .2em!important;
+}

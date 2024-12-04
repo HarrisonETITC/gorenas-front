@@ -53,6 +53,7 @@
     background-color: transparent;
     outline: none;
     border: none;
+    cursor: pointer;
 }
 
 .sidebar-list-item .menu-icono {
