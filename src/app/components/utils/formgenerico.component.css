@@ -32,6 +32,7 @@ button {
 }
 
 .campos-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
     padding: .7em;
@@ -164,7 +165,7 @@ option:hover {
 
 .opciones-autocomplete {
     position: absolute;
-    width: 100%;
+    min-width: 100%;
     background-color: #2869ff;
     color: white;
     border-radius: 5px;
@@ -172,6 +173,7 @@ option:hover {
     transform: translateY(1em);
     overflow-y: scroll;
     max-height: 200px;
+    z-index: 10;
 }
 
 .opciones-autocomplete::-webkit-scrollbar {

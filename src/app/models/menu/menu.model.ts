@@ -11,7 +11,9 @@ export class Menu {
             new MenuItem('Dashboard', 'dashboard', 'home-outline'),
             new MenuItem('Sucursales', 'sucursales', 'business-outline'),
             new MenuItem('Empleados', 'empleados', 'people-outline'),
-            new MenuItem('Ventas', 'ventas', 'cash-outline')
+            new MenuItem('Ventas', 'ventas', 'cash-outline'),
+            new MenuItem('Usuarios', 'usuarios', 'person-circle-outline'),
+            new MenuItem('Personas', 'personas', 'person-add-outline')
         );
     }
 

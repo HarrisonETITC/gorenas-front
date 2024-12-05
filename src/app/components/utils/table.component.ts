@@ -35,6 +35,9 @@ export class TableComponent<T extends { id: number }> {
       return `${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
     }
 
+    if (!AppUtil.verificarVacio(valor['valor']))
+      return valor.valor;
+
     if (!AppUtil.verificarVacio(llave) && this.headersDinero.includes(llave)) {
       return Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(valor);
     }

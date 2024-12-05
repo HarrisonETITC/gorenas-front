@@ -30,9 +30,9 @@ export class AplicacionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-  const urlTree = this.router.parseUrl(this.router.url);
-  const segments = urlTree.root.children['primary']?.segments || [];
-  const componenteActivo = segments[segments.length - 1]?.path;
+    const urlTree = this.router.parseUrl(this.router.url);
+    const segments = urlTree.root.children['primary']?.segments || [];
+    const componenteActivo = segments[segments.length - 1]?.path;
 
     this.items = this.aplicacionService.menu.getItems();
     this.items.forEach((item) => {

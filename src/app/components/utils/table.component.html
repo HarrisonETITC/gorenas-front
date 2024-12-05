@@ -1,12 +1,12 @@
 <div class="data-container">
   <div class="products-area-wrapper tableView">
     <div class="products-header">
-      @for (col of (cabeceras$ | async); track $index) {
+      @for (col of (cabeceras$ | async)?? []; track $index) {
         <div class="product-cell">{{ mapeos.get(col) }}</div>
       }
       <div class="product-cell">Acciones</div>
     </div>
-    @for (valor of (informacion$ | async); track valor.id) {
+    @for (valor of (informacion$ | async)?? []; track $index) {
       <div class="products-row">
         @for (clave of obtenerLlaves(valor); track $index) {
           @if (clave == 'estado') {

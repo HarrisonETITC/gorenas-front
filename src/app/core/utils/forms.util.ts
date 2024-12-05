@@ -1,4 +1,5 @@
 import { FormGroup } from "@angular/forms";
+import { FormItem} from "@models/formulario/form-item.model";
 import { AppUtil } from "@utils/app.util";
 
 export class FormsUtil {
@@ -38,4 +39,21 @@ export class FormsUtil {
     static hasError(group: FormGroup, formControl: string): boolean {
         return group.get(formControl).invalid && group.get(formControl).touched;
     }
+
+    static convertirFormObjeto<T>(form: FormGroup, campos: Array<FormItem>, id?: number): T {
+        const nuevo = {};
+
+        if (!AppUtil.verificarVacio(id))
+            nuevo['id'] = id;
+
+        for (const campo of campos) {
+            if (campo.tipo === FormItem.TIPO_AUTOCOMPLETE) {
+                nuevo[campo.id] = campo.valorAutoComplete?.id ?? null;
+                continue;
+            }
+            nuevo[campo.id] = form.get(campo.id)?.value ?? null;
+        }
+
+        return nuevo as T;
+    }v
 }

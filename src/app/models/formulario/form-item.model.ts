@@ -1,9 +1,5 @@
+import { IIdValor } from "@models/base/id-valor.interface";
 import { BehaviorSubject, Observable } from "rxjs";
-
-export type nombreValor = {
-    valor: any,
-    nombre: string
-}
 
 export class FormItem {
     public static readonly TIPO_TEXT = 'text';
@@ -17,13 +13,13 @@ export class FormItem {
     tipo: string;
     label: string;
     icono: string;
-    opciones?: Array<{ valor: string, nombre: string }>;
-    dataAutocomplete?: Observable<Array<nombreValor>>;
+    opciones?: Array<IIdValor>;
+    dataAutocomplete?: Observable<Array<IIdValor>>;
     autocompleteHandler?: BehaviorSubject<string>;
     activarPanel: boolean = false;
-    valorAutoComplete: nombreValor;
+    valorAutoComplete: IIdValor;
 
-    constructor(id: string, tipo: string, label: string, icono: string, opciones?: Array<nombreValor>, dataAutocomplete?: Observable<Array<nombreValor>>, autocompleteHandler?: BehaviorSubject<string>) {
+    constructor(id: string, tipo: string, label: string, icono: string, opciones?: Array<IIdValor>, dataAutocomplete?: Observable<Array<IIdValor>>, autocompleteHandler?: BehaviorSubject<string>) {
         this.id = id;
         this.tipo = tipo;
         this.label = label;

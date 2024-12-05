@@ -7,6 +7,7 @@ import { apiUrl, basicHeaders } from '../environment';
 import { UsuarioSendData } from '@models/sendData/usuario.senddata';
 import { GenerarCampoAutoComplete } from '../core/interfaces/generar-auto-complete.interface';
 import { FormItem } from '@models/formulario/form-item.model';
+import { IIdValor } from '@models/base/id-valor.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,7 @@ export class LoginService implements GenerarCampoAutoComplete {
     this.logeado = new BehaviorSubject(!AppUtil.verificarVacio(sessionStorage.getItem('token')));
   }
 
-  iniciarSesion(email: string, contrasena: string): Observable<string> {
+  iniciarSesion(email: string, contrasena: string): Observable<any> {
     this.cambiarProcesando();
     return this.http.post<{ token: string, usuario: { id: number } }>(
       `${apiUrl}/usuario/autenticar`,
@@ -33,12 +34,11 @@ export class LoginService implements GenerarCampoAutoComplete {
           return new Error(err.error.message)
         })
       }),
-      map((data) => {
+      tap((data: { token: string, usuario: { id: number } }) => {
         this.cambiarProcesando()
         sessionStorage.setItem('token', data.token);
         sessionStorage.setItem('user_id', `${data.usuario.id}`);
         this.logeado.next(true);
-        return 'Inicio de sesión correcto';
       })
     )
   }
@@ -80,7 +80,7 @@ export class LoginService implements GenerarCampoAutoComplete {
 
   generarAutoComplete(nombre: string, mostrar: string, icono: string): { item: FormItem; sub: Subscription; } {
     const disponibles = new BehaviorSubject<Array<Usuario>>([]);
-    const nuevoSource = disponibles.pipe(map((usuarios) => usuarios.map((usuario) => { return { valor: usuario.id, nombre: usuario.email } })));
+    const nuevoSource: Observable<Array<IIdValor>> = disponibles.pipe(map((usuarios) => usuarios.map((usuario) => { return { id: usuario.id, valor: usuario.email } })));
     const manejador = new BehaviorSubject<string>('');
 
     const sub = manejador.asObservable().pipe(
@@ -95,6 +95,10 @@ export class LoginService implements GenerarCampoAutoComplete {
       item: new FormItem(nombre, FormItem.TIPO_AUTOCOMPLETE, mostrar, icono, null, nuevoSource, manejador),
       sub
     }
+  }
+
+  getByPersonaId(id: number) {
+    return this.http.get<Usuario>(`${apiUrl}/usuario/persona?personaId=${id}`, { headers: basicHeaders });
   }
 
 }

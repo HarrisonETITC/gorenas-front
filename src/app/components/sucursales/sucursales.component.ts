@@ -73,7 +73,7 @@ export class SucursalesComponent implements OnInit {
           const nuevaSucursal: createSucursalData = {
             direccion: this.formSucursal.controls.direccion.value,
             mes: this.formSucursal.controls.ganancias.value,
-            restauranteId: this.formSucursalCampos.at(2).valorAutoComplete.valor
+            restauranteId: this.formSucursalCampos.at(2).valorAutoComplete.id
           };
           return this.sucursalService.crearSucursal(nuevaSucursal);
         }
@@ -101,7 +101,7 @@ export class SucursalesComponent implements OnInit {
       this.formSucursal.controls.ganancias.setValue(registro.ganancias);
       this.formSucursal.controls.restaurante.setValue(data.nombre);
 
-      this.formSucursalCampos.at(2).valorAutoComplete = { valor: data.id, nombre: data.nombre };
+      this.formSucursalCampos.at(2).valorAutoComplete = { id: data.id, valor: data.nombre };
 
       this.dialog.open(FormgenericoComponent, {
         data: { form: this.formSucursal, campos: this.formSucursalCampos, config: new FormConfig(`Editar Sucursal`, 'Editar'), servicio: this.restauranteService }

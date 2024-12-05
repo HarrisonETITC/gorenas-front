@@ -23,10 +23,11 @@ export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
   subs: Map<string, Subscription> = new Map();
   activo: boolean = true;
   servicio: INotificarGuardar;
+  editar: boolean;
 
   constructor(
     private readonly dialogRef: MatDialogRef<FormgenericoComponent>,
-    @Inject(MAT_DIALOG_DATA) private readonly data: { form: FormGroup, campos: Array<FormItem>, config: FormConfig, servicio: INotificarGuardar }
+    @Inject(MAT_DIALOG_DATA) private readonly data: { form: FormGroup, campos: Array<FormItem>, config: FormConfig, servicio: INotificarGuardar, editar: boolean }
   ) { }
 
   ngOnInit(): void {
@@ -35,6 +36,7 @@ export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
       this.campos = this.data.campos;
       this.config = this.data.config;
       this.servicio = this.data.servicio;
+      this.editar = this.data.editar ?? false;
     }
   }
 
@@ -61,7 +63,7 @@ export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!AppUtil.verificarVacio(encontrado) && encontrado.tipo == FormItem.TIPO_AUTOCOMPLETE) {
       encontrado.activarPanel = false;
       this.form.get(campo).setValue(adicional, { emitEvent: false });
-      encontrado.valorAutoComplete = { nombre: adicional, valor };
+      encontrado.valorAutoComplete = { valor: adicional, id: valor };
 
       return;
     }
@@ -79,6 +81,13 @@ export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   notificarComponente() {
-    this.servicio.notificarGuardar();
+    if (this.form.valid) {
+      if (!this.editar)
+        this.servicio.notificarGuardar();
+      else
+        this.servicio.notificarEditar();
+    }
+    else
+      alert('El formulario tiene errores')
   }
 }

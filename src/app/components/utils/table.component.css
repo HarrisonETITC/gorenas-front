@@ -30,11 +30,12 @@
 
 .tableView .product-cell {
     flex: 1;
-    padding: 8px 16px;
+    padding: 8px 0px;
     color: var(--app-content-main-color);
     font-size: 14px;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .tableView .product-cell img {

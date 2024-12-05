@@ -4,6 +4,7 @@ import { LoginService } from './login.service';
 import { HttpClient } from '@angular/common/http';
 import { Usuario } from '@models/usuario.model';
 import { apiUrl, basicHeaders } from '../environment';
+import { Persona } from '@models/persona.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class AplicacionService {
   constructor() { }
 
   getPersonaInfo(idUsuario: number) {
-    return this.http.get<Usuario>(`${apiUrl}/persona/info?id=${idUsuario}`, { headers: basicHeaders });
+    return this.http.get<Persona>(`${apiUrl}/persona/info?id=${idUsuario}`, { headers: basicHeaders });
   }
 
   cerrarSesion() {

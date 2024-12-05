@@ -20,7 +20,7 @@
                         <div class="select-container">
                             <select class="select-box" formControlName="{{ item.id }}">
                                 @for(opt of item.opciones; track $index) {
-                                    <option [value]="opt.valor">{{ opt.nombre }}</option>
+                                    <option [value]="opt.id">{{ opt.valor }}</option>
                                 }
                             </select>
                         </div>
@@ -35,7 +35,7 @@
                             @if (item.dataAutocomplete !== undefined && (item.dataAutocomplete | async).length > 0 && item.activarPanel) {
                                 <div class="opciones-autocomplete">
                                     @for(auto of (item.dataAutocomplete | async); track $index) {
-                                        <div class="opc-autocomplete" (click)="cambiarValor(item.id, auto.valor, auto.nombre)" >{{auto.nombre}}</div>
+                                        <div class="opc-autocomplete" (click)="cambiarValor(item.id, auto.id, auto.valor)" >{{auto.valor}}</div>
                                     }
                                 </div>
                             }
