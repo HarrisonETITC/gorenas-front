@@ -17,7 +17,6 @@ export class RestauranteService implements GenerarCampoAutoComplete, INotificarG
 
   private readonly http: HttpClient = inject(HttpClient);
   constructor() { }
-
   buscarDisponibles() {
     return this.http.get<Array<Restaurante>>(`${apiUrl}/restaurante/disponibles`, { headers: basicHeaders });
   }
@@ -51,5 +50,9 @@ export class RestauranteService implements GenerarCampoAutoComplete, INotificarG
 
   notificarEditar(): void {
     this.manejadorFormularios.next('Editar');
+  }
+  
+  notificarTerminado(): void {
+    this.manejadorFormularios.next('');
   }
 }

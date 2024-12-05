@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormgenericoComponent } from '@components/utils/formgenerico.component';
 import { TableComponent } from '@components/utils/table.component';
+import { IIdValor } from '@models/base/id-valor.interface';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
 import { Persona } from '@models/persona.model';
@@ -55,7 +56,6 @@ export class PersonasComponent {
       map(suc => { return suc.length > 0 ? Object.keys(suc[0]) : [] })
     );
     this.iniciarCamposFormulario();
-    console.log(Object.keys(new CreatePersonaData()))
   }
 
   buscarSucursales() {
@@ -109,12 +109,29 @@ export class PersonasComponent {
         if (!AppUtil.verificarVacio(lista)) {
           this.tabla.refrescarManual(lista);
           this.dialog.closeAll()
+          this.personasService.notificarTerminado();
         }
       })
-    ).subscribe((asd) => console.log(sub.unsubscribe()))
+    ).subscribe((asd) => sub.unsubscribe())
   }
 
   editarRegistro(registro: Persona) {
-    
+    const sub = this.personasService.getById(registro.id).pipe(
+      concatMap((persona) => {
+        FormsUtil.llenarFormConCampos(this.personaForm, this.personaFormCampos, persona);
+
+        return this.loginService.getByPersonaId(persona.id);
+      }),
+      concatMap((usuario) => {
+        FormsUtil.setValorAutoComplete(this.personaForm, this.personaFormCampos, 'usuarioId', { id: usuario.id, valor: usuario.email });
+
+        return this.rolesService.getByPersonaId(registro.id);
+      }),
+      tap((rol) => {
+        FormsUtil.setValorAutoComplete(this.personaForm, this.personaFormCampos, 'rolId', { id: rol.id, valor: rol.nombre });
+
+        this.abrirFormulario(registro);
+      })
+    ).subscribe(() => sub.unsubscribe())
   }
 }

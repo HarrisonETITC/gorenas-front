@@ -1,5 +1,6 @@
 import { FormGroup } from "@angular/forms";
-import { FormItem} from "@models/formulario/form-item.model";
+import { IIdValor } from "@models/base/id-valor.interface";
+import { FormItem } from "@models/formulario/form-item.model";
 import { AppUtil } from "@utils/app.util";
 
 export class FormsUtil {
@@ -55,5 +56,18 @@ export class FormsUtil {
         }
 
         return nuevo as T;
-    }v
+    }
+
+    static llenarFormConCampos(group: FormGroup, campos: Array<FormItem>, data: any) {
+        for (const campo of campos) {
+            if ((campo.tipo != FormItem.TIPO_AUTOCOMPLETE)) {
+                group.get(campo.id).setValue(data[campo.id], { emitEvent: false });
+            }
+        }
+    }
+
+    static setValorAutoComplete(form: FormGroup, campos: Array<FormItem>, campoId: string, data: IIdValor) {
+        campos.find((val) => val.id == campoId).valorAutoComplete = data;
+        form.get(campoId)?.setValue(data.valor);
+    }
 }

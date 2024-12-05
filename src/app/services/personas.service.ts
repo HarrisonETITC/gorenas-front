@@ -41,7 +41,7 @@ export class PersonasService implements GenerarCampoAutoComplete, INotificarGuar
   }
 
   editarPersona(editado: CreatePersonaData) {
-    return this.http.put<CreatePersonaData>(`${apiUrl}/persona/actualizar`, editado, {headers: basicHeaders})
+    return this.http.put<CreatePersonaData>(`${apiUrl}/persona/actualizar`, editado, { headers: basicHeaders })
   }
 
   getNotificador() {
@@ -53,11 +53,19 @@ export class PersonasService implements GenerarCampoAutoComplete, INotificarGuar
   }
 
   notificarEditar(): void {
-    this.manejadorFormularios.next('Editar'); 
+    this.manejadorFormularios.next('Editar');
+  }
+
+  notificarTerminado(): void {
+    this.manejadorFormularios.next('');
   }
 
   generarAutoComplete(nombre: string, mostrar: string, icono: string): { item: FormItem; sub: Subscription; } {
     throw new Error('Method not implemented.');
+  }
+
+  getById(id: number) {
+    return this.http.get<CreatePersonaData>(`${apiUrl}/persona/id?personaId=${id}`, { headers: basicHeaders });
   }
 
 }

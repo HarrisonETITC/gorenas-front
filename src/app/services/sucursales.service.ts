@@ -5,7 +5,7 @@ import { apiUrl, basicHeaders } from '../environment';
 import { AppUtil } from '@utils/app.util';
 import { Observable } from 'rxjs';
 
-export type createSucursalData = { direccion: string, mes: number, restauranteId: number };
+export type createSucursalData = { id?: number, direccion: string, mes: number, restauranteId: number };
 
 @Injectable({
   providedIn: 'root'
@@ -31,11 +31,19 @@ export class SucursalesService {
     )
   }
 
+  editarSucursal(data: createSucursalData) {
+    return this.http.put<createSucursalData>(`${apiUrl}/sucursal/actualizar`, data, { headers: basicHeaders });
+  }
+
   getRestauranteBySucursalId(id: number) {
     return this.http.get<{ id: number, nombre: string }>(
       `${apiUrl}/sucursal/restaurante-sucursal?sucursalId=${id}`,
       { headers: basicHeaders }
     );
+  }
+
+  getSucursalById(id: number) {
+    return this.http.get<createSucursalData>(`${apiUrl}/sucursal/id?sucursalId=${id}`, { headers: basicHeaders });
   }
 
 }

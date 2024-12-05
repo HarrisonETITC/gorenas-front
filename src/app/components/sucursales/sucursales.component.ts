@@ -5,12 +5,12 @@ import { FormgenericoComponent } from '@components/utils/formgenerico.component'
 import { TableComponent } from '@components/utils/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
-import { Restaurante } from '@models/restaurante.model';
 import { Sucursal } from '@models/sucursal.model';
 import { RestauranteService } from '@services/restaurante.service';
 import { createSucursalData, SucursalesService } from '@services/sucursales.service';
 import { AppUtil } from '@utils/app.util';
-import { concat, concatMap, EMPTY, map, Observable, Subscription, tap } from 'rxjs';
+import { FormsUtil } from '@utils/forms.util';
+import { concatMap, EMPTY, map, Observable, Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'app-sucursales',
@@ -27,8 +27,8 @@ export class SucursalesComponent implements OnInit {
 
   formSucursal = new FormGroup({
     direccion: new FormControl<string>('', [Validators.required]),
-    ganancias: new FormControl<number>(0, [Validators.required]),
-    restaurante: new FormControl<string>('', [Validators.required])
+    mes: new FormControl<number>(0, [Validators.required]),
+    restauranteId: new FormControl<string>('', [Validators.required])
   })
   formSucursalCampos: Array<FormItem>;
   subs: Array<Subscription> = [];
@@ -52,30 +52,31 @@ export class SucursalesComponent implements OnInit {
   }
 
   iniciarCamposFormulario() {
-    const autocompleteRestaurante = this.restauranteService.generarAutoComplete('restaurante', 'Restaurante asociado', 'business-outline');
+    const autocompleteRestaurante = this.restauranteService.generarAutoComplete('restauranteId', 'Restaurante asociado', 'business-outline');
     this.subs.push(autocompleteRestaurante.sub);
     this.formSucursalCampos = [
       new FormItem('direccion', FormItem.TIPO_TEXT, 'Dirección de la sucursal', 'analytics-outline'),
-      new FormItem('ganancias', FormItem.TIPO_NUMBER, 'Ganancias iniciales', 'cash-outline'),
+      new FormItem('mes', FormItem.TIPO_NUMBER, 'Ganancias iniciales', 'cash-outline'),
       autocompleteRestaurante.item
     ]
   }
 
-  abrirFormulario(data?: Restaurante) {
+  abrirFormulario(data?: Sucursal) {
     const titulo = !AppUtil.verificarVacio(data) ? 'Editar' : 'Registrar';
     this.dialog.open(FormgenericoComponent, {
-      data: { form: this.formSucursal, campos: this.formSucursalCampos, config: new FormConfig(`${titulo} Sucursal`, titulo), servicio: this.restauranteService }
+      data: { form: this.formSucursal, campos: this.formSucursalCampos, config: new FormConfig(`${titulo} Sucursal`, titulo), servicio: this.restauranteService, editar: !AppUtil.verificarVacio(data) }
     });
 
     const sub = this.restauranteService.getNotificador().pipe(
       concatMap((val) => {
         if (val == 'Guardar') {
-          const nuevaSucursal: createSucursalData = {
-            direccion: this.formSucursal.controls.direccion.value,
-            mes: this.formSucursal.controls.ganancias.value,
-            restauranteId: this.formSucursalCampos.at(2).valorAutoComplete.id
-          };
+          const nuevaSucursal: createSucursalData = FormsUtil.convertirFormObjeto(this.formSucursal, this.formSucursalCampos);
           return this.sucursalService.crearSucursal(nuevaSucursal);
+        }
+
+        if (val == 'Editar') {
+          const editar: createSucursalData = FormsUtil.convertirFormObjeto(this.formSucursal, this.formSucursalCampos, data.id);
+          return this.sucursalService.editarSucursal(editar);
         }
 
         return EMPTY
@@ -90,23 +91,25 @@ export class SucursalesComponent implements OnInit {
         if (!AppUtil.verificarVacio(lista)) {
           this.tabla.refrescarManual(lista);
           this.dialog.closeAll()
+          this.restauranteService.notificarTerminado();
         }
       })
     ).subscribe(() => sub.unsubscribe())
   }
 
   editarRegistro(registro: Sucursal) {
-    this.sucursalService.getRestauranteBySucursalId(registro.id).subscribe((data) => {
-      this.formSucursal.controls.direccion.setValue(registro.direccion);
-      this.formSucursal.controls.ganancias.setValue(registro.ganancias);
-      this.formSucursal.controls.restaurante.setValue(data.nombre);
+    const sub = this.sucursalService.getSucursalById(registro.id).pipe(
+      concatMap((suc) => {
+        FormsUtil.llenarFormConCampos(this.formSucursal, this.formSucursalCampos, suc);
+        return this.sucursalService.getRestauranteBySucursalId(registro.id);
+      }),
+      tap((restaurante) => {
+        FormsUtil.setValorAutoComplete(this.formSucursal, this.formSucursalCampos, 'restauranteId', { id: restaurante.id, valor: restaurante.nombre })
+        this.abrirFormulario(registro)
+      })
+    )
 
-      this.formSucursalCampos.at(2).valorAutoComplete = { id: data.id, valor: data.nombre };
-
-      this.dialog.open(FormgenericoComponent, {
-        data: { form: this.formSucursal, campos: this.formSucursalCampos, config: new FormConfig(`Editar Sucursal`, 'Editar'), servicio: this.restauranteService }
-      });
-    })
+      .subscribe((data) => sub.unsubscribe())
   }
 
 }
