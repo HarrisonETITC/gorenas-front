@@ -8,12 +8,14 @@
     </div>
     <ul class="sidebar-list">
       @for (item of items; track $index) {
-        <li class="sidebar-list-item" [classList]="'sidebar-list-item' + (item.activo? ' active' : '')">
-          <button (click)="activarItem(item.nombre);" [routerLink]="item.direccion" type="button" class="menu-item">
-            <ion-icon name="{{item.icono}}" class="menu-icono"></ion-icon>
-            <span>{{ item.nombre }}</span>
-          </button>
-        </li>
+        @if (puedeVer(item.direccion)) {
+          <li class="sidebar-list-item" [classList]="'sidebar-list-item' + (item.activo? ' active' : '')">
+            <button (click)="activarItem(item.nombre);" [routerLink]="item.direccion" type="button" class="menu-item">
+              <ion-icon name="{{item.icono}}" class="menu-icono"></ion-icon>
+              <span>{{ item.nombre }}</span>
+            </button>
+          </li>
+        }
       }
     </ul>
     <div class="account-info">

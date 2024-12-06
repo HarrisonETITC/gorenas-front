@@ -17,7 +17,7 @@ export class AplicacionService {
   constructor() { }
 
   getPersonaInfo(idUsuario: number) {
-    return this.http.get<Persona>(`${apiUrl}/persona/info?id=${idUsuario}`, { headers: basicHeaders });
+    return this.http.get<Persona>(`${apiUrl}/persona/info?id=${idUsuario}`, { headers: basicHeaders() });
   }
 
   cerrarSesion() {

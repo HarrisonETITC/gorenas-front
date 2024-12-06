@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -7,6 +8,7 @@ import { IIdValor } from '@models/base/id-valor.interface';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
 import { Persona } from '@models/persona.model';
+import { RolModel } from '@models/rol.model';
 import { LoginService } from '@services/login.service';
 import { CreatePersonaData, PersonasService } from '@services/personas.service';
 import { RolesService } from '@services/roles.service';
@@ -42,6 +44,7 @@ export class PersonasComponent {
     rh: new FormControl<string>('')
   })
   subs: Array<Subscription> = [];
+  puedeAgregar = [RolModel.ROL_ADMINISTRADOR, RolModel.ROL_PROPIETARIO, RolModel.ROL_GERENTE].includes(sessionStorage.getItem('rol'));
 
   constructor(
     private readonly personasService: PersonasService,
@@ -109,10 +112,15 @@ export class PersonasComponent {
         if (!AppUtil.verificarVacio(lista)) {
           this.tabla.refrescarManual(lista);
           this.dialog.closeAll()
-          this.personasService.notificarTerminado();
         }
       })
-    ).subscribe((asd) => sub.unsubscribe())
+    ).subscribe({
+      next: () => this.personasService.notificarTerminado(),
+      error: (err: HttpErrorResponse) => {
+        alert(err.error.message);
+        this.personasService.notificarTerminado();
+      }
+    })
   }
 
   editarRegistro(registro: Persona) {

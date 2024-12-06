@@ -22,6 +22,8 @@ export class PaginadorComponent implements OnInit, OnDestroy {
   protected paginas: Array<number> = [];
   protected botonSiguiente: boolean = false;
   protected botonAnterior: boolean = false;
+  protected maxPaginasVisible: number = 8;
+  protected paginasVisibles: Array<number> = [];
 
   private dataSub: Subscription;
 
@@ -54,7 +56,7 @@ export class PaginadorComponent implements OnInit, OnDestroy {
     this.paginaActual++;
     this.refrescarInformacion();
   }
-  
+
   protected paginaAnterior() {
     this.paginaActual--;
     this.refrescarInformacion();
@@ -71,6 +73,8 @@ export class PaginadorComponent implements OnInit, OnDestroy {
     this.dataHandler.next(paginatedItems);
     this.itemsMostrados$ = this.dataHandler.asObservable();
     this.cambioPagina.emit(this.itemsMostrados$);
+
+    this.actualizarPaginasVisibles();
   }
 
   refrescarManual(nuevosItems: Array<any>) {
@@ -84,5 +88,17 @@ export class PaginadorComponent implements OnInit, OnDestroy {
     this.dataHandler.next(paginatedItems);
     this.itemsMostrados$ = this.dataHandler.asObservable();
     this.cambioPagina.emit(this.itemsMostrados$);
+
+    this.actualizarPaginasVisibles();
+  }
+
+  protected actualizarPaginasVisibles() {
+    const paginaInicial = Math.max(1, this.paginaActual - Math.floor(this.maxPaginasVisible / 2));
+    const paginaFinal = Math.min(this.totalPaginas, paginaInicial + this.maxPaginasVisible - 1);
+
+    this.paginasVisibles = [];
+    for (let i = paginaInicial; i <= paginaFinal; i++) {
+      this.paginasVisibles.push(i);
+    }
   }
 }

@@ -13,7 +13,8 @@ export class Menu {
             new MenuItem('Empleados', 'empleados', 'people-outline'),
             new MenuItem('Ventas', 'ventas', 'cash-outline'),
             new MenuItem('Usuarios', 'usuarios', 'person-circle-outline'),
-            new MenuItem('Personas', 'personas', 'person-add-outline')
+            new MenuItem('Personas', 'personas', 'person-add-outline'),
+            new MenuItem('Roles', 'roles', 'document-lock-outline')
         );
     }
 

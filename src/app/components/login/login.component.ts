@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { LoginService } from '@services/login.service';
 import { FormsUtil } from '@utils/forms.util';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
@@ -38,14 +38,15 @@ export class LoginComponent implements OnInit {
       const usuario = this.loginForm.controls.username.value;
       const contra = this.loginForm.controls.password.value;
 
-      this.loginService.iniciarSesion(usuario, contra).subscribe({
-        next: (val) => {
-          this.router.navigate([`/app/dashboard`])
-        },
-        error: (err) => {
-          alert(err.message)
-        }
-      });
+      this.loginService.iniciarSesion(usuario, contra)
+        .subscribe({
+          next: (val) => {
+            this.router.navigate([`/app/dashboard`])
+          },
+          error: (err) => {
+            alert(err.message)
+          }
+        });
     } else {
       alert('Hay errores en el formulario')
     }

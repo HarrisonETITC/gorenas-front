@@ -1,22 +1,41 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { GenerarCampoAutoComplete } from '../core/interfaces/generar-auto-complete.interface';
+import { IIdValor } from '@models/base/id-valor.interface';
 import { FormItem } from '@models/formulario/form-item.model';
-import { BehaviorSubject, concatMap, filter, map, Observable, Subscription, throttleTime } from 'rxjs';
-import { apiUrl, basicHeaders } from '../environment';
 import { RolModel } from '@models/rol.model';
 import { AppUtil } from '@utils/app.util';
-import { IIdValor } from '@models/base/id-valor.interface';
+import { BehaviorSubject, concatMap, filter, map, Observable, Subscription, throttleTime } from 'rxjs';
+import { GenerarCampoAutoComplete } from '../core/interfaces/generar-auto-complete.interface';
+import { INotificarGuardar } from '../core/interfaces/notificar-guardar.interface';
+import { apiUrl, basicHeaders } from '../environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RolesService implements GenerarCampoAutoComplete {
+export class RolesService implements GenerarCampoAutoComplete, INotificarGuardar {
+  private readonly manejadorFormularios = new BehaviorSubject<string>('');
   private readonly rol = sessionStorage.getItem('rol');
   private readonly usuarioId = sessionStorage.getItem('user_id');
   private readonly http = inject(HttpClient);
 
   constructor() { }
+
+  getNotificador() {
+    return this.manejadorFormularios.asObservable()
+  }
+
+  notificarGuardar(): void {
+    this.manejadorFormularios.next('Guardar');
+  }
+
+  notificarEditar(): void {
+    this.manejadorFormularios.next('Editar');
+  }
+
+  notificarTerminado(): void {
+    this.manejadorFormularios.next('');
+  }
+
   generarAutoComplete(nombre: string, mostrar: string, icono: string): { item: FormItem; sub: Subscription; } {
     const disponibles = new BehaviorSubject<Array<RolModel>>([]);
     const nuevoSource: Observable<Array<IIdValor>> = disponibles.pipe(map((ress) => ress.map((res) => { return { id: res.id, valor: res.nombre } })));
@@ -37,14 +56,30 @@ export class RolesService implements GenerarCampoAutoComplete {
   }
 
   getByPersonaId(id: number) {
-    return this.http.get<RolModel>(`${apiUrl}/rol/persona?personaId=${id}`, { headers: basicHeaders });
+    return this.http.get<RolModel>(`${apiUrl}/rol/persona?personaId=${id}`, { headers: basicHeaders() });
   }
 
   private buscarDisponibles(query: string) {
-    return this.http.get<Array<RolModel>>(`${apiUrl}/rol/disponibles?rol=${this.rol}&consulta=${query}`, { headers: basicHeaders })
+    return this.http.get<Array<RolModel>>(`${apiUrl}/rol/disponibles?rol=${this.rol}&consulta=${query}`, { headers: basicHeaders() })
   }
 
   private getRolByPersonaId(id: number) {
-    return this.http.get(`${apiUrl}/rol/persona?personaId=${id}`, { headers: basicHeaders });
+    return this.http.get(`${apiUrl}/rol/persona?personaId=${id}`, { headers: basicHeaders() });
+  }
+
+  getRoles() {
+    return this.http.get<Array<RolModel>>(`${apiUrl}/rol/mostrar?rol=${this.rol}`, { headers: basicHeaders() });
+  }
+
+  crearRol(nuevo: RolModel) {
+    return this.http.post<RolModel>(`${apiUrl}/rol/crear`, nuevo, { headers: basicHeaders() });
+  }
+
+  actualizarRol(edit: RolModel) {
+    return this.http.put<RolModel>(`${apiUrl}/rol/actualizar`, edit, { headers: basicHeaders() });
+  }
+
+  buscarPorId(id: number) {
+    return this.http.get<RolModel>(`${apiUrl}/rol/id?id=${id}`, { headers: basicHeaders() });
   }
 }

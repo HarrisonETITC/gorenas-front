@@ -1,1 +1,19 @@
-<p>ventas works!</p>
+<div class="app-content">
+    <div class="app-content-header">
+      <h1 class="app-content-headerText">Sucursales</h1>
+    </div>
+    <div class="app-content-actions">
+      <input class="search-bar" placeholder="Search..." type="text">
+      <div class="app-content-actions-wrapper">
+        <button class="app-content-headerButton" (click)="abrirFormulario()">Agregar sucursal</button>
+      </div>
+    </div>
+    <app-table
+      style="height: 90%;"
+      [cabeceras$]="columnas$"
+      [informacion$]="ventas$"
+      [mapeos]="mapeos"
+      [mapeosValores]="valores"
+      (btnEditar)="editarRegistro($event)"
+    ></app-table>
+  </div>

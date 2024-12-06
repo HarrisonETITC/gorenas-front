@@ -1,6 +1,6 @@
 <div class="app-content">
     <div class="app-content-header">
-      <h1 class="app-content-headerText">Personas</h1>
+      <h1 class="app-content-headerText">Roles</h1>
     </div>
     @if (puedeAgregar) {
       <div class="app-content-actions">
@@ -12,7 +12,7 @@
     <app-table
       style="height: 90%;"
       [cabeceras$]="columnas$"
-      [informacion$]="personas$"
+      [informacion$]="roles$"
       [mapeos]="mapeos"
       (btnEditar)="editarRegistro($event)"
     ></app-table>

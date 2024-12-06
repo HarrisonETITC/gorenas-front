@@ -20,8 +20,12 @@
           }
         }
         <div class="product-cell btn-container">
-          <button class="app-content-headerButton btn-editar" (click)="botonEditar(valor)">Editar</button>
-          <button class="app-content-headerButton btn-inactivar" (click)="botonInactivar(valor)">Inactivar</button>
+          @if(puedeVer('editar')) {
+            <button class="app-content-headerButton btn-editar" (click)="botonEditar(valor)">Editar</button>
+          }
+          @if(false) {
+            <button class="app-content-headerButton btn-inactivar" (click)="botonInactivar(valor)">Inactivar</button>
+          }
         </div>
       </div>
     }

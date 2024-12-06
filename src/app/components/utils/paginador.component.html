@@ -6,7 +6,7 @@
             [disabled]="!botonAnterior"
             (click)="paginaAnterior()"
         >back</button>
-            @for(numero of paginas; track $index){
+            @for(numero of paginasVisibles; track $index){
                 <button
                     type="button"
                     class="paginador-button centro {{(numero == paginaActual)? 'focus' : ''}}"

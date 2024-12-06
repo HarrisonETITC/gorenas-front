@@ -16,6 +16,8 @@ export class LoginService implements GenerarCampoAutoComplete {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly procesando: BehaviorSubject<boolean>;
   private logeado: BehaviorSubject<boolean>;
+  private readonly userId = sessionStorage.getItem('user_id');
+  private readonly rol = sessionStorage.getItem('rol');
 
   constructor() {
     this.procesando = new BehaviorSubject(false);
@@ -27,7 +29,7 @@ export class LoginService implements GenerarCampoAutoComplete {
     return this.http.post<{ token: string, usuario: { id: number } }>(
       `${apiUrl}/usuario/autenticar`,
       { username: email, password: contrasena },
-      { headers: basicHeaders }
+      { headers: basicHeaders() }
     ).pipe(
       catchError((err: HttpErrorResponse) => {
         this.cambiarProcesando(); return throwError(() => {
@@ -57,11 +59,15 @@ export class LoginService implements GenerarCampoAutoComplete {
   }
 
   buscarDisponibles(filtro: string): Observable<Array<Usuario>> {
-    return this.http.get<Array<Usuario>>(`${apiUrl}/usuario/disponibles?consulta=${filtro}`, { headers: basicHeaders });
+    return this.http.get<Array<Usuario>>(`${apiUrl}/usuario/disponibles?consulta=${filtro}`, { headers: basicHeaders() });
   }
 
   crearUsuario(nuevo: UsuarioSendData) {
-    return this.http.post<UsuarioSendData>(`${apiUrl}/usuario/crear`, nuevo, { headers: basicHeaders });
+    return this.http.post<UsuarioSendData>(`${apiUrl}/usuario/crear`, nuevo, { headers: basicHeaders() });
+  }
+
+  editarUsuario(editar: UsuarioSendData) {
+    return this.http.put<UsuarioSendData>(`${apiUrl}/usuario/actualizar`, editar, { headers: basicHeaders() });
   }
 
   getProcesando(): Observable<boolean> {
@@ -98,7 +104,15 @@ export class LoginService implements GenerarCampoAutoComplete {
   }
 
   getByPersonaId(id: number) {
-    return this.http.get<Usuario>(`${apiUrl}/usuario/persona?personaId=${id}`, { headers: basicHeaders });
+    return this.http.get<Usuario>(`${apiUrl}/usuario/persona?personaId=${id}`, { headers: basicHeaders() });
+  }
+
+  getUsuarios() {
+    return this.http.get<Array<Usuario>>(`${apiUrl}/usuario/mostrar?userId=${this.userId}&rol=${this.rol}`, { headers: basicHeaders() })
+  }
+
+  buscarPorId(id: number) {
+    return this.http.get<UsuarioSendData>(`${apiUrl}/usuario/id?id=${id}`, { headers: basicHeaders() });
   }
 
 }

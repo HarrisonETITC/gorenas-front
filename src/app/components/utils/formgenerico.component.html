@@ -8,7 +8,7 @@
                 <label [htmlFor]="item.id" class="campo-label">{{ item.label }}</label>
                 <div class="form-campo">
                     <ion-icon name="{{ item.icono }}"></ion-icon>
-                    @if(item.tipo == 'text' || item.tipo == 'passowrd' || item.tipo == 'number') {
+                    @if(item.tipo == 'text' || item.tipo == 'password' || item.tipo == 'number') {
                         <input
                             [type]="item.tipo"
                             [id]="item.id"

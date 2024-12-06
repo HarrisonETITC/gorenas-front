@@ -2,12 +2,13 @@
     <div class="app-content-header">
       <h1 class="app-content-headerText">Sucursales</h1>
     </div>
-    <div class="app-content-actions">
-      <input class="search-bar" placeholder="Search..." type="text">
-      <div class="app-content-actions-wrapper">
-        <button class="app-content-headerButton" (click)="abrirFormulario()">Agregar sucursal</button>
+    @if (puedeAgregar) {
+      <div class="app-content-actions">
+        <div class="app-content-actions-wrapper">
+          <button class="app-content-headerButton" (click)="abrirFormulario()">Agregar sucursal</button>
+        </div>
       </div>
-    </div>
+    }
     <app-table
       style="height: 90%;"
       [cabeceras$]="columnas$"

@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { Router, RouterModule } from '@angular/router';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
 import { AppUtil } from '@utils/app.util';
+import { AuthUtils } from '@utils/auth.util';
 import { Subscription } from 'rxjs';
 import { INotificarGuardar } from 'src/app/core/interfaces/notificar-guardar.interface';
 
@@ -48,6 +50,16 @@ export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
         this.activarSuscripcion(campo, field)
       }
     }
+
+    this.dialogRef.beforeClosed().subscribe(() => {
+      this.campos.forEach((campo) => {
+        const control = this.form.get(campo.id)
+
+        if (!AppUtil.verificarVacio(control))
+          control.setValue(null, { emitEvent: false })
+
+      });
+    })
   }
 
   ngOnDestroy(): void {

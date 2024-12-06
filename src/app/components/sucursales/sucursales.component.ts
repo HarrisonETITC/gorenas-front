@@ -5,6 +5,7 @@ import { FormgenericoComponent } from '@components/utils/formgenerico.component'
 import { TableComponent } from '@components/utils/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
+import { RolModel } from '@models/rol.model';
 import { Sucursal } from '@models/sucursal.model';
 import { RestauranteService } from '@services/restaurante.service';
 import { createSucursalData, SucursalesService } from '@services/sucursales.service';
@@ -24,6 +25,7 @@ export class SucursalesComponent implements OnInit {
   columnas$: Observable<Array<string>>;
   mapeos = Sucursal.mapeoCols;
   @ViewChild(TableComponent) tabla: TableComponent<Sucursal>;
+  puedeAgregar = [RolModel.ROL_ADMINISTRADOR, RolModel.ROL_PROPIETARIO].includes(sessionStorage.getItem('rol'));
 
   formSucursal = new FormGroup({
     direccion: new FormControl<string>('', [Validators.required]),
@@ -111,5 +113,4 @@ export class SucursalesComponent implements OnInit {
 
       .subscribe((data) => sub.unsubscribe())
   }
-
 }

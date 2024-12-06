@@ -7,8 +7,8 @@
       "type": "chrome",
       "request": "attach",
       "webRoot": "${workspaceFolder}",
-      "url": "http://localhost:4200",
-      "port": 9222
+      "url": "http://localhost:4200/home/login",
+      "port": 9320
     },
     {
       "name": "ng test",

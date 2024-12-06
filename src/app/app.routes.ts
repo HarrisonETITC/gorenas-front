@@ -10,6 +10,7 @@ import { EmpleadosComponent } from '@components/empleados/empleados.component';
 import { VentasComponent } from '@components/ventas/ventas.component';
 import { UsuariosComponent } from '@components/usuarios/usuarios.component';
 import { PersonasComponent } from '@components/personas/personas.component';
+import { RolComponent } from '@components/rol/rol.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -31,7 +32,8 @@ export const routes: Routes = [
             { path: 'empleados', component: EmpleadosComponent, canActivate: [appGuard] },
             { path: 'ventas', component: VentasComponent, canActivate: [appGuard] },
             { path: 'usuarios', component: UsuariosComponent, canActivate: [appGuard] },
-            { path: 'personas', component: PersonasComponent, canActivate: [appGuard] }
+            { path: 'personas', component: PersonasComponent, canActivate: [appGuard] },
+            { path: 'roles', component: RolComponent, canActivate: [appGuard] },
 
         ]
     }
