@@ -12,6 +12,12 @@ export class RolModel {
         RolModel.ROLES.push(RolModel.ROL_PROPIETARIO);
         RolModel.ROLES.push(RolModel.ROL_GERENTE);
         RolModel.ROLES.push(RolModel.ROL_CAJERO);
+
+        this.mapeoCols.set('id', 'ID');
+        this.mapeoCols.set('nombre', 'Nombre del rol');
+        this.mapeoCols.set('estado', 'Estado');
+        this.mapeoCols.set('creado', 'Fecha de creación');
+        this.mapeoCols.set('modificacion', 'Última vez modificado');
     }
 
     id: number;

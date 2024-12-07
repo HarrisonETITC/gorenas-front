@@ -154,7 +154,11 @@
     padding: 0 16px;
     transition: 0.2s;
     cursor: pointer;
-    width: 100%;
+}
+
+.app-content-headerButton ion-icon {
+    font-size: 1.5em;
+    padding: 8px;
 }
 
 .btn-editar {

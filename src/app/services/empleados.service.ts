@@ -48,7 +48,7 @@ export class EmpleadosService implements GenerarCampoAutoComplete {
   }
 
   private buscarDisponibles(query: string) {
-    return this.http.get<Array<Empleado>>(`${apiUrl}/empleado/disponibles?userId=${this.userId}&rol=${this.rol}&consulta=${query}`)
+    return this.http.get<Array<Empleado>>(`${apiUrl}/empleado/disponibles?userId=${this.userId}&rol=${this.rol}&consulta=${query}`, { headers: basicHeaders() })
   }
 
   getEmpleados() {

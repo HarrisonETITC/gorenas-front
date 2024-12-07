@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Usuario } from '@models/usuario.model';
 import { AppUtil } from '@utils/app.util';
 import { Observable } from 'rxjs';
@@ -12,7 +12,8 @@ import { AuthUtils } from '@utils/auth.util';
   selector: 'app-table',
   imports: [CommonModule, PaginadorComponent, RouterModule],
   templateUrl: './table.component.html',
-  styleUrl: './table.component.css'
+  styleUrl: './table.component.css',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class TableComponent<T extends { id: number }> implements OnInit {
   @Input({ required: true }) cabeceras$: Observable<Array<string>>;
