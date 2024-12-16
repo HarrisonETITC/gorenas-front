@@ -15,6 +15,23 @@ export class AppUtil {
         }
     }
 
+    public static verifyEmpty(value: any): boolean {
+        const basic: boolean = (value === undefined || value === null);
+        const emptyObject = {};
+        if (typeof value === 'string')
+            return basic || value === '' || value === "" || value === ``;
+        else if (typeof value === 'number')
+            return basic || isNaN(value);
+        else if (value instanceof Array)
+            return basic || value.length <= 0;
+        else if (value === emptyObject)
+            return true
+        else if (value instanceof Map)
+            return basic || value.size == 0;
+
+        return basic;
+    }
+
     public static procesarNombre(nombres: string, apellidos: string) {
         let resultado = '';
 

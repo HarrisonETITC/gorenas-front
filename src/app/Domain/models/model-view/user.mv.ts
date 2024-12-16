@@ -1,6 +1,6 @@
 import { GeneralModel } from "../general/general.model";
 
-export class UserModeView extends GeneralModel {
+export class UserModelView extends GeneralModel {
     email: string;
     name: string;
     state: string;

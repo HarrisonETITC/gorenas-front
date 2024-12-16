@@ -1,19 +1,17 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { LoginService } from '@services/login.service';
-import { AuthUtils } from '@utils/auth.util';
+import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
 import { map } from 'rxjs';
 
 export const appGuard: CanActivateFn = (route, state) => {
-  const loginService: LoginService = inject(LoginService);
+  const authService = inject(AUTH_SERVICE);
   const router: Router = inject(Router);
 
-  return loginService.getLogeado().pipe(
-    map((logeado) => {
+  return authService.isLoggedIn().pipe(
+    map((loged) => {
       const url = state.url;
-      const lastSegment = url.split('/').pop();
 
-      if (!logeado || !AuthUtils.verificarPuedeVer(lastSegment)) return router.createUrlTree([`/home/login`]);
+      if (!loged) return router.createUrlTree([`/home/login`]);
       return true
     })
   )

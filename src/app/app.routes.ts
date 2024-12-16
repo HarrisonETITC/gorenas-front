@@ -1,6 +1,4 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
 import { homeGuard } from './core/guards/home.guard';
 import { appGuard } from './core/guards/app.guard';
 import { AplicacionComponent } from '@components/aplicacion/aplicacion.component';
@@ -11,6 +9,8 @@ import { VentasComponent } from '@components/ventas/ventas.component';
 import { UsuariosComponent } from '@components/usuarios/usuarios.component';
 import { PersonasComponent } from '@components/personas/personas.component';
 import { RolComponent } from '@components/rol/rol.component';
+import { LoginComponent } from '@components/login/login.component';
+import { RegisterComponent } from '@components/register/register.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
