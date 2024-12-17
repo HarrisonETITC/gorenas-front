@@ -2,9 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FormgenericoComponent } from '@components/utils/formgenerico.component';
-import { TableComponent } from '@components/utils/table.component';
-import { IIdValor } from '@models/base/id-valor.interface';
+import { FormgenericoComponent } from '@components/utils/formgenerico/formgenerico.component';
+import { TableComponent } from '@components/utils/table/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
 import { Persona } from '@models/persona.model';
@@ -88,7 +87,7 @@ export class PersonasComponent {
       data: { form: this.personaForm, campos: this.personaFormCampos, config: new FormConfig(`${titulo} Persona`, titulo), servicio: this.personasService, editar: !AppUtil.verificarVacio(data) }
     });
 
-    const sub = this.personasService.getNotificador().pipe(
+    this.personasService.getNotificador().pipe(
       concatMap((val) => {
         if (val == 'Guardar') {
           const nuevaPersona: CreatePersonaData = FormsUtil.convertirFormObjeto(this.personaForm, this.personaFormCampos);

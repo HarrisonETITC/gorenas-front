@@ -3,7 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnInit, Output,
 import { Usuario } from '@models/usuario.model';
 import { AppUtil } from '@utils/app.util';
 import { Observable } from 'rxjs';
-import { PaginadorComponent } from './paginador.component';
+import { PaginadorComponent } from '../paginador/paginador.component';
 import { IIdValor } from '@models/base/id-valor.interface';
 import { Router, RouterModule } from '@angular/router';
 import { AuthUtils } from '@utils/auth.util';

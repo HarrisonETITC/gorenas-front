@@ -26,8 +26,8 @@
           </svg>
         </div>
         <div class="profile-info">
-          <div class="account-info-name">{{ (usuario$ | async)?.nombre?? '' }}</div>
-          <p class="account-range">{{ (usuario$ | async)?.cargo?? '' }}</p>
+          <div class="account-info-name">{{ (usuario$ | async)?.names?? '' }}</div>
+          <p class="account-range">{{ (usuario$ | async)?.role?? '' }}</p>
         </div>
         <button class="account-info-more" (click)="salir()">
           <ion-icon name="log-out-outline"></ion-icon>

@@ -62,5 +62,24 @@ body {
     display: flex;
     flex-direction: column;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.notification-snack-bar-container {
+    margin: 0 !important;
+}
+
+.notification-snack-bar-container .mat-mdc-snackbar-surface {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    min-width: none;
+    max-width: none;
+}

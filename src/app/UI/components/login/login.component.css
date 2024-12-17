@@ -133,6 +133,7 @@
     font-size: .9em;
     color: #5e5e5e;
     padding-bottom: 10em;
+    cursor: pointer;
 }
 
 .screen-1 .footer span {
@@ -141,10 +142,6 @@
 
 .screen-1 .footer span:hover {
     color: white;
-}
-
-.screen-1 .footer span {
-    cursor: pointer;
 }
 
 .form-container {

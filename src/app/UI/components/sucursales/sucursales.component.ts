@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FormgenericoComponent } from '@components/utils/formgenerico.component';
-import { TableComponent } from '@components/utils/table.component';
+import { FormgenericoComponent } from '@components/utils/formgenerico/formgenerico.component';
+import { TableComponent } from '@components/utils/table/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
 import { RolModel } from '@models/rol.model';
