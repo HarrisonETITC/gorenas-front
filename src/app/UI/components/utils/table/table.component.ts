@@ -15,7 +15,7 @@ import { AuthUtils } from '@utils/auth.util';
   styleUrl: './table.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class TableComponent<T extends { id: number }> implements OnInit {
+export class TableComponent<T extends { id?: number }> implements OnInit {
   @Input({ required: true }) cabeceras$: Observable<Array<string>>;
   @Input({ required: true }) informacion$: Observable<Array<T>>;
   @Input({ required: true }) mapeos: Map<string, string>;

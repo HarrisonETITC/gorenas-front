@@ -1,5 +1,5 @@
 export class RolModel {
-    public static readonly mapeoCols = new Map();
+    public static readonly mapeoCols = new Map<string, string>();
     public static readonly ROL_ADMINISTRADOR = 'administrador';
     public static readonly ROL_PROPIETARIO = 'propietario';
     public static readonly ROL_GERENTE = 'gerente';

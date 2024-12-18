@@ -67,7 +67,7 @@ export class ApplicationComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  puedeVer(ruta: string) {
-    return AuthUtils.verificarPuedeVer(ruta);
+  canSeeSection(roles: Array<string>) {
+    return this.authService.userHasRole(roles);
   }
 }

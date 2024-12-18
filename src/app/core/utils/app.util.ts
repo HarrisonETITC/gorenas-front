@@ -1,3 +1,5 @@
+import { GeneralFilter } from "@models/base/general.filter";
+
 export class AppUtil {
     public static verificarVacio(valor: any): boolean {
         const basic: boolean = (valor === undefined || valor === null);
@@ -47,5 +49,21 @@ export class AppUtil {
 
     public static getRol() {
         return sessionStorage.getItem('rol');
+    }
+
+    public static processFilters<T extends GeneralFilter>(filter: T): string {
+        if (AppUtil.verifyEmpty(filter))
+            return '';
+
+        const filters: Map<string, string> = new Map();
+        Object.keys(filter).forEach(key => {
+            if (!AppUtil.verifyEmpty(filter[key]))
+                filters.set(key, filter[key]);
+        });
+
+        if (AppUtil.verifyEmpty(filters))
+            return '';
+
+        return Array.from(filters.keys()).map((val, i) => `${(i == 0) ? '?' : '&'}${val}=${filters.get(val)}`).join('');
     }
 }

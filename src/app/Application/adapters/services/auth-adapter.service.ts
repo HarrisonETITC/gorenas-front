@@ -82,7 +82,7 @@ export class AuthServiceAdapter implements AuthServicePort {
     }
     userHasRole(acceptedRoles: Array<string>): Observable<boolean> {
         return this.getUser().pipe(
-            map(usr => acceptedRoles.includes(usr.role))
+            map(usr => AppUtil.verifyEmpty(acceptedRoles) || acceptedRoles.includes(usr.role))
         );
     }
     userHasPermission(permission: string): Observable<boolean> {

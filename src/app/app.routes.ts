@@ -12,6 +12,7 @@ import { RolesComponent } from '@components/app/roles/roles.component';
 import { LoginComponent } from '@components/auth/login/login.component';
 import { RegisterComponent } from '@components/auth/register/register.component';
 import { RoleModel } from '@Domain/models/base/role.model';
+import { PermissionComponent } from '@components/app/permission/permission.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -48,6 +49,10 @@ export const routes: Routes = [
             },
             {
                 path: 'roles', component: RolesComponent, canActivate: [appGuard],
+                data: { acceptedRoles: [RoleModel.ROLE_ADMINISTRATOR] }
+            },
+            {
+                path: 'permissions', component: PermissionComponent, canActivate: [appGuard],
                 data: { acceptedRoles: [RoleModel.ROLE_ADMINISTRATOR] }
             },
             { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }

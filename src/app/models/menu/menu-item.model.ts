@@ -3,11 +3,13 @@ export class MenuItem {
     direccion: string;
     icono: string;
     activo: boolean;
+    roles: Array<string>;
 
-    constructor(nombre: string, direccion: string, icono: string, activo?: boolean) {
+    constructor(nombre: string, direccion: string, icono: string, activo?: boolean, roles: Array<string> = []) {
         this.nombre = nombre;
         this.direccion = direccion;
         this.icono = icono;
-        this.activo = activo?? false;
+        this.activo = activo ?? false;
+        this.roles = roles;
     }
 }

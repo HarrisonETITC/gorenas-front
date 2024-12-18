@@ -11,6 +11,7 @@ import { ParseDataInterceptor } from '@Application/config/interceptors/parse-dat
 import { NotificationProviders } from '@Application/config/providers/notification.providers';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ValidationErrorInterceptor } from '@Application/config/interceptors/validation-error.interceptor';
+import { PermissionProviders } from '@Application/config/providers/permission.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     ...AuthProviders,
     ...ApplicationProviders,
     ...PersonProviders,
+    ...PermissionProviders,
     ...NotificationProviders
   ]
 };

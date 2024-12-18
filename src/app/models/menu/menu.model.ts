@@ -1,3 +1,4 @@
+import { RoleModel } from "@Domain/models/base/role.model";
 import { MenuItem } from "./menu-item.model";
 
 export class Menu {
@@ -9,12 +10,13 @@ export class Menu {
         this.items = new Array();
         this.items.push(
             new MenuItem('Dashboard', 'dashboard', 'home-outline'),
-            new MenuItem('Sucursales', 'sucursales', 'business-outline'),
-            new MenuItem('Empleados', 'empleados', 'people-outline'),
-            new MenuItem('Ventas', 'ventas', 'cash-outline'),
-            new MenuItem('Usuarios', 'usuarios', 'person-circle-outline'),
-            new MenuItem('Personas', 'personas', 'person-add-outline'),
-            new MenuItem('Roles', 'roles', 'document-lock-outline')
+            new MenuItem('Sucursales', 'branches', 'business-outline'),
+            new MenuItem('Empleados', 'employees', 'people-outline'),
+            new MenuItem('Ventas', 'sales', 'cash-outline'),
+            new MenuItem('Usuarios', 'users', 'person-circle-outline', false, [RoleModel.ROLE_ADMINISTRATOR]),
+            new MenuItem('Personas', 'persons', 'person-add-outline'),
+            new MenuItem('Roles', 'roles', 'document-lock-outline', false, [RoleModel.ROLE_ADMINISTRATOR]),
+            new MenuItem('Permisos', 'permissions', 'lock-open-outline', false, [RoleModel.ROLE_ADMINISTRATOR])
         );
     }
 

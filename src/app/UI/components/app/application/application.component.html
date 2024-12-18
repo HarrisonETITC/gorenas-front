@@ -8,7 +8,7 @@
     </div>
     <ul class="sidebar-list">
       @for (item of items; track $index) {
-        @if (puedeVer(item.direccion)) {
+        @if ((canSeeSection(item.roles) | async)) {
           <li class="sidebar-list-item" [classList]="'sidebar-list-item' + (item.activo? ' active' : '')">
             <button (click)="activarItem(item.nombre);" [routerLink]="item.direccion" type="button" class="menu-item">
               <ion-icon name="{{item.icono}}" class="menu-icono"></ion-icon>
