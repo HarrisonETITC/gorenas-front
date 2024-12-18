@@ -3,14 +3,14 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnInit, Output,
 import { Usuario } from '@models/usuario.model';
 import { AppUtil } from '@utils/app.util';
 import { Observable } from 'rxjs';
-import { PaginadorComponent } from '../paginador/paginador.component';
+import { PaginatorComponent } from '../paginator/paginator.component';
 import { IIdValor } from '@models/base/id-valor.interface';
 import { Router, RouterModule } from '@angular/router';
 import { AuthUtils } from '@utils/auth.util';
 
 @Component({
   selector: 'app-table',
-  imports: [CommonModule, PaginadorComponent, RouterModule],
+  imports: [CommonModule, PaginatorComponent, RouterModule],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -20,7 +20,7 @@ export class TableComponent<T extends { id: number }> implements OnInit {
   @Input({ required: true }) informacion$: Observable<Array<T>>;
   @Input({ required: true }) mapeos: Map<string, string>;
   @Input() mapeosValores: Map<string, Array<IIdValor>>;
-  @ViewChild(PaginadorComponent) paginador: PaginadorComponent;
+  @ViewChild(PaginatorComponent) paginador: PaginatorComponent;
 
   @Output() protected btnInactivar = new EventEmitter<T>();
   @Output() protected btnEditar = new EventEmitter<T>();

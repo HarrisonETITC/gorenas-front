@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { FormgenericoComponent } from '@components/utils/formgenerico/formgenerico.component';
+import { GenericFormComponent } from '@components/utils/genericform/genericform.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { Empleado } from '@models/empleado.model';
 import { FormConfig } from '@models/formulario/form-config.model';
@@ -16,13 +16,13 @@ import { FormsUtil } from '@utils/forms.util';
 import { concatMap, EMPTY, map, Observable, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-empleados',
+  selector: 'app-employees',
   imports: [TableComponent, CommonModule, ReactiveFormsModule],
-  templateUrl: './empleados.component.html',
-  styleUrl: './empleados.component.css',
+  templateUrl: './employees.component.html',
+  styleUrl: './employees.component.css',
   providers: [PersonasService, EmpleadosService, SucursalesService]
 })
-export class EmpleadosComponent implements OnInit {
+export class EmployeesComponent implements OnInit {
   empleados$: Observable<Array<Empleado>>;
   columnas$: Observable<Array<string>>;
   mapeos = Empleado.mapeoCols;
@@ -67,7 +67,7 @@ export class EmpleadosComponent implements OnInit {
 
   abrirFormulario(data?: Empleado) {
     const titulo = !AppUtil.verificarVacio(data) ? 'Editar' : 'Registrar';
-    this.dialog.open(FormgenericoComponent, {
+    this.dialog.open(GenericFormComponent, {
       data: { form: this.formEmpleado, campos: this.formEmpleadoCampos, config: new FormConfig(`${titulo} Empleado`, titulo), servicio: this.personaService, editar: !AppUtil.verificarVacio(data) }
     });
 

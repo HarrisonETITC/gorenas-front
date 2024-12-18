@@ -9,7 +9,7 @@ import { LoginModel } from "@Domain/models/general/login.model";
 import { UserModelView } from "@Domain/models/model-view/user.mv";
 import { AuthResponse } from "@Domain/types/auth-response.type";
 import { AppUtil } from "@utils/app.util";
-import { BehaviorSubject, catchError, concatMap, ignoreElements, Observable, tap, throwError } from "rxjs";
+import { BehaviorSubject, catchError, concatMap, ignoreElements, map, Observable, tap, throwError } from "rxjs";
 import { apiUrl } from "src/app/environment";
 
 @Injectable({
@@ -19,14 +19,15 @@ export class AuthServiceAdapter implements AuthServicePort {
     private readonly baseUrl: string = `${apiUrl}/${URL_AUTH}/`;
     private readonly logedManager: BehaviorSubject<boolean>;
     private readonly loginStateManager = new BehaviorSubject<boolean>(false);
-    private readonly userManager = new BehaviorSubject<UserModelView>(new UserModelView());
+    private readonly userManager: BehaviorSubject<UserModelView>;
 
     constructor(
         private readonly http: HttpClient,
         @Inject(STORAGE_PROVIDER)
         private readonly storage: StoragePort
     ) {
-        this.logedManager = new BehaviorSubject<boolean>(!AppUtil.verifyEmpty(this.getToken()));
+        this.logedManager = new BehaviorSubject(!AppUtil.verifyEmpty(this.getToken()));
+        this.userManager = new BehaviorSubject(this.storage.getItem('user'));
     }
 
     login(credentials: LoginModel): Observable<void> {
@@ -78,5 +79,15 @@ export class AuthServiceAdapter implements AuthServicePort {
     }
     getToken(): string {
         return this.storage.getItem('token');
+    }
+    userHasRole(acceptedRoles: Array<string>): Observable<boolean> {
+        return this.getUser().pipe(
+            map(usr => acceptedRoles.includes(usr.role))
+        );
+    }
+    userHasPermission(permission: string): Observable<boolean> {
+        return this.getUser().pipe(
+            map(usr => usr.permissions.includes('*') || usr.permissions.includes(permission))
+        )
     }
 }

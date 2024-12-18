@@ -4,12 +4,12 @@ import { AppUtil } from '@utils/app.util';
 import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-paginador',
+  selector: 'app-paginator',
   imports: [CommonModule],
-  templateUrl: './paginador.component.html',
-  styleUrl: './paginador.component.css'
+  templateUrl: './paginator.component.html',
+  styleUrl: './paginator.component.css'
 })
-export class PaginadorComponent implements OnInit, OnDestroy {
+export class PaginatorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) registros: number = 15;
   @Input({ required: true }) data: Observable<Array<any>>;
   @Output() protected cambioPagina = new EventEmitter<Observable<Array<any>>>();

@@ -30,10 +30,10 @@
       </div>
     }
   </div>
-  <app-paginador
+  <app-paginator
     [registros]="15"
     [data]="informacion$"
     (cambioPagina)="refrescarInformacion($event)"
     style="height: 15%; width: 100%;"
-  ></app-paginador>
+  ></app-paginator>
 </div>

@@ -18,14 +18,14 @@ import { AuthUtils } from '@utils/auth.util';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-aplicacion',
+  selector: 'app-application',
   imports: [RouterOutlet, RouterModule, CommonModule],
-  templateUrl: './aplicacion.component.html',
-  styleUrl: './aplicacion.component.css',
+  templateUrl: './application.component.html',
+  styleUrl: './application.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [AplicacionService, LoginService]
 })
-export class AplicacionComponent implements OnInit {
+export class ApplicationComponent implements OnInit {
   items: Array<MenuItem>;
   usuario$: Observable<PersonModelView>;
 

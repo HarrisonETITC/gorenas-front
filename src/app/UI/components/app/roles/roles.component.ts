@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FormgenericoComponent } from '@components/utils/formgenerico/formgenerico.component';
+import { GenericFormComponent } from '@components/utils/genericform/genericform.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
@@ -14,13 +14,13 @@ import { FormsUtil } from '@utils/forms.util';
 import { concatMap, EMPTY, map, Observable, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-rol',
+  selector: 'app-roles',
   imports: [TableComponent, CommonModule, ReactiveFormsModule, MatDialogModule],
-  templateUrl: './rol.component.html',
-  styleUrl: './rol.component.css',
+  templateUrl: './roles.component.html',
+  styleUrl: './roles.component.css',
   providers: [RolesService]
 })
-export class RolComponent implements OnInit {
+export class RolesComponent implements OnInit {
   roles$: Observable<Array<RolModel>>;
   columnas$: Observable<Array<string>>;
   mapeos = RolModel.mapeoCols;
@@ -57,7 +57,7 @@ export class RolComponent implements OnInit {
 
   abrirFormulario(data?: RolModel) {
     const titulo = !AppUtil.verificarVacio(data) ? 'Editar' : 'Registrar';
-    this.dialog.open(FormgenericoComponent, {
+    this.dialog.open(GenericFormComponent, {
       data: { form: this.formRol, campos: this.formRolCampos, config: new FormConfig(`${titulo} Rol`, titulo), servicio: this.rolService, editar: !AppUtil.verificarVacio(data) }
     });
 

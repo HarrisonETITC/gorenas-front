@@ -9,13 +9,13 @@ import { Subscription } from 'rxjs';
 import { INotificarGuardar } from 'src/app/core/interfaces/notificar-guardar.interface';
 
 @Component({
-  selector: 'app-formgenerico',
+  selector: 'app-genericform',
   imports: [ReactiveFormsModule, MatDialogModule, CommonModule],
-  templateUrl: './formgenerico.component.html',
-  styleUrl: './formgenerico.component.css',
+  templateUrl: './genericform.component.html',
+  styleUrl: './genericform.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
+export class GenericFormComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input({ required: true }) form: FormGroup;
   @Input({ required: true }) campos: Array<FormItem>;
   @Input({ required: true }) config: FormConfig;
@@ -26,7 +26,7 @@ export class FormgenericoComponent implements OnInit, AfterViewInit, OnDestroy {
   editar: boolean;
 
   constructor(
-    private readonly dialogRef: MatDialogRef<FormgenericoComponent>,
+    private readonly dialogRef: MatDialogRef<GenericFormComponent>,
     @Inject(MAT_DIALOG_DATA) private readonly data: { form: FormGroup, campos: Array<FormItem>, config: FormConfig, servicio: INotificarGuardar, editar: boolean }
   ) { }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FormgenericoComponent } from '@components/utils/formgenerico/formgenerico.component';
+import { GenericFormComponent } from '@components/utils/genericform/genericform.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
@@ -14,13 +14,13 @@ import { FormsUtil } from '@utils/forms.util';
 import { concatMap, EMPTY, map, Observable, Subscription, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-sucursales',
+  selector: 'app-branches',
   imports: [TableComponent, ReactiveFormsModule, MatDialogModule],
-  templateUrl: './sucursales.component.html',
-  styleUrl: './sucursales.component.css',
+  templateUrl: './branches.component.html',
+  styleUrl: './branches.component.css',
   providers: [SucursalesService, RestauranteService]
 })
-export class SucursalesComponent implements OnInit {
+export class BranchesComponent implements OnInit {
   sucursales$: Observable<Array<Sucursal>>;
   columnas$: Observable<Array<string>>;
   mapeos = Sucursal.mapeoCols;
@@ -65,7 +65,7 @@ export class SucursalesComponent implements OnInit {
 
   abrirFormulario(data?: Sucursal) {
     const titulo = !AppUtil.verificarVacio(data) ? 'Editar' : 'Registrar';
-    this.dialog.open(FormgenericoComponent, {
+    this.dialog.open(GenericFormComponent, {
       data: { form: this.formSucursal, campos: this.formSucursalCampos, config: new FormConfig(`${titulo} Sucursal`, titulo), servicio: this.restauranteService, editar: !AppUtil.verificarVacio(data) }
     });
 

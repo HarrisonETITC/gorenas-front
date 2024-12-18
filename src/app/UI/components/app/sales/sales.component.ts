@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { FormgenericoComponent } from '@components/utils/formgenerico/formgenerico.component';
+import { GenericFormComponent } from '@components/utils/genericform/genericform.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { IIdValor } from '@models/base/id-valor.interface';
 import { FormConfig } from '@models/formulario/form-config.model';
@@ -15,13 +15,13 @@ import { FormsUtil } from '@utils/forms.util';
 import { concatMap, EMPTY, map, Observable, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-ventas',
+  selector: 'app-sales',
   imports: [TableComponent, CommonModule, ReactiveFormsModule],
-  templateUrl: './ventas.component.html',
-  styleUrl: './ventas.component.css',
+  templateUrl: './sales.component.html',
+  styleUrl: './sales.component.css',
   providers: [EmpleadosService, VentasService]
 })
-export class VentasComponent {
+export class SalesComponent {
   ventas$: Observable<Array<Venta>>;
   columnas$: Observable<Array<string>>;
   mapeos = Venta.mapeoCols;
@@ -65,7 +65,7 @@ export class VentasComponent {
 
   abrirFormulario(data?: Venta) {
     const titulo = !AppUtil.verificarVacio(data) ? 'Editar' : 'Registrar';
-    this.dialog.open(FormgenericoComponent, {
+    this.dialog.open(GenericFormComponent, {
       data: { form: this.formSucursal, campos: this.formSucursalCampos, config: new FormConfig(`${titulo} Venta`, titulo), servicio: this.ventasService, editar: !AppUtil.verificarVacio(data) }
     });
 

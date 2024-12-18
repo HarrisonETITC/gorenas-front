@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FormgenericoComponent } from '@components/utils/formgenerico/formgenerico.component';
+import { GenericFormComponent } from '@components/utils/genericform/genericform.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
@@ -17,10 +17,10 @@ import { FormsUtil } from '@utils/forms.util';
 import { concatMap, EMPTY, map, Observable, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-usuarios',
+  selector: 'app-users',
   imports: [CommonModule, MatDialogModule, ReactiveFormsModule, TableComponent],
-  templateUrl: './usuarios.component.html',
-  styleUrl: './usuarios.component.css',
+  templateUrl: './users.component.html',
+  styleUrl: './users.component.css',
   providers: [LoginService, PersonasService]
 })
 export class UsuariosComponent implements OnInit {
@@ -65,7 +65,7 @@ export class UsuariosComponent implements OnInit {
 
   abrirFormulario(data?: Usuario) {
     const titulo = !AppUtil.verificarVacio(data) ? 'Editar' : 'Registrar';
-    this.dialog.open(FormgenericoComponent, {
+    this.dialog.open(GenericFormComponent, {
       data: { form: this.formUsuario, campos: this.formUsuarioCampos, config: new FormConfig(`${titulo} Usuario`, titulo), servicio: this.personaService, editar: !AppUtil.verificarVacio(data) }
     });
 

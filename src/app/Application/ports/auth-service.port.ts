@@ -12,4 +12,6 @@ export interface AuthServicePort {
     getTokenExcludedEndpoints(): Array<string>;
     setAuthHeader(req: HttpRequest<any>): HttpRequest<any>;
     getToken(): string;
+    userHasRole(acceptedRoles: Array<string>): Observable<boolean>;
+    userHasPermission(permission: string): Observable<boolean>;
 }

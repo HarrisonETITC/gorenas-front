@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FormgenericoComponent } from '@components/utils/formgenerico/formgenerico.component';
+import { GenericFormComponent } from '@components/utils/genericform/genericform.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
@@ -16,13 +16,13 @@ import { FormsUtil } from '@utils/forms.util';
 import { concatMap, EMPTY, map, Observable, Subscription, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-personas',
+  selector: 'app-persons',
   imports: [TableComponent, ReactiveFormsModule, MatDialogModule],
-  templateUrl: './personas.component.html',
-  styleUrl: './personas.component.css',
+  templateUrl: './persons.component.html',
+  styleUrl: './persons.component.css',
   providers: [PersonasService, LoginService, RolesService]
 })
-export class PersonasComponent {
+export class PersonsComponent {
 
   personas$: Observable<Array<Persona>>;
   columnas$: Observable<Array<string>>;
@@ -83,7 +83,7 @@ export class PersonasComponent {
 
   abrirFormulario(data?: Persona) {
     const titulo = !AppUtil.verificarVacio(data) ? 'Editar' : 'Registrar';
-    this.dialog.open(FormgenericoComponent, {
+    this.dialog.open(GenericFormComponent, {
       data: { form: this.personaForm, campos: this.personaFormCampos, config: new FormConfig(`${titulo} Persona`, titulo), servicio: this.personasService, editar: !AppUtil.verificarVacio(data) }
     });
 

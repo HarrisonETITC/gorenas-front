@@ -5,4 +5,5 @@ export class UserModelView extends GeneralModel {
     name: string;
     state: string;
     role: string;
+    permissions: Array<string>;
 }
