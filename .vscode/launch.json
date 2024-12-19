@@ -8,7 +8,7 @@
       "request": "attach",
       "webRoot": "${workspaceFolder}",
       "url": "http://localhost:4200/home/login",
-      "port": 9320
+      "port": 9222
     },
     {
       "name": "ng test",

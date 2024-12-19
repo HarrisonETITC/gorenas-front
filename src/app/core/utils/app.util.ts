@@ -1,3 +1,5 @@
+import { GeneralFilter } from "@models/base/general.filter";
+
 export class AppUtil {
     public static verificarVacio(valor: any): boolean {
         const basic: boolean = (valor === undefined || valor === null);
@@ -15,6 +17,23 @@ export class AppUtil {
         }
     }
 
+    public static verifyEmpty(value: any): boolean {
+        const basic: boolean = (value === undefined || value === null);
+        const emptyObject = {};
+        if (typeof value === 'string')
+            return basic || value === '' || value === "" || value === ``;
+        else if (typeof value === 'number')
+            return basic || isNaN(value);
+        else if (value instanceof Array)
+            return basic || value.length <= 0;
+        else if (value === emptyObject)
+            return true
+        else if (value instanceof Map)
+            return basic || value.size == 0;
+
+        return basic;
+    }
+
     public static procesarNombre(nombres: string, apellidos: string) {
         let resultado = '';
 
@@ -30,5 +49,21 @@ export class AppUtil {
 
     public static getRol() {
         return sessionStorage.getItem('rol');
+    }
+
+    public static processFilters<T extends GeneralFilter>(filter: T): string {
+        if (AppUtil.verifyEmpty(filter))
+            return '';
+
+        const filters: Map<string, string> = new Map();
+        Object.keys(filter).forEach(key => {
+            if (!AppUtil.verifyEmpty(filter[key]))
+                filters.set(key, filter[key]);
+        });
+
+        if (AppUtil.verifyEmpty(filters))
+            return '';
+
+        return Array.from(filters.keys()).map((val, i) => `${(i == 0) ? '?' : '&'}${val}=${filters.get(val)}`).join('');
     }
 }

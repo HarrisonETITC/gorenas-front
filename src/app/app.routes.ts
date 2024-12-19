@@ -1,16 +1,18 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
 import { homeGuard } from './core/guards/home.guard';
 import { appGuard } from './core/guards/app.guard';
-import { AplicacionComponent } from '@components/aplicacion/aplicacion.component';
-import { DashboardComponent } from '@components/dashboard/dashboard.component';
-import { SucursalesComponent } from '@components/sucursales/sucursales.component';
-import { EmpleadosComponent } from '@components/empleados/empleados.component';
-import { VentasComponent } from '@components/ventas/ventas.component';
-import { UsuariosComponent } from '@components/usuarios/usuarios.component';
-import { PersonasComponent } from '@components/personas/personas.component';
-import { RolComponent } from '@components/rol/rol.component';
+import { ApplicationComponent } from '@components/app/application/application.component';
+import { DashboardComponent } from '@components/app/dashboard/dashboard.component';
+import { BranchesComponent } from '@components/app/branches/branches.component';
+import { EmployeesComponent } from '@components/app/employees/employees.component';
+import { SalesComponent } from '@components/app/sales/sales.component';
+import { UsuariosComponent } from '@components/app/users/users.component';
+import { PersonsComponent } from '@components/app/persons/persons.component';
+import { RolesComponent } from '@components/app/roles/roles.component';
+import { LoginComponent } from '@components/auth/login/login.component';
+import { RegisterComponent } from '@components/auth/register/register.component';
+import { RoleModel } from '@Domain/models/base/role.model';
+import { PermissionComponent } from '@components/app/permission/permission.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -20,21 +22,40 @@ export const routes: Routes = [
         path: 'home',
         children: [
             { path: '', redirectTo: 'login', pathMatch: 'full' },
-            { path: 'login', component: LoginComponent, canActivate: [homeGuard] },
-            { path: 'register', component: RegisterComponent, canActivate: [homeGuard] }
+            { path: 'login', component: LoginComponent, canActivate: [homeGuard] }
         ]
     },
     {
-        path: 'app', component: AplicacionComponent, canActivate: [appGuard], children: [
+        path: 'app', component: ApplicationComponent, canActivate: [appGuard], children: [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-            { path: 'dashboard', component: DashboardComponent, canActivate: [appGuard] },
-            { path: 'sucursales', component: SucursalesComponent, canActivate: [appGuard] },
-            { path: 'empleados', component: EmpleadosComponent, canActivate: [appGuard] },
-            { path: 'ventas', component: VentasComponent, canActivate: [appGuard] },
-            { path: 'usuarios', component: UsuariosComponent, canActivate: [appGuard] },
-            { path: 'personas', component: PersonasComponent, canActivate: [appGuard] },
-            { path: 'roles', component: RolComponent, canActivate: [appGuard] },
-
+            {
+                path: 'dashboard', component: DashboardComponent, canActivate: [appGuard]
+            },
+            {
+                path: 'branches', component: BranchesComponent, canActivate: [appGuard]
+            },
+            {
+                path: 'employees', component: EmployeesComponent, canActivate: [appGuard]
+            },
+            {
+                path: 'sales', component: SalesComponent, canActivate: [appGuard]
+            },
+            {
+                path: 'users', component: UsuariosComponent, canActivate: [appGuard],
+                data: { acceptedRoles: [RoleModel.ROLE_ADMINISTRATOR, RoleModel.ROLE_PROPIETARY, RoleModel.ROLE_MANAGER] }
+            },
+            {
+                path: 'persons', component: PersonsComponent, canActivate: [appGuard]
+            },
+            {
+                path: 'roles', component: RolesComponent, canActivate: [appGuard],
+                data: { acceptedRoles: [RoleModel.ROLE_ADMINISTRATOR] }
+            },
+            {
+                path: 'permissions', component: PermissionComponent, canActivate: [appGuard],
+                data: { acceptedRoles: [RoleModel.ROLE_ADMINISTRATOR] }
+            },
+            { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     }
 ];

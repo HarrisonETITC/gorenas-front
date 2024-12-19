@@ -1,0 +1,26 @@
+<div class="notification-container {{ data.type }}">
+    <div class="notification-data-container">
+        <div class>
+            <div class="notification-title">
+                <ion-icon name="{{ data.icon }}"></ion-icon>
+                <h3>{{ data.title }}</h3>
+            </div>
+            <div class="notification-message">
+                <p>{{ data.text }}</p>
+                @if (showList) {
+                    <ul class="notification-list">
+                        @for (item of list; track $index) {
+                            <li>{{ item }}</li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+        <button
+            class="btn-dismiss-notification"
+            (click)="dismissNotification()"
+        >
+            <ion-icon name="close-outline"></ion-icon>
+        </button>
+    </div>
+</div>
