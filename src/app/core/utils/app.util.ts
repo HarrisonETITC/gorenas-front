@@ -30,6 +30,8 @@ export class AppUtil {
             return true
         else if (value instanceof Map)
             return basic || value.size == 0;
+        else if (value instanceof Date)
+            return basic || isNaN(value.getTime());
 
         return basic;
     }

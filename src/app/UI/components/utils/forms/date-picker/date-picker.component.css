@@ -1,0 +1,70 @@
+::ng-deep.mdc-text-field--filled {
+    border-radius: .5rem!important;
+    padding-right: 0!important;
+    height: 3rem!important;
+}
+
+::ng-deep.mdc-text-field--filled:hover {
+    background-color: white!important;
+}
+
+::ng-deep.mdc-text-field--filled .mat-mdc-form-field-focus-overlay {
+    background-color: white!important;
+}
+
+::ng-deep.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: white!important;
+}
+
+::ng-deep.mat-mdc-button-touch-target {
+    width: 2rem!important;
+    height: 2rem!important;
+    padding: 0!important;
+}
+
+::ng-deep.mdc-text-field--filled .mat-mdc-form-field-flex .mat-mdc-form-field-icon-prefix .mat-datepicker-toggle 
+
+::ng-deep.mdc-text-field--filled .mat-mdc-form-field-flex .mat-mdc-form-field-icon-prefix {
+    padding: 0!important;
+}
+
+::ng-deep.mdc-text-field--filled .mat-mdc-form-field-flex .mat-mdc-form-field-infix {
+    width: auto!important;
+    padding-bottom: 0!important;
+}
+
+::ng-deep.mdc-text-field--filled .mat-mdc-form-field-flex {
+    height: 100%!important;
+    align-items: center!important;
+}
+
+::ng-deep.mat-datepicker-content {
+    background-color: white!important;
+}
+
+::ng-deep.mdc-text-field--filled .mat-mdc-form-field-flex .mat-mdc-form-field-icon-prefix .mat-datepicker-toggle .mdc-icon-button {
+    color: gray!important;
+}
+
+::ng-deep.mat-icon {
+    padding: 0 .5rem!important;
+    color: gray!important;
+    margin: 0!important;
+}
+
+::ng-deep.mat-mdc-select-arrow svg {
+    top: 0!important;
+    left: 0!important;
+}
+
+::ng-deep.mat-mdc-select-value {
+    font-size: .9rem!important;
+}
+
+::ng-deep.mdc-text-field--filled:not(.mdc-text-field--disabled).mdc-text-field--invalid:not(.mdc-text-field--disabled):hover .mdc-floating-label {
+    color: #ba1a1a!important;
+}
+
+::ng-deep.mdc-text-field--outlined:not(.mdc-text-field--disabled).mat-mdc-notch-piece {
+    border-width: 0;
+}

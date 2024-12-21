@@ -10,7 +10,7 @@ import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
   styleUrl: './paginator.component.css'
 })
 export class PaginatorComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) registros: number = 15;
+  @Input({ required: true }) registros: number = 25;
   @Input({ required: true }) data: Observable<Array<any>>;
   @Output() protected cambioPagina = new EventEmitter<Observable<Array<any>>>();
 

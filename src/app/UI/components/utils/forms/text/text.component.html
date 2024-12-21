@@ -1,0 +1,26 @@
+<mat-form-field class="w-full">
+    <mat-label>{{ label }}</mat-label>
+    @if (!verifyEmpty(icon)) {
+        <mat-icon matIconPrefix>{{ icon }}</mat-icon>
+    }
+    @if (type === 'password') {
+        <button mat-icon-button matSuffix (click)="showPass = !showPass">
+            <mat-icon class="p-0">{{ showPass? 'visibility_outline' : 'visibility_off_outline' }}</mat-icon>
+        </button>
+    }
+    @if (type === 'password') {
+        <input
+            matInput
+            [formControl]="control"
+            [type]="showPass? 'text' : 'password'"
+        >
+    }
+    @else {
+        <input
+            matInput
+            [formControl]="control"
+            [type]="type"
+            class="pr-4"
+        >
+    }
+</mat-form-field>

@@ -1,16 +1,35 @@
 <div class="app-content">
     <div class="app-content-header">
-      <h1 class="app-content-headerText">Roles</h1>
+        <h1 class="app-content-headerText">Roles</h1>
     </div>
     <div class="app-content-actions">
-      <div class="app-content-actions-wrapper">
-        <button class="app-content-headerButton">Agregar permiso</button>
-      </div>
+        <div class="app-content-actions-wrapper">
+            <button class="app-content-headerButton">Agregar permiso</button>
+        </div>
     </div>
-    <app-table
-      style="height: 90%;"
-      [cabeceras$]="cols$"
-      [informacion$]="data$"
-      [mapeos]="headers"
-    ></app-table>
+    <div class="flex justify-center gap-1 h-full">
+        <div class="text-white px-5 bg-secondary rounded-general py-2">
+            <p class="m-0 p-0 size text-xl white text-white font-bold mb-4">Filtros</p>
+            <app-date-picker
+                [label]="'Fecha de nacimiento'"
+            ></app-date-picker>
+            <app-select
+                [label]="'Rol'"
+                [icon]="'check_circle_outline'"
+                [values]="[{value: '1', viewValue: 'Adminaaaaaaaaaaaaa', icon: 'favorite_outline'}, {value: '2', viewValue: 'User'}]"
+                [control]="null"
+            ></app-select>
+            <app-text
+                [label]="'Cualquier cosa'"
+                [icon]="'settings_outline'"
+                [type]="'number'"
+            ></app-text>
+        </div>
+        <app-table
+            class="w-full h-full"
+            [cabeceras$]="cols$"
+            [informacion$]="data$"
+            [mapeos]="headers"
+        ></app-table>
+    </div>
 </div>

@@ -1,0 +1,17 @@
+
+<mat-form-field class="w-full">
+    <mat-label>Favorite food</mat-label>
+    @if (!verifyEmpty(icon)) {
+      <mat-icon matIconPrefix>{{ icon }}</mat-icon>
+    }
+    <mat-select [formControl]="control">
+      @for (val of values; track $index) {
+        <mat-option [value]="val.value">
+          @if (!verifyEmpty(val.icon)) {
+            <mat-icon>{{ val.icon }}</mat-icon>
+          }
+          {{val.viewValue}}
+        </mat-option>
+      }
+    </mat-select>
+</mat-form-field>
