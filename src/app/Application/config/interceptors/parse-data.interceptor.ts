@@ -7,7 +7,7 @@ export const ParseDataInterceptor = (req: HttpRequest<unknown>, next: HttpHandle
         map((event: HttpEvent<any>) => {
             if (event instanceof HttpResponse) {
                 const body = event.body;
-                if (!AppUtil.verifyEmpty(body) && !AppUtil.verifyEmpty(body.data))
+                if (!AppUtil.verifyEmpty(body) && !AppUtil.verifyEmptySimple(body.data))
                     return event.clone({ body: body.data });
             }
 

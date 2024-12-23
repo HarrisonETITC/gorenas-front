@@ -5,7 +5,7 @@ import { GeneralModel } from "@Domain/models/general/general.model";
 import { IdValue } from "@Domain/models/general/id-value.interface";
 import { GeneralFilter } from "@models/base/general.filter";
 import { AppUtil } from "@utils/app.util";
-import { Observable } from "rxjs";
+import { defaultIfEmpty, Observable, of } from "rxjs";
 import { apiUrl } from "src/app/environment";
 
 export abstract class GeneralApiService<T extends GeneralModel, U = T> implements ApiServicePort<T, U> {
@@ -19,7 +19,9 @@ export abstract class GeneralApiService<T extends GeneralModel, U = T> implement
     }
 
     getAll(): Observable<U[]> {
-        return this.http.get<Array<U>>(`${this.baseUrl}/${URL_ALL}`);
+        return this.http.get<Array<U>>(`${this.baseUrl}/${URL_ALL}`).pipe(
+            defaultIfEmpty([])
+        );
     }
     getById(id: number): Observable<U> {
         return this.http.get<U>(`${this.baseUrl}${URL_ID}?id=${id}`);
@@ -34,10 +36,12 @@ export abstract class GeneralApiService<T extends GeneralModel, U = T> implement
         return this.http.delete<void>(`${this.baseUrl}${URL_DELETE}?id=${id}`);
     }
     getAvailable(query?: string): Observable<Array<IdValue>> {
-        return this.http.get<Array<IdValue>>(`${this.baseUrl}${URL_AVAILABLE}?query=${query}`);
+        return AppUtil.verifyEmpty(query) ? of([]) : this.http.get<Array<IdValue>>(`${this.baseUrl}${URL_AVAILABLE}?query=${query}`)
     }
     getCanSee(params?: GeneralFilter): Observable<U[]> {
         const url = `${this.baseUrl}${URL_CAN_SEE}` + AppUtil.processFilters(params);
-        return this.http.get<Array<U>>(url);
+        return this.http.get<Array<U>>(url).pipe(
+            defaultIfEmpty([])
+        );
     }
 }

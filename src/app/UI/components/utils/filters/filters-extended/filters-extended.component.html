@@ -1,0 +1,62 @@
+<div class="text-white px-5 bg-secondary rounded-general pt-2 pb-4 w-80">
+  <p class="m-0 p-0 size text-xl white text-white font-bold mb-4">Filtros</p>
+  <form [formGroup]="form">
+    @for(field of fields; track $index) {
+      @if (isBasicControl(field.type)) {
+        <app-text
+          class="max-w-40"
+          [label]="field.label"
+          [icon]="field.icon"
+          [control]="getControl(field.name)"
+          [type]="field.type"
+          (updateValue)="handleEvents()"
+        ></app-text>
+      }
+      @if (isSelectControl(field.type)) {
+        <app-select
+          class="max-w-xs"
+          [label]="field.label"
+          [icon]="field.icon"
+          [control]="getControl(field.name)"
+          [values]="field.selectOptions"
+          (updateValue)="handleEvents()"
+        ></app-select>
+      }
+      @if (isDatePickerControl(field.type)) {
+        <app-date-picker
+          class="max-w-xs"
+          [label]="field.label"
+          [control]="getControl(field.name)"
+          (updateValue)="handleEvents()"
+        ></app-date-picker>
+      }
+      @if (isAutoCompleteControl(field.type)) {
+        <app-auto-complete
+          class="max-w-xs"
+          [label]="field.label"
+          [icon]="field.icon"
+          [control]="getControl(field.name)"
+          [data$]="field.completeOptions"
+          (updateData)="updateAutoCompleteData($event, field.name)"
+          (updateValue)="handleEvents()"
+        ></app-auto-complete>
+      } 
+    }
+  </form>
+  <p class="mb-2 text-white">
+    <mat-slide-toggle
+      (change)="autoSearch = !autoSearch;"
+      [checked]="autoSearch"
+    ></mat-slide-toggle>
+    Búsqueda automática
+  </p>
+  @if (!autoSearch) {
+    <button
+      class="app-content-headerButton button-icon-right-fix"
+      (click)="sendSearchEvent()"
+    >
+      Buscar
+      <mat-icon>search_outline</mat-icon>
+    </button>
+  }
+</div>

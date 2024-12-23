@@ -36,6 +36,10 @@ export class AppUtil {
         return basic;
     }
 
+    public static verifyEmptySimple(value: any): boolean {
+        return value === undefined || value === null;
+    }
+
     public static procesarNombre(nombres: string, apellidos: string) {
         let resultado = '';
 

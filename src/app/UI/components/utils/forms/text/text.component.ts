@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,20 +19,26 @@ export class TextComponent implements OnInit, AfterViewInit, FormFieldComponentP
   @Input({ required: true }) label: string;
   @Input({ required: false }) icon?: string;
   @Input({ required: true }) type: 'text' | 'number' | 'password';
-
+  @Output() updateData: EventEmitter<Observable<string | number>> = new EventEmitter();
+  @Output() updateValue: EventEmitter<string | number> = new EventEmitter();
+  
   showPass: boolean = false;
 
   ngOnInit(): void {
     this.init();
   }
   ngAfterViewInit(): void {
-    this.valueManager = new BehaviorSubject<string>(this.control.value);
+    this.updateData.emit(this.getValue());
   }
   init(): void {
     if (AppUtil.verifyEmpty(this.control)) {
       this.control = new FormControl<string>('', []);
     }
-    this.control.valueChanges.subscribe(val => this.valueManager.next(val));
+    this.valueManager = new BehaviorSubject<string>(this.control.value);
+    this.control.valueChanges.subscribe(val => {
+      this.updateValue.emit(val);
+      this.valueManager.next(val)
+    });
   }
   getValue(): Observable<string> {
     return this.valueManager.asObservable();

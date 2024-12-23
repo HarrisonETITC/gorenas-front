@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { dateValidator } from '@UI/forms/validators/date.validator';
 import { AppUtil } from '@utils/app.util';
@@ -18,31 +18,36 @@ import { FormFieldComponentPort } from '@Application/ports/form-field.port';
   providers: [provideNativeDateAdapter()]
 })
 export class DatePickerComponent implements OnInit, AfterViewInit, FormFieldComponentPort<Date> {
+  icon?: string;
   private valueManager: BehaviorSubject<Date>;
   @Input({ required: false }) control?: FormControl<any>;
   @Input({ required: true }) label: string;
+  @Output() updateData: EventEmitter<Observable<Date>> = new EventEmitter();
+  @Output() updateValue: EventEmitter<Date> = new EventEmitter();
 
   ngOnInit(): void {
     this.init();
   }
 
   ngAfterViewInit(): void {
-    this.valueManager = new BehaviorSubject<Date>(this.control.value)
-    this.valueManager.subscribe(date => { console.log(date) });
+    this.updateData.emit(this.getValue());
   }
 
   init(): void {
-
     if (AppUtil.verifyEmpty(this.control)) {
       this.control = new FormControl<Date>(new Date(), [dateValidator()]);
     }
+    this.valueManager = new BehaviorSubject<Date>(this.control.value);
 
     this.control.valueChanges.pipe(
       map(val => new Date(val)),
       filter(val => {
         return !AppUtil.verifyEmpty(val)
       })
-    ).subscribe(date => this.valueManager.next(date))
+    ).subscribe(date => {
+      this.valueManager.next(date)
+      this.updateValue.emit(date);
+    })
   }
 
   getValue(): Observable<Date> {

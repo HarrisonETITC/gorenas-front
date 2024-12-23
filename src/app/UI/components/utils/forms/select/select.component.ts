@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormFieldComponentPort } from '@Application/ports/form-field.port';
 import { ViewValue } from '@Domain/types/view-value.type';
 import { MatSelectModule } from '@angular/material/select';
@@ -21,18 +21,24 @@ export class SelectComponent implements OnInit, AfterViewInit, FormFieldComponen
   @Input({ required: true }) label: string;
   @Input({ required: true }) values: Array<ViewValue>;
   @Input({ required: false }) icon?: string;
+  @Output() updateData: EventEmitter<Observable<string>> = new EventEmitter();
+  @Output() updateValue: EventEmitter<string> = new EventEmitter();
 
   ngOnInit(): void {
     this.init();
   }
   ngAfterViewInit(): void {
-    this.valueManager = new BehaviorSubject<string>(this.control.value);
+    this.updateData.emit(this.getValue());
   }
   init(): void {
     if (AppUtil.verifyEmpty(this.control)) {
       this.control = new FormControl<string>('', []);
     }
-    this.control.valueChanges.subscribe(val => this.valueManager.next(val));
+    this.valueManager = new BehaviorSubject<string>(this.control.value);
+    this.control.valueChanges.subscribe(val => {
+      this.updateValue.emit(val);
+      this.valueManager.next(val);
+    });
   }
   getValue(): Observable<string> {
     return this.valueManager.asObservable();
