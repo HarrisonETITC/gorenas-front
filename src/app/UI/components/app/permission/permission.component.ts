@@ -100,6 +100,7 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
       {
         label: 'Nombre del permiso',
         name: 'permission',
+        icon: 'article_outline',
         type: FormItemModel.TYPE_TEXT,
         defaultValue: ''
       }
@@ -110,12 +111,15 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
     const field = this.filterFields.find(f => f.name === handler.name);
     field.completeOptions = handler.updater.pipe(
       distinctUntilChanged(),
-      throttleTime(400, undefined, { leading: true, trailing: true }),
+      throttleTime(300, undefined, { leading: true, trailing: true }),
       concatMap(val => field.completeOptionsFilter.getAvailable(val))
     );
   }
 
-  handleSearch(event: PermissionFilter) {
-    this.search(event);
+  handleSearch(event: Observable<PermissionFilter>) {
+    this.subs.push(event.pipe(
+      distinctUntilChanged(),
+      throttleTime(500, undefined, { leading: true, trailing: true }),
+    ).subscribe(filter => this.search(filter)));
   }
 }

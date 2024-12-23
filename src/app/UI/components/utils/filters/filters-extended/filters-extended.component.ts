@@ -2,24 +2,26 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AutoCompleteComponent } from '@components/utils/forms/auto-complete/auto-complete.component';
 import { DatePickerComponent } from '@components/utils/forms/date-picker/date-picker.component';
 import { SelectComponent } from '@components/utils/forms/select/select.component';
 import { TextComponent } from '@components/utils/forms/text/text.component';
 import { FormItemModel } from '@Domain/models/form-item.model';
 import { AppUtil } from '@utils/app.util';
-import { distinctUntilChanged, Observable, of, throttleTime } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, Observable, of, throttleTime } from 'rxjs';
 
 @Component({
   selector: 'app-filters-extended',
-  imports: [ReactiveFormsModule, TextComponent, SelectComponent, DatePickerComponent, AutoCompleteComponent, MatIconModule, MatSlideToggleModule],
+  imports: [ReactiveFormsModule, TextComponent, SelectComponent, DatePickerComponent, AutoCompleteComponent, MatIconModule, MatSlideToggleModule, MatTooltipModule],
   templateUrl: './filters-extended.component.html',
   styleUrl: './filters-extended.component.css'
 })
 export class FiltersExtendedComponent implements OnInit {
+  private readonly outputEventHandler = new BehaviorSubject<any>({});
   protected readonly form = new FormGroup({});
   @Input({ required: true }) fields: Array<FormItemModel>;
-  @Output() searchHandler = new EventEmitter<any>();
+  @Output() searchHandler = new EventEmitter<Observable<any>>();
   @Output() autocompleteUpdater = new EventEmitter<{ name: string, updater: Observable<string> }>();
   autoSearch: boolean = false;
 
@@ -27,6 +29,7 @@ export class FiltersExtendedComponent implements OnInit {
     for (const field of this.fields) {
       this.form.addControl(field.name, new FormControl(field.defaultValue, { validators: (AppUtil.verifyEmpty(field.validators) ? [] : field.validators) }));
     }
+    this.searchHandler.emit(this.outputEventHandler.asObservable());
   }
 
   protected isBasicControl(type: string) {
@@ -72,9 +75,9 @@ export class FiltersExtendedComponent implements OnInit {
       .subscribe(query => this.initAutoCompleteData(fieldName, query));
   }
 
-  sendSearchEvent() {
+  protected sendSearchEvent() {
     const send = this.buildObjectFromForm();
-    this.searchHandler.emit(send);
+    this.outputEventHandler.next(send);
   }
 
   protected handleEvents() {

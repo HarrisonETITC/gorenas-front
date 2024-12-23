@@ -5,7 +5,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { AppUtil } from '@utils/app.util';
 
@@ -35,10 +35,13 @@ export class SelectComponent implements OnInit, AfterViewInit, FormFieldComponen
       this.control = new FormControl<string>('', []);
     }
     this.valueManager = new BehaviorSubject<string>(this.control.value);
-    this.control.valueChanges.subscribe(val => {
-      this.updateValue.emit(val);
-      this.valueManager.next(val);
-    });
+    this.control.valueChanges.pipe(
+      tap(() => this.control.updateValueAndValidity({ emitEvent: false }))
+    )
+      .subscribe(val => {
+        this.updateValue.emit(val);
+        this.valueManager.next(val);
+      });
   }
   getValue(): Observable<string> {
     return this.valueManager.asObservable();

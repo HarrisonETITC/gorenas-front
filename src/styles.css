@@ -4,7 +4,7 @@
 
 /* You can add global styles to this file, and also import other style files */
 :root {
-    --error-color: rgb(202, 66, 66);
+    --error-color: #ba1a1a;
     --app-bg: #101827;
     --sidebar: rgba(21, 30, 47, 1);
     --sidebar-main-color: #fff;
@@ -24,6 +24,7 @@
     --mat-switch-pressed-handle-size: 1.25rem;
     --mdc-switch-state-layer-size: 1.5rem;
     --mdc-switch-track-width: 2.75rem;
+    --mdc-filled-text-field-focus-label-text-color: var(--action-color)
 }
 
 .light:root {
@@ -190,18 +191,21 @@ body {
 
 .mdc-text-field--filled .mat-mdc-form-field-flex .mat-mdc-form-field-icon-prefix .mat-datepicker-toggle .mdc-icon-button {
     color: gray!important;
-}   
+}
+
+.mat-mdc-form-field-icon-suffix,
+.mat-mdc-form-field-icon-prefix {
+    color: gray!important;
+}
 
 .mat-mdc-form-field-icon-suffix button .mat-icon {
     padding: 0!important;
-    color: gray!important;
     margin: 0!important;
     width: 1.5rem!important;
 }
 
 .mat-mdc-form-field-icon-prefix .mat-icon {
     padding: 0 .5rem!important;
-    color: gray!important;
     margin: 0!important;
     width: 1.5rem!important;
 }
@@ -254,4 +258,28 @@ body {
 
 .mat-mdc-option.mdc-list-item {
     gap: .3rem;
+}
+
+mat-form-field.transparent .mat-mdc-text-field-wrapper {
+    background-color: transparent!important;
+}
+
+mat-form-field.transparent:not(.mat-focused):not(.mat-form-field-invalid) .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-infix .mdc-floating-label {
+    color: lightgray!important;
+}
+
+mat-form-field.transparent .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-select {
+    color: white;
+}
+
+mat-form-field.mat-focused .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-icon-prefix {
+    color: var(--action-color)!important;
+}
+
+mat-form-field.mat-form-field-invalid .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-icon-prefix {
+    color: var(--error-color)!important;
+}
+
+mat-form-field.transparent .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-input-element {
+    color: white;
 }
