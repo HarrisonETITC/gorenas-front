@@ -1,0 +1,20 @@
+::ng-deep .mat-mdc-menu-content {
+    background-color: var(--app-bg);
+}
+
+::ng-deep .mat-mdc-menu-item {
+    color: white!important;
+}
+
+::ng-deep .mat-mdc-menu-item:hover {
+    background-color: rgb(29, 40, 60)!important;
+}
+
+::ng-deep .border-action .mdc-line-ripple {
+    display: none;
+}
+
+::ng-deep .mdc-text-field--filled .mat-mdc-form-field-focus-overlay {
+    border-radius: 0rem 5rem 5rem 0rem !important;
+}
+

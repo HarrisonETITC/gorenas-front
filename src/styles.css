@@ -264,15 +264,15 @@ mat-form-field.transparent .mat-mdc-text-field-wrapper {
     background-color: transparent!important;
 }
 
-mat-form-field.transparent:not(.mat-focused):not(.mat-form-field-invalid) .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-infix .mdc-floating-label {
+mat-form-field.transparent:not(.mat-focused):not(.mat-form-field-invalid) .mdc-floating-label {
     color: lightgray!important;
 }
 
-mat-form-field.transparent .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-select {
+mat-form-field.transparent .mat-mdc-select {
     color: white;
 }
 
-mat-form-field.mat-focused .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-icon-prefix {
+mat-form-field.mat-focused .mat-mdc-form-field-icon-prefix {
     color: var(--action-color)!important;
 }
 

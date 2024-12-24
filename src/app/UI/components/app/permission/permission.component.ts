@@ -6,6 +6,7 @@ import { PERMISSION_SERVICE } from '@Application/config/providers/permission.pro
 import { PERSON_SERVICE } from '@Application/config/providers/person.providers';
 import { ApiServicePort } from '@Application/ports/api-service.port';
 import { AuthServicePort } from '@Application/ports/auth-service.port';
+import { FiltersCompactComponent } from '@components/utils/filters/filters-compact/filters-compact.component';
 import { FiltersExtendedComponent } from '@components/utils/filters/filters-extended/filters-extended.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { PermissionModel } from '@Domain/models/base/permission.model';
@@ -21,7 +22,7 @@ import { UseTable } from 'src/app/core/interfaces/use-table.interface';
 
 @Component({
   selector: 'app-permission',
-  imports: [CommonModule, TableComponent, FiltersExtendedComponent, MatIconModule],
+  imports: [CommonModule, TableComponent, FiltersExtendedComponent, MatIconModule, FiltersCompactComponent],
   templateUrl: './permission.component.html',
   styleUrl: './permission.component.css'
 })
@@ -87,7 +88,8 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
         icon: 'tune_outline',
         type: FormItemModel.TYPE_SELECT,
         defaultValue: RoleModel.ROLE_ADMINISTRATOR,
-        selectOptions: Array.from(RoleModel.ROLES_NAMES.keys()).map(key => { return { value: key, viewValue: RoleModel.ROLES_NAMES.get(key) } })
+        selectOptions: Array.from(RoleModel.ROLES_NAMES.keys()).map(key => { return { value: key, viewValue: RoleModel.ROLES_NAMES.get(key) } }),
+        active: true
       },
       {
         label: 'Nombre del módulo',

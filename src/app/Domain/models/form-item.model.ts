@@ -32,4 +32,5 @@ export class FormItemModel<T = any> {
     selectOptions?: Array<ViewValue>;
     completeOptions?: Observable<Array<IdValue>>;
     completeOptionsFilter?: GetAvailablePort;
+    active?: boolean;
 }

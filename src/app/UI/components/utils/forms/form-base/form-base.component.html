@@ -1,0 +1,88 @@
+@if (mode === 'form') {
+    <form [formGroup]="form">
+        @for(field of fields; track $index) {
+          @if (isBasicControl(field.type)) {
+            <app-text
+              class="max-w-40"
+              [label]="field.label"
+              [icon]="field.icon"
+              [control]="getControl(field.name)"
+              [type]="field.type"
+              (updateValue)="handleEvents()"
+            ></app-text>
+          }
+          @if (isSelectControl(field.type)) {
+            <app-select
+              class="max-w-xs"
+              [label]="field.label"
+              [icon]="field.icon"
+              [control]="getControl(field.name)"
+              [values]="field.selectOptions"
+              (updateValue)="handleEvents()"
+            ></app-select>
+          }
+          @if (isDatePickerControl(field.type)) {
+            <app-date-picker
+              class="max-w-xs"
+              [label]="field.label"
+              [control]="getControl(field.name)"
+              (updateValue)="handleEvents()"
+            ></app-date-picker>
+          }
+          @if (isAutoCompleteControl(field.type)) {
+            <app-auto-complete
+              class="max-w-xs"
+              [label]="field.label"
+              [icon]="field.icon"
+              [control]="getControl(field.name)"
+              [data$]="field.completeOptions"
+              (updateData)="updateAutoCompleteData($event, field.name)"
+              (updateValue)="handleEvents()"
+            ></app-auto-complete>
+          } 
+        }
+    </form>
+}
+@else {
+    @for(field of fields; track $index) {
+      @if (isBasicControl(field.type) && (showAll || field.active)) {
+        <app-text
+          class="max-w-40"
+          [label]="field.label"
+          [icon]="field.icon"
+          [control]="getControl(field.name)"
+          [type]="field.type"
+          (updateValue)="handleEvents()"
+        ></app-text>
+      }
+      @if (isSelectControl(field.type) && (showAll || field.active)) {
+        <app-select
+          class="max-w-xs"
+          [label]="field.label"
+          [icon]="field.icon"
+          [control]="getControl(field.name)"
+          [values]="field.selectOptions"
+          (updateValue)="handleEvents()"
+        ></app-select>
+      }
+      @if (isDatePickerControl(field.type) && (showAll || field.active)) {
+        <app-date-picker
+          class="max-w-xs"
+          [label]="field.label"
+          [control]="getControl(field.name)"
+          (updateValue)="handleEvents()"
+        ></app-date-picker>
+      }
+      @if (isAutoCompleteControl(field.type) && (showAll || field.active)) {
+        <app-auto-complete
+          class="max-w-xs"
+          [label]="field.label"
+          [icon]="field.icon"
+          [control]="getControl(field.name)"
+          [data$]="field.completeOptions"
+          (updateData)="updateAutoCompleteData($event, field.name)"
+          (updateValue)="handleEvents()"
+        ></app-auto-complete>
+      } 
+    }
+}
