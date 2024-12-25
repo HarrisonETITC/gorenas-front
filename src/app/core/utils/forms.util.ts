@@ -1,9 +1,20 @@
 import { FormGroup } from "@angular/forms";
 import { IIdValor } from "@models/base/id-valor.interface";
-import { FormItem } from "@models/formulario/form-item.model";
 import { AppUtil } from "@utils/app.util";
+import { FieldHandlerPort } from "../interfaces/field-handler.port";
+import { AutocompleteFieldAdapter } from "@Application/adapters/field-handlers/auto-complete-field.adapter";
+import { SelectFieldAdapter } from "@Application/adapters/field-handlers/select-field.adapter";
+import { FormItemModel } from "@Domain/models/form-item.model";
+import { FormItem } from "@models/formulario/form-item.model";
 
 export class FormsUtil {
+    static readonly FORMS_HANDLER = new Map<string, FieldHandlerPort>();
+
+    static {
+        FormsUtil.FORMS_HANDLER.set(FormItemModel.TYPE_AUTO_COMPLETE, new AutocompleteFieldAdapter());
+        FormsUtil.FORMS_HANDLER.set(FormItemModel.TYPE_SELECT, new SelectFieldAdapter());
+    }
+
     static errorMessage(group: FormGroup, formControl: string): string {
         const control = group.get(formControl);
 

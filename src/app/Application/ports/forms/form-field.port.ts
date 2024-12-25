@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 
 export interface FormFieldComponentPort<T> {
     control?: FormControl;
+    isTransparent?: boolean;
     icon?: string;
     label: string;
     init(): void;
@@ -11,4 +12,5 @@ export interface FormFieldComponentPort<T> {
     verifyEmpty(val: any): boolean;
     updateData: EventEmitter<Observable<T>>;
     updateValue: EventEmitter<T>;
+    getTransparentClass(): string;
 }

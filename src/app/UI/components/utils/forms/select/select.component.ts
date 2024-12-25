@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormFieldComponentPort } from '@Application/ports/form-field.port';
+import { FormFieldComponentPort } from '@Application/ports/forms/form-field.port';
 import { ViewValue } from '@Domain/types/view-value.type';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,6 +17,7 @@ import { AppUtil } from '@utils/app.util';
 })
 export class SelectComponent implements OnInit, AfterViewInit, FormFieldComponentPort<string> {
   private valueManager: BehaviorSubject<string>;
+  @Input({ required: false }) isTransparent?: boolean;
   @Input({ required: false }) control?: FormControl<string>;
   @Input({ required: true }) label: string;
   @Input({ required: true }) values: Array<ViewValue>;
@@ -48,5 +49,8 @@ export class SelectComponent implements OnInit, AfterViewInit, FormFieldComponen
   }
   verifyEmpty(val: any): boolean {
     return AppUtil.verifyEmpty(val);
+  }
+  getTransparentClass(): string {
+    return this.isTransparent ? 'transparent' : '';
   }
 }

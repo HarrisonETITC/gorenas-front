@@ -144,7 +144,7 @@
     background-color: #59719d;
 }
 
-.app-content-headerButton {
+.header-button {
     color: #fff;
     font-size: 14px;
     line-height: 24px;
@@ -156,7 +156,7 @@
     cursor: pointer;
 }
 
-.app-content-headerButton ion-icon {
+.header-button ion-icon {
     font-size: 1.5em;
     padding: 8px;
 }

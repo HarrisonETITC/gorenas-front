@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { FormFieldComponentPort } from '@Application/ports/form-field.port';
+import { FormFieldComponentPort } from '@Application/ports/forms/form-field.port';
 
 @Component({
   selector: 'app-date-picker',
@@ -18,8 +18,8 @@ import { FormFieldComponentPort } from '@Application/ports/form-field.port';
   providers: [provideNativeDateAdapter()]
 })
 export class DatePickerComponent implements OnInit, AfterViewInit, FormFieldComponentPort<Date> {
-  icon?: string;
   private valueManager: BehaviorSubject<Date>;
+  @Input({ required: false }) isTransparent?: boolean;
   @Input({ required: false }) control?: FormControl<any>;
   @Input({ required: true }) label: string;
   @Output() updateData: EventEmitter<Observable<Date>> = new EventEmitter();
@@ -28,11 +28,9 @@ export class DatePickerComponent implements OnInit, AfterViewInit, FormFieldComp
   ngOnInit(): void {
     this.init();
   }
-
   ngAfterViewInit(): void {
     this.updateData.emit(this.getValue());
   }
-
   init(): void {
     if (AppUtil.verifyEmpty(this.control)) {
       this.control = new FormControl<Date>(new Date(), [dateValidator()]);
@@ -49,12 +47,13 @@ export class DatePickerComponent implements OnInit, AfterViewInit, FormFieldComp
       this.updateValue.emit(date);
     })
   }
-
   getValue(): Observable<Date> {
     return this.valueManager.asObservable();
   }
-
   verifyEmpty(val: any): boolean {
     return AppUtil.verifyEmpty(val);
+  }
+  getTransparentClass(): string {
+    return this.isTransparent ? 'transparent' : '';
   }
 }

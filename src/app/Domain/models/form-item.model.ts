@@ -33,4 +33,5 @@ export class FormItemModel<T = any> {
     completeOptions?: Observable<Array<IdValue>>;
     completeOptionsFilter?: GetAvailablePort;
     active?: boolean;
+    transparent?: boolean;
 }

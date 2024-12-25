@@ -3,28 +3,51 @@
         <h1 class="app-content-headerText">Roles</h1>
     </div>
     <div class="app-content-actions">
-        <app-filters-compact
-            [fields]="filterFields"
-        ></app-filters-compact>
-        <div class="app-content-actions-wrapper">
-            <button class="app-content-headerButton button-icon-right-fix">
+        @if (!filterType) {
+            <app-filters-compact class="compact"
+                [fields]="filterFields"
+                (searchHandler)="handleSearch($event)"
+            ></app-filters-compact>
+        }
+        <div class="app-content-actions-wrapper flex-col items-end justify-center">
+            <div>
+                <button
+                    [matMenuTriggerFor]="settings"
+                    mat-icon-button>
+                    <mat-icon>settings_outline</mat-icon>
+                </button>
+                <mat-menu #settings="matMenu">
+                    <p class="text-white flex flex-col p-2 pl-4 h-full relative before:content-dot before:absolute before:text-white before:left-1 before:text-xl before:top-1">
+                        Modo de filtros: {{ filterType? 'Extendido' : 'Compacto' }}
+                        <mat-slide-toggle
+                            (click)="$event.stopPropagation()"
+                            (change)="filterType = !filterType;"
+                            [checked]="filterType"
+                        ></mat-slide-toggle>
+                    </p>
+                </mat-menu>
+            </div>
+            <button class="header-button button-icon-right-fix">
                 Agregar permiso
                 <mat-icon
                     class="text-white p-0"
                 >add_outline</mat-icon>
             </button>
+
         </div>
     </div>
     <div class="flex justify-center gap-1 h-full">
-        <app-filters-extended 
-            [fields]="filterFields"
-            (searchHandler)="handleSearch($event)"
-        ></app-filters-extended>
+        @if(filterType) {
+            <app-filters-extended 
+                [fields]="filterFields"
+                (searchHandler)="handleSearch($event)"
+            ></app-filters-extended>
+        }
         <app-table
             class="w-full h-full"
             [cabeceras$]="cols$"
             [informacion$]="data$"
             [mapeos]="headers"
         ></app-table>
-    </div>
+        </div>
 </div>

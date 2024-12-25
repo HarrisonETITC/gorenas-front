@@ -28,7 +28,7 @@ export class PaginatorComponent implements OnInit, OnDestroy {
   private dataSub: Subscription;
 
   ngOnInit(): void {
-    this.dataSub = this.data.pipe(
+    this.dataSub = this.data?.pipe(
       tap((valores) => {
         if (!AppUtil.verificarVacio(valores)) {
           this.paginaActual = 1;

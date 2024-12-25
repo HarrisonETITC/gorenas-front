@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { FormFieldComponentPort } from '@Application/ports/form-field.port';
+import { FormFieldComponentPort } from '@Application/ports/forms/form-field.port';
 import { AppUtil } from '@utils/app.util';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -15,6 +15,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class TextComponent implements OnInit, AfterViewInit, FormFieldComponentPort<string | number> {
   private valueManager: BehaviorSubject<string>;
+  @Input({ required: false }) isTransparent?: boolean;
   @Input({ required: false }) control?: FormControl<string>;
   @Input({ required: true }) label: string;
   @Input({ required: false }) icon?: string;
@@ -46,5 +47,7 @@ export class TextComponent implements OnInit, AfterViewInit, FormFieldComponentP
   verifyEmpty(val: any): boolean {
     return AppUtil.verifyEmpty(val);
   }
-
+  getTransparentClass(): string {
+    return this.isTransparent ? 'transparent' : '';
+  }
 }

@@ -15,12 +15,19 @@
     Búsqueda automática
   </p>
   @if (!autoSearch) {
-    <button
-      class="app-content-headerButton button-icon-right-fix"
-      (click)="sendSearchEvent()"
-    >
-      Buscar
-      <mat-icon>search_outline</mat-icon>
-    </button>
+    <div class="flex justify-between">
+      <button
+        class="header-button bg-warningBold hover:bg-warningBoldHover button-icon-right-fix"
+        (click)="setDefaultValues()">
+        Limpiar
+        <mat-icon>clear_all_outline</mat-icon>
+      </button>
+      <button
+        class="header-button button-icon-right-fix"
+        (click)="sendSearchEvent()">
+        Buscar
+        <mat-icon>search_outline</mat-icon>
+      </button>
+    </div>
   }
 </div>

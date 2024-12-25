@@ -12,6 +12,7 @@ import { NotificationProviders } from '@Application/config/providers/notificatio
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ValidationErrorInterceptor } from '@Application/config/interceptors/validation-error.interceptor';
 import { PermissionProviders } from '@Application/config/providers/permission.providers';
+import { FormsProviders } from '@Application/config/providers/form.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     ...ApplicationProviders,
     ...PersonProviders,
     ...PermissionProviders,
+    ...FormsProviders,
     ...NotificationProviders
   ]
 };

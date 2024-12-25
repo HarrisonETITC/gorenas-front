@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { FormFieldComponentPort } from '@Application/ports/form-field.port';
+import { FormFieldComponentPort } from '@Application/ports/forms/form-field.port';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { IdValue } from '@Domain/models/general/id-value.interface';
 import { AppUtil } from '@utils/app.util';
@@ -18,7 +18,7 @@ import { AsyncPipe } from '@angular/common';
 })
 export class AutoCompleteComponent implements OnInit, AfterViewInit, FormFieldComponentPort<string | IdValue> {
   private valueManager: BehaviorSubject<string>;
-
+  @Input({ required: false }) isTransparent?: boolean;
   @Input({ required: false }) control?: FormControl<string | IdValue>;
   @Input({ required: false }) icon?: string;
   @Input({ required: true }) label: string;
@@ -60,6 +60,7 @@ export class AutoCompleteComponent implements OnInit, AfterViewInit, FormFieldCo
     this.control.setValue(event.option.value, { emitEvent: false });
     this.updateValue.emit((this.control.value as IdValue));
   }
-
-
+  getTransparentClass(): string {
+    return this.isTransparent ? 'transparent' : '';
+  }
 }

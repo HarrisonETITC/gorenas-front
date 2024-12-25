@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatButtonModule } from '@angular/material/button';
 import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
 import { PERMISSION_SERVICE } from '@Application/config/providers/permission.providers';
 import { PERSON_SERVICE } from '@Application/config/providers/person.providers';
@@ -17,12 +19,15 @@ import { PermissionModelView } from '@Domain/models/model-view/permission.mv';
 import { PersonModelView } from '@Domain/models/model-view/person.mv';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
-import { concatMap, distinctUntilChanged, filter, map, Observable, Subscription, take, throttleTime } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable, Subscription, take, tap, throttleTime } from 'rxjs';
 import { UseTable } from 'src/app/core/interfaces/use-table.interface';
+import { MatMenuModule } from '@angular/material/menu';
+import { FIELDS_SERVICE } from '@Application/config/providers/form.providers';
+import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 
 @Component({
   selector: 'app-permission',
-  imports: [CommonModule, TableComponent, FiltersExtendedComponent, MatIconModule, FiltersCompactComponent],
+  imports: [CommonModule, TableComponent, FiltersExtendedComponent, MatIconModule, FiltersCompactComponent, MatSlideToggleModule, MatButtonModule, MatMenuModule],
   templateUrl: './permission.component.html',
   styleUrl: './permission.component.css'
 })
@@ -31,7 +36,9 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
   cols$: Observable<string[]>;
   headers: Map<string, string>;
   subs: Array<Subscription> = [];
+  filtersSub: Subscription;
   filterFields: Array<FormItemModel>;
+  protected filterType: boolean = false;
   persons$;
 
   constructor(
@@ -40,21 +47,22 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
     @Inject(AUTH_SERVICE)
     private readonly authService: AuthServicePort,
     @Inject(PERSON_SERVICE)
-    private readonly personService: ApiServicePort<PersonModel, PersonModelView>
+    private readonly personService: ApiServicePort<PersonModel, PersonModelView>,
+    @Inject(FIELDS_SERVICE)
+    private readonly fieldsService: FieldsServicePort
   ) { }
 
   ngOnInit(): void {
-    this.initFilters();
     const dataSub = this.authService.getUser()
       .pipe(
         filter(user => !AppUtil.verifyEmpty(user) && !AppUtil.verifyEmpty(user.role)),
-        take(1)
+        take(1),
+        tap(user => {
+          this.initData({ roleName: user.role, module: null, permission: null })
+          this.initFilters(user.role);
+        })
       )
-      .subscribe(user => {
-        if (!AppUtil.verifyEmpty(user) && !AppUtil.verifyEmpty(user.role)) {
-          this.initData()
-        }
-      });
+      .subscribe();
     this.subs.push(dataSub);
     this.headers = PermissionModelView.headers;
   }
@@ -63,7 +71,9 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
     this.subs.forEach(s => {
       if (!s.closed)
         s.unsubscribe();
-    })
+    });
+    this.filtersSub?.unsubscribe();
+    this.fieldsService.resetControls();
   }
 
   initData(filter?: PermissionFilter): void {
@@ -80,48 +90,16 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
     );
   }
 
-  initFilters(): void {
-    this.filterFields = [
-      {
-        label: 'Nombre del rol',
-        name: 'roleName',
-        icon: 'tune_outline',
-        type: FormItemModel.TYPE_SELECT,
-        defaultValue: RoleModel.ROLE_ADMINISTRATOR,
-        selectOptions: Array.from(RoleModel.ROLES_NAMES.keys()).map(key => { return { value: key, viewValue: RoleModel.ROLES_NAMES.get(key) } }),
-        active: true
-      },
-      {
-        label: 'Nombre del módulo',
-        name: 'module',
-        icon: 'view_module_outline',
-        type: FormItemModel.TYPE_SELECT,
-        defaultValue: '',
-        selectOptions: [{ value: '', viewValue: 'Todos' }].concat(PermissionModel.MODULES.map(mod => { return { value: mod, viewValue: mod } }))
-      },
-      {
-        label: 'Nombre del permiso',
-        name: 'permission',
-        icon: 'article_outline',
-        type: FormItemModel.TYPE_TEXT,
-        defaultValue: ''
-      }
-    ];
-  }
-
-  updateAutocomplete(handler: { name: string, updater: Observable<string> }) {
-    const field = this.filterFields.find(f => f.name === handler.name);
-    field.completeOptions = handler.updater.pipe(
-      distinctUntilChanged(),
-      throttleTime(300, undefined, { leading: true, trailing: true }),
-      concatMap(val => field.completeOptionsFilter.getAvailable(val))
-    );
+  initFilters(roleName: string): void {
+    this.filterFields = PermissionFilter.FIELDS;
+    PermissionFilter.FIELDS.find(f => f.name === 'roleName').defaultValue = roleName
   }
 
   handleSearch(event: Observable<PermissionFilter>) {
-    this.subs.push(event.pipe(
+    this.filtersSub = event.pipe(
+      filter(f => !AppUtil.verifyEmpty(f)),
       distinctUntilChanged(),
       throttleTime(500, undefined, { leading: true, trailing: true }),
-    ).subscribe(filter => this.search(filter)));
+    ).subscribe(filter => this.search(filter));
   }
 }

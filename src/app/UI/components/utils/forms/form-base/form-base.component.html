@@ -8,6 +8,7 @@
               [icon]="field.icon"
               [control]="getControl(field.name)"
               [type]="field.type"
+              [isTransparent]="field.transparent || transparentFields"
               (updateValue)="handleEvents()"
             ></app-text>
           }
@@ -18,6 +19,7 @@
               [icon]="field.icon"
               [control]="getControl(field.name)"
               [values]="field.selectOptions"
+              [isTransparent]="field.transparent || transparentFields"
               (updateValue)="handleEvents()"
             ></app-select>
           }
@@ -26,6 +28,7 @@
               class="max-w-xs"
               [label]="field.label"
               [control]="getControl(field.name)"
+              [isTransparent]="field.transparent || transparentFields"
               (updateValue)="handleEvents()"
             ></app-date-picker>
           }
@@ -36,7 +39,8 @@
               [icon]="field.icon"
               [control]="getControl(field.name)"
               [data$]="field.completeOptions"
-              (updateData)="updateAutoCompleteData($event, field.name)"
+              [isTransparent]="field.transparent || transparentFields"
+              (updateData)="updateAutoCompleteData($event, field)"
               (updateValue)="handleEvents()"
             ></app-auto-complete>
           } 
@@ -52,6 +56,7 @@
           [icon]="field.icon"
           [control]="getControl(field.name)"
           [type]="field.type"
+          [isTransparent]="field.transparent || transparentFields"
           (updateValue)="handleEvents()"
         ></app-text>
       }
@@ -62,6 +67,7 @@
           [icon]="field.icon"
           [control]="getControl(field.name)"
           [values]="field.selectOptions"
+          [isTransparent]="field.transparent || transparentFields"
           (updateValue)="handleEvents()"
         ></app-select>
       }
@@ -70,6 +76,7 @@
           class="max-w-xs"
           [label]="field.label"
           [control]="getControl(field.name)"
+          [isTransparent]="field.transparent || transparentFields"
           (updateValue)="handleEvents()"
         ></app-date-picker>
       }
@@ -80,7 +87,8 @@
           [icon]="field.icon"
           [control]="getControl(field.name)"
           [data$]="field.completeOptions"
-          (updateData)="updateAutoCompleteData($event, field.name)"
+          [isTransparent]="field.transparent || transparentFields"
+          (updateData)="updateAutoCompleteData($event, field)"
           (updateValue)="handleEvents()"
         ></app-auto-complete>
       } 

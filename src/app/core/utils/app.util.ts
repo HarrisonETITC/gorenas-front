@@ -19,19 +19,18 @@ export class AppUtil {
 
     public static verifyEmpty(value: any): boolean {
         const basic: boolean = (value === undefined || value === null);
-        const emptyObject = {};
         if (typeof value === 'string')
             return basic || value === '' || value === "" || value === ``;
         else if (typeof value === 'number')
             return basic || isNaN(value);
         else if (value instanceof Array)
             return basic || value.length <= 0;
-        else if (value === emptyObject)
-            return true
         else if (value instanceof Map)
             return basic || value.size == 0;
         else if (value instanceof Date)
             return basic || isNaN(value.getTime());
+        else if (typeof value === 'object')
+            return basic || Object.keys(value).length === 0;
 
         return basic;
     }

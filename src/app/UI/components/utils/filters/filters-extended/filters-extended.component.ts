@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -13,7 +13,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
   templateUrl: './filters-extended.component.html',
   styleUrl: './filters-extended.component.css'
 })
-export class FiltersExtendedComponent implements OnInit {
+export class FiltersExtendedComponent implements OnInit, AfterViewInit {
   private readonly outputEventHandler = new BehaviorSubject<any>({});
   @Input({ required: true }) fields: Array<FormItemModel>;
   @Output() searchHandler = new EventEmitter<Observable<any>>();
@@ -22,6 +22,9 @@ export class FiltersExtendedComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchHandler.emit(this.outputEventHandler.asObservable());
+  }
+  ngAfterViewInit(): void {
+    //this.sendSearchEvent();
   }
 
   protected sendSearchEvent() {
@@ -32,5 +35,9 @@ export class FiltersExtendedComponent implements OnInit {
   protected handleEvents() {
     if (this.autoSearch && this.formBase.form.valid)
       this.sendSearchEvent();
+  }
+
+  protected setDefaultValues() {
+    this.formBase.resetDefaultValues();
   }
 }

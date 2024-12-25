@@ -1,15 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormItemModel } from '@Domain/models/form-item.model';
 import { AppUtil } from '@utils/app.util';
-import { BehaviorSubject, Observable, throttleTime, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AutoCompleteComponent } from '../auto-complete/auto-complete.component';
 import { DatePickerComponent } from '../date-picker/date-picker.component';
 import { SelectComponent } from '../select/select.component';
 import { TextComponent } from '../text/text.component';
+import { FormsUtil } from '@utils/forms.util';
+import { AutocompleteFieldPort } from '@Application/ports/forms/auto-complete-field.port';
+import { FIELDS_SERVICE } from '@Application/config/providers/form.providers';
+import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 
 @Component({
   selector: 'app-form-base',
@@ -20,17 +24,22 @@ import { TextComponent } from '../text/text.component';
 export class FormBaseComponent<T = any> implements OnInit {
   public static readonly MODE_FORM = 'form';
   public static readonly MODE_CONTROLS = 'controls';
-
   @Input({ required: true }) fields: Array<FormItemModel>;
   @Input({ required: true }) mode: 'form' | 'controls';
   @Input({ required: true }) showAll: boolean;
+  @Input({ required: false }) transparentFields?: boolean;
   @Output() onFieldChange = new EventEmitter<any>();
 
   private readonly outputEventHandler = new BehaviorSubject<any>({});
   private readonly actualFilterHandler = new BehaviorSubject<string>('');
   protected actualFilter$: Observable<string>;
-  readonly controlsMap: Map<string, FormControl> = new Map();
+  controlsMap: Map<string, FormControl> = new Map();
   readonly form = new FormGroup({});
+
+  constructor(
+    @Inject(FIELDS_SERVICE)
+    private readonly service: FieldsServicePort
+  ) { }
 
   ngOnInit(): void {
     this.init();
@@ -38,14 +47,10 @@ export class FormBaseComponent<T = any> implements OnInit {
   }
 
   init() {
-    for (const field of this.fields) {
-      const insertControl = new FormControl(field.defaultValue, { validators: (AppUtil.verifyEmpty(field.validators) ? [] : field.validators) })
-
-      if (this.mode === FormBaseComponent.MODE_FORM)
-        this.form.addControl(field.name, insertControl);
-      else
-        this.controlsMap.set(field.name, insertControl);
-    }
+    if (this.mode === FormBaseComponent.MODE_FORM)
+      this.service.init(this.fields, this.form);
+    else
+      this.controlsMap = this.service.init(this.fields);
   }
 
   protected isBasicControl(type: string) {
@@ -69,30 +74,15 @@ export class FormBaseComponent<T = any> implements OnInit {
       return this.form.get(name) as FormControl;
 
     return this.controlsMap.get(name);
+  }
 
-    /* if (this.isSelectControl(field.type) && AppUtil.verifyEmpty(field.selectOptions)) {
-      throw new Error(`Debe proveer las opciones para el componente de tipo select con nombre '${name}'`);
-    }
-
-    if (this.isAutoCompleteControl(field.type) && AppUtil.verifyEmpty(field.completeOptions))
-      field.completeOptions = of([]); */
+  protected updateAutoCompleteData(queryHandler: Observable<string>, field: FormItemModel): void {
+    const formHandler = (FormsUtil.FORMS_HANDLER.get(FormItemModel.TYPE_AUTO_COMPLETE) as unknown as AutocompleteFieldPort);
+    formHandler.updateAutoCompleteData(queryHandler, field);
   }
 
   protected handleEvents() {
     this.onFieldChange.emit();
-  }
-
-  private initAutoCompleteData(fieldName: string, query?: string) {
-    const field = this.fields.find(f => f.name === fieldName);
-    field.completeOptions = field.completeOptionsFilter.getAvailable(query);
-  }
-
-  protected updateAutoCompleteData(queryHandler: Observable<string>, fieldName: string) {
-    queryHandler.pipe(
-      throttleTime(400, undefined, { leading: true, trailing: true }),
-      distinctUntilChanged()
-    )
-      .subscribe(query => this.initAutoCompleteData(fieldName, query));
   }
 
   buildObjectFromForm(): T {
@@ -107,5 +97,11 @@ export class FormBaseComponent<T = any> implements OnInit {
     }
 
     return (obj as T);
+  }
+
+  resetDefaultValues() {
+    for (const field of this.fields) {
+      this.service.setControlValue(field.name, field.defaultValue, (this.mode === FormBaseComponent.MODE_FORM) ? this.form : undefined);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { FormBaseComponent } from '@components/utils/forms/form-base/form-base.component';
 import { FormItemModel } from '@Domain/models/form-item.model';
@@ -16,8 +16,9 @@ import { AsyncPipe } from '@angular/common';
   templateUrl: './filters-compact.component.html',
   styleUrl: './filters-compact.component.css'
 })
-export class FiltersCompactComponent implements OnInit {
+export class FiltersCompactComponent implements OnInit, AfterViewInit {
   @Input({ required: true }) fields: Array<FormItemModel>;
+  @Output() searchHandler = new EventEmitter<Observable<any>>();
   @ViewChild(FormBaseComponent) protected readonly formBase: FormBaseComponent;
   private readonly outputEventHandler = new BehaviorSubject<any>({});
   private readonly appliedFiltersHandler = new BehaviorSubject<Array<ViewValue>>([]);
@@ -26,6 +27,10 @@ export class FiltersCompactComponent implements OnInit {
 
   ngOnInit(): void {
     this.appliedFilters$ = this.appliedFiltersHandler.asObservable();
+    this.searchHandler.emit(this.outputEventHandler.asObservable());
+  }
+  ngAfterViewInit(): void {
+    //this.sendSearchEvent();
   }
 
   protected handleEvents() {
@@ -57,6 +62,11 @@ export class FiltersCompactComponent implements OnInit {
         } else {
           return { value: field.label, viewValue: control.value };
         }
-      }));
+      })
+    );
+  }
+
+  protected setDefaultValues() {
+    this.formBase.resetDefaultValues();
   }
 }

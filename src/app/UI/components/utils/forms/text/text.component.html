@@ -1,4 +1,4 @@
-<mat-form-field class="w-full transparent">
+<mat-form-field class="w-full {{ getTransparentClass() }}">
     <mat-label>{{ label }}</mat-label>
     @if (!verifyEmpty(icon)) {
         <mat-icon matIconPrefix>{{ icon }}</mat-icon>

@@ -8,10 +8,13 @@ module.exports = {
   theme: {
     extend: {
       backgroundColor: {
-        primary: "#101827",
-        secondary: "#1d283c",
-        action: "#2869ff",
-        actionHover: "#6291fd"
+        primary: "var(--app-bg)",
+        secondary: "var(--sidebar-active-link)",
+        action: "var(--action-color)",
+        actionHover: "var(--action-color-hover)",
+        warning: "var(--app-warning)",
+        warningBold: "var(--app-warning-bold)",
+        warningBoldHover: "var(--app-warning-bold-hover)"
       },
       borderRadius: {
         general: "0.25rem",
@@ -19,7 +22,14 @@ module.exports = {
         right: "0rem 5rem 5rem 0rem",
       },
       borderColor: {
-        action: "#2869ff"
+        action: "var(--action-color)"
+      },
+      textColor: {
+        warning: "var(--app-warning)",
+        warningBold: "var(--app-warning-bold)"
+      },
+      content: {
+        dot: "'•'"
       }
     },
   },

@@ -1,4 +1,4 @@
-<mat-form-field class="w-full">
+<mat-form-field class="w-full {{ getTransparentClass() }}">
     <mat-label>{{ label }}</mat-label>
     <input type="text" matInput [formControl]="control" [matAutocomplete]="auto">
     <mat-autocomplete (optionSelected)="handleOptionSelected($event)" #auto="matAutocomplete" [displayWith]="displayName">
