@@ -51,7 +51,7 @@ export class FieldsServiceAdapter implements FieldsServicePort {
         if (!AppUtil.verifyEmpty(form) && !AppUtil.verifyEmpty(form.get(name)))
             form.get(name).setValue(value)
 
-        this.getControl(name).setValue(value);
+        this.getControl(name).setValue(value, { emitEvent: false });
     }
     resetControls() {
         this.controls.clear();

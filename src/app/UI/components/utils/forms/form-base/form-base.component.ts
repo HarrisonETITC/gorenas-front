@@ -103,5 +103,6 @@ export class FormBaseComponent<T = any> implements OnInit {
     for (const field of this.fields) {
       this.service.setControlValue(field.name, field.defaultValue, (this.mode === FormBaseComponent.MODE_FORM) ? this.form : undefined);
     }
+    this.onFieldChange.emit();
   }
 }

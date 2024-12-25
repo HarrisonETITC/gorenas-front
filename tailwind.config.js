@@ -25,6 +25,7 @@ module.exports = {
         action: "var(--action-color)"
       },
       textColor: {
+        contentMain: "var(--app-content-main-color)",
         warning: "var(--app-warning)",
         warningBold: "var(--app-warning-bold)"
       },
