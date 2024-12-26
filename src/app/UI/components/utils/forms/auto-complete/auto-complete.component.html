@@ -9,4 +9,7 @@
         <mat-option [value]="option">{{option.value}}</mat-option>
       }
     </mat-autocomplete>
+    @if(control.invalid) {
+      <mat-error>{{ getErrorMessage() }}</mat-error>
+    }
 </mat-form-field>

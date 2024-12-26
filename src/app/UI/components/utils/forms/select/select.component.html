@@ -14,4 +14,7 @@
         </mat-option>
       }
     </mat-select>
+    @if(control.invalid) {
+        <mat-error>{{ getErrorMessage() }}</mat-error>
+    }
 </mat-form-field>

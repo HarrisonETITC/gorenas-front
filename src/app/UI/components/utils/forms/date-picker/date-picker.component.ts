@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { FormFieldComponentPort } from '@Application/ports/forms/form-field.port';
+import { FormsUtil } from '@utils/forms.util';
 
 @Component({
   selector: 'app-date-picker',
@@ -55,5 +56,8 @@ export class DatePickerComponent implements OnInit, AfterViewInit, FormFieldComp
   }
   getTransparentClass(): string {
     return this.isTransparent ? 'transparent' : '';
+  }
+  getErrorMessage(): string {
+    return FormsUtil.errorMessage(null, null, this.control);
   }
 }

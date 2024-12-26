@@ -23,4 +23,7 @@
             class="pr-4"
         >
     }
+    @if(control.invalid) {
+        <mat-error>{{ getErrorMessage() }}</mat-error>
+    }
 </mat-form-field>

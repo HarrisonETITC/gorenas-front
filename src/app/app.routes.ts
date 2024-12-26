@@ -12,13 +12,18 @@ import { RolesComponent } from '@components/app/roles/roles.component';
 import { LoginComponent } from '@components/auth/login/login.component';
 import { RoleModel } from '@Domain/models/base/role.model';
 import { PermissionComponent } from '@components/app/permission/permission.component';
+import { formDataGuard } from './core/guards/form-data.guard';
 
 const createUpdateRoutes: Routes = [
     {
-        path: 'form', loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent)
+        path: 'form',
+        loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent),
+        canDeactivate: [formDataGuard]
     },
     {
-        path: 'form/:id', loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent)
+        path: 'form/:id',
+        loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent),
+        canDeactivate: [formDataGuard]
     }
 ]
 

@@ -9,6 +9,7 @@ import { IdValue } from '@Domain/models/general/id-value.interface';
 import { AppUtil } from '@utils/app.util';
 import { BehaviorSubject, filter, Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { FormsUtil } from '@utils/forms.util';
 
 @Component({
   selector: 'app-auto-complete',
@@ -62,5 +63,8 @@ export class AutoCompleteComponent implements OnInit, AfterViewInit, FormFieldCo
   }
   getTransparentClass(): string {
     return this.isTransparent ? 'transparent' : '';
+  }
+  getErrorMessage(): string {
+    return FormsUtil.errorMessage(null, null, this.control);
   }
 }

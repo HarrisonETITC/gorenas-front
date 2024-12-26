@@ -7,6 +7,7 @@ export class PermissionForms {
 
     static {
         this.CREATE_FORM.title = 'Crear permiso';
+        this.CREATE_FORM.buttonTitle = 'Crear'
         this.CREATE_FORM.fields = [
             {
                 label: 'Nombre del permiso',

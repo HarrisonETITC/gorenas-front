@@ -13,4 +13,7 @@
         [matDatepicker]="picker"
     >
     <mat-datepicker #picker></mat-datepicker>
+    @if(control.invalid) {
+        <mat-error>{{ getErrorMessage() }}</mat-error>
+    }
 </mat-form-field>

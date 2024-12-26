@@ -1,4 +1,4 @@
-import { FormGroup } from "@angular/forms";
+import { FormControl, FormGroup } from "@angular/forms";
 import { IIdValor } from "@models/base/id-valor.interface";
 import { AppUtil } from "@utils/app.util";
 import { FieldHandlerPort } from "../interfaces/field-handler.port";
@@ -15,34 +15,34 @@ export class FormsUtil {
         FormsUtil.FORMS_HANDLER.set(FormItemModel.TYPE_SELECT, new SelectFieldAdapter());
     }
 
-    static errorMessage(group: FormGroup, formControl: string): string {
-        const control = group.get(formControl);
+    static errorMessage(group: FormGroup, formControl: string, control?: FormControl): string {
+        const controlVerify = !AppUtil.verifyEmpty(control) ? control : group.get(formControl);
 
-        if (AppUtil.verificarVacio(control))
+        if (AppUtil.verificarVacio(controlVerify))
             return "El campo no existe en el formulario";
-        if (control.hasError("required")) {
+        if (controlVerify.hasError("required")) {
             return "Este campo es requerido";
         }
-        if (control.hasError("maxlength")) {
-            const valor = control.errors["maxlength"].requiredLength;
+        if (controlVerify.hasError("maxlength")) {
+            const valor = controlVerify.errors["maxlength"].requiredLength;
             return "Máximo de " + valor + " carácteres";
         }
-        if (control.hasError("minlength")) {
-            const valor = control.errors["minlength"].requiredLength;
+        if (controlVerify.hasError("minlength")) {
+            const valor = controlVerify.errors["minlength"].requiredLength;
             return "Mínimo de " + valor + " carácteres";
         }
-        if (control.hasError("email")) {
+        if (controlVerify.hasError("email")) {
             return "Dirección de correo inválida"
         }
-        if (control.hasError("max")) {
-            const valor = control.errors["max"].max;
+        if (controlVerify.hasError("max")) {
+            const valor = controlVerify.errors["max"].max;
             return "Valor máximo: " + valor;
         }
-        if (control.hasError("min")) {
-            const valor = control.errors["min"].min;
+        if (controlVerify.hasError("min")) {
+            const valor = controlVerify.errors["min"].min;
             return "Valor mínimo: " + valor;
         }
-        if (control.hasError('matchFields')) {
+        if (controlVerify.hasError('matchFields')) {
             return 'Los campos no coinciden';
         }
         return '';

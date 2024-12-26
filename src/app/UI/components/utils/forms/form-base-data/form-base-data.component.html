@@ -14,5 +14,13 @@
             [automaticUpdate]="true"
             [transparentFields]="true"
         ></app-form-base>
+        <div class="flex justify-end w-full">
+            <button
+                class="header-button button-icon-right-fix"
+                (click)="handleFormMainButton()">
+                {{ actualForm.buttonTitle }}
+                <mat-icon>check_small</mat-icon>
+            </button>
+        </div>
     </div>
 </div>

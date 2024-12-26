@@ -6,6 +6,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { FormFieldComponentPort } from '@Application/ports/forms/form-field.port';
 import { AppUtil } from '@utils/app.util';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { FormsUtil } from '@utils/forms.util';
 
 @Component({
   selector: 'app-text',
@@ -22,7 +23,7 @@ export class TextComponent implements OnInit, AfterViewInit, FormFieldComponentP
   @Input({ required: true }) type: 'text' | 'number' | 'password';
   @Output() updateData: EventEmitter<Observable<string | number>> = new EventEmitter();
   @Output() updateValue: EventEmitter<string | number> = new EventEmitter();
-  
+
   showPass: boolean = false;
 
   ngOnInit(): void {
@@ -49,5 +50,8 @@ export class TextComponent implements OnInit, AfterViewInit, FormFieldComponentP
   }
   getTransparentClass(): string {
     return this.isTransparent ? 'transparent' : '';
+  }
+  getErrorMessage(): string {
+    return FormsUtil.errorMessage(null, null, this.control);
   }
 }

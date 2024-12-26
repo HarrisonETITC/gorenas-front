@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { AppUtil } from '@utils/app.util';
+import { FormsUtil } from '@utils/forms.util';
 
 @Component({
   selector: 'app-select',
@@ -52,5 +53,8 @@ export class SelectComponent implements OnInit, AfterViewInit, FormFieldComponen
   }
   getTransparentClass(): string {
     return this.isTransparent ? 'transparent' : '';
+  }
+  getErrorMessage(): string {
+    return FormsUtil.errorMessage(null, null, this.control);
   }
 }

@@ -15,7 +15,7 @@ import { FormItemModel } from '@Domain/models/forms/form-item.model';
 import { PermissionModelView } from '@Domain/models/model-view/permission.mv';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
-import { distinctUntilChanged, filter, map, Observable, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
+import { distinctUntilChanged, filter, first, map, Observable, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
 import { UseTable } from 'src/app/core/interfaces/use-table.interface';
 import { MatMenuModule } from '@angular/material/menu';
 import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers/form.providers';
@@ -72,7 +72,8 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
     this.authService.getUser()
       .pipe(
         filter(user => !AppUtil.verifyEmpty(user) && !AppUtil.verifyEmpty(user.role)),
-        take(1),
+        first(),
+        takeUntil(this.finsihSubs$),
         tap(user => {
           this.search({ roleName: user.role, module: null, permission: null });
           this.initFilters(user.role);
@@ -117,7 +118,19 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
 
     const formRoute = (edit && !AppUtil.verifyEmpty(id)) ? `form/${id}` : `form`;
     this.formDataService.updateState(true);
+    this.formDataService.sendFormEvent({ event: '' });
     this.formDataService.setForms([PermissionForms.CREATE_FORM]);
+
+    const formSub = this.formDataService.formDataEvent().pipe(
+      filter(ev => ev.event === 'create' || ev.event === 'update' || ev.event === 'close'),
+      takeUntil(this.finsihSubs$)
+    ).subscribe((ev) => {
+      if (ev.event === 'create' || ev.event === 'update')
+        this.formDataService.sendFormEvent({ event: 'done' })
+      if (ev.event === 'close')
+        formSub.unsubscribe();
+    })
+
     this.router.navigate([formRoute], { relativeTo: this.route });
   }
   goCreate(): void {

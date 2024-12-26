@@ -13,4 +13,5 @@ export interface FormFieldComponentPort<T> {
     updateData: EventEmitter<Observable<T>>;
     updateValue: EventEmitter<T>;
     getTransparentClass(): string;
+    getErrorMessage(): string;
 }
