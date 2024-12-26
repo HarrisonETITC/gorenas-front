@@ -7,8 +7,7 @@ import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
 import { AppUtil } from '@utils/app.util';
 import { FormBaseComponent } from '../form-base/form-base.component';
-import { concatMap, filter, first, map, Observable, of, Subscription, take, tap } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { filter, first, Subscription, tap } from 'rxjs';
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
 import { FormsUtil } from '@utils/forms.util';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
@@ -18,7 +17,7 @@ import { ErrorConfig, WarningConfig } from '@Application/adapters/services/notif
 
 @Component({
   selector: 'app-form-base-data',
-  imports: [MatIconModule, MatButtonModule, MatTooltipModule, FormBaseComponent, AsyncPipe],
+  imports: [MatIconModule, MatButtonModule, MatTooltipModule, FormBaseComponent],
   templateUrl: './form-base-data.component.html',
   styleUrl: './form-base-data.component.css'
 })

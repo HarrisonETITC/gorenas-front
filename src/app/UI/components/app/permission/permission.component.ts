@@ -15,7 +15,7 @@ import { FormItemModel } from '@Domain/models/forms/form-item.model';
 import { PermissionModelView } from '@Domain/models/model-view/permission.mv';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
-import { distinctUntilChanged, filter, first, map, Observable, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
+import { distinctUntilChanged, filter, first, map, Observable, Subject, takeUntil, tap, throttleTime } from 'rxjs';
 import { UseTable } from 'src/app/core/interfaces/use-table.interface';
 import { MatMenuModule } from '@angular/material/menu';
 import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers/form.providers';
