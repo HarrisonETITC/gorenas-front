@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -13,11 +13,12 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { ValidationErrorInterceptor } from '@Application/config/interceptors/validation-error.interceptor';
 import { PermissionProviders } from '@Application/config/providers/permission.providers';
 import { FormsProviders } from '@Application/config/providers/form.providers';
+import { RoleProviders } from '@Application/config/providers/role.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()),
     provideAnimations(),
     provideHttpClient(
       withInterceptors([TokenHeaderInterceptor, ParseDataInterceptor, ValidationErrorInterceptor])
@@ -27,6 +28,7 @@ export const appConfig: ApplicationConfig = {
     ...PersonProviders,
     ...PermissionProviders,
     ...FormsProviders,
+    ...RoleProviders,
     ...NotificationProviders
   ]
 };

@@ -1,15 +1,18 @@
 import { Injectable } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { FieldsServicePort } from "@Application/ports/forms/fields-service.port";
-import { FormItemModel } from "@Domain/models/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/form-item.model";
 import { AppUtil } from "@utils/app.util";
 import { FormsUtil } from "@utils/forms.util";
+import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable()
 export class FieldsServiceAdapter implements FieldsServicePort {
-    private readonly controls = new Map<string, FormControl>();
+    private controls = new Map<string, FormControl>();
+    private readonly fieldsHandler = new BehaviorSubject<Array<FormItemModel>>([]);
 
     init(fields: Array<FormItemModel>, form?: FormGroup) {
+        this.controls = new Map<string, FormControl>();
         for (const field of fields) {
             if (FormsUtil.FORMS_HANDLER.has(field.type)) {
                 FormsUtil.FORMS_HANDLER.get(field.type).validateField(field);
@@ -70,5 +73,11 @@ export class FieldsServiceAdapter implements FieldsServicePort {
     }
     getControl(name: string): FormControl {
         return this.controls.get(name);
+    }
+    updateFields(fields: Array<FormItemModel>): void {
+        this.fieldsHandler.next(fields);
+    }
+    getFields(): Observable<Array<FormItemModel>> {
+        return this.fieldsHandler.asObservable();
     }
 }

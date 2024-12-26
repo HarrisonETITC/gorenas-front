@@ -1,6 +1,6 @@
 import { PermissionModel } from "@Domain/models/base/permission.model";
 import { RoleModel } from "@Domain/models/base/role.model";
-import { FormItemModel } from "@Domain/models/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/form-item.model";
 import { GeneralFilter } from "@models/base/general.filter";
 
 export class PermissionFilter extends GeneralFilter {

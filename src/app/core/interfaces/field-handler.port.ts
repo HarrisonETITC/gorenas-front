@@ -1,4 +1,4 @@
-import { FormItemModel } from "@Domain/models/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/form-item.model";
 
 export interface FieldHandlerPort {
     validateField(field: FormItemModel): void;

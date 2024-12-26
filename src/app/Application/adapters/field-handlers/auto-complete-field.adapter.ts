@@ -1,5 +1,5 @@
 import { AutocompleteFieldPort } from "@Application/ports/forms/auto-complete-field.port";
-import { FormItemModel } from "@Domain/models/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/form-item.model";
 import { AppUtil } from "@utils/app.util";
 import { distinctUntilChanged, Observable, of, throttleTime } from "rxjs";
 import { FieldHandlerPort } from "src/app/core/interfaces/field-handler.port";

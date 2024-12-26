@@ -15,10 +15,10 @@ import { PermissionComponent } from '@components/app/permission/permission.compo
 
 const createUpdateRoutes: Routes = [
     {
-        path: 'create', loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent)
+        path: 'form', loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent)
     },
     {
-        path: 'update', loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent)
+        path: 'form/:id', loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent)
     }
 ]
 

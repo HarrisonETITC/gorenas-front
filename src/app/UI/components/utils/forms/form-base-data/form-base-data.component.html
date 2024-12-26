@@ -1,4 +1,4 @@
-<div class="w-full h-full flex text-white py-4 px-1">
+<div class="w-full h-full flex flex-col text-white py-4 px-1">
     <button
         (click)="goBack()"
         class="bg-action hover:bg-actionHover transition-[background-color] duration-300 text-white mat-icon-button"
@@ -6,5 +6,13 @@
         mat-icon-button>
         <mat-icon>arrow_back_outline</mat-icon>
     </button>
-    aaaaaaaa
+    <div class="flex items-center justify-center flex-col max-w-xl bg-secondary p-5 ml-auto mr-auto rounded-general">
+        <h3 class="text-white text-left w-full py-4 text-xl font-bold">{{ actualForm.title }}</h3>
+        <app-form-base class="bg-secondary"
+            [mode]="'form'"
+            [fields]="[]"
+            [automaticUpdate]="true"
+            [transparentFields]="true"
+        ></app-form-base>
+    </div>
 </div>

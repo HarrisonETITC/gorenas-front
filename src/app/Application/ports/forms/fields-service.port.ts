@@ -1,4 +1,6 @@
 import { FormControl, FormGroup } from "@angular/forms";
+import { FormItemModel } from "@Domain/models/forms/form-item.model";
+import { Observable } from "rxjs";
 
 export interface FieldsServicePort {
     init(fields: Array<any>, form?: any): Map<string, FormControl>;
@@ -9,4 +11,6 @@ export interface FieldsServicePort {
     existsControl(name: string): boolean;
     setControl(name: string, control: any): void;
     getControl(name: string): FormControl;
+    updateFields(fields: Array<FormItemModel>): void;
+    getFields(): Observable<Array<FormItemModel>>;
 }

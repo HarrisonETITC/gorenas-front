@@ -11,17 +11,21 @@ import { FiltersCompactComponent } from '@components/utils/filters/filters-compa
 import { FiltersExtendedComponent } from '@components/utils/filters/filters-extended/filters-extended.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { PermissionModel } from '@Domain/models/base/permission.model';
-import { FormItemModel } from '@Domain/models/form-item.model';
+import { FormItemModel } from '@Domain/models/forms/form-item.model';
 import { PermissionModelView } from '@Domain/models/model-view/permission.mv';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
-import { distinctUntilChanged, filter, map, Observable, Subscription, take, tap, throttleTime } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
 import { UseTable } from 'src/app/core/interfaces/use-table.interface';
 import { MatMenuModule } from '@angular/material/menu';
 import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers/form.providers';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
+import { PermissionForms } from '@Application/config/forms/permissions/permission.forms';
+import { ROLE_SERVICE } from '@Application/config/providers/role.providers';
+import { RoleModel } from '@Domain/models/base/role.model';
+import { RoleModelView } from '@Domain/models/model-view/role.mv';
 
 @Component({
   selector: 'app-permission',
@@ -33,11 +37,10 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
   data$: Observable<Array<PermissionModelView>>;
   cols$: Observable<string[]>;
   headers: Map<string, string>;
-  subs: Array<Subscription> = [];
-  filtersSub: Subscription;
   filterFields: Array<FormItemModel>;
   protected filterType: boolean = false;
   protected isFormView$: Observable<boolean>;
+  private readonly finsihSubs$ = new Subject<void>();
 
   constructor(
     @Inject(PERMISSION_SERVICE)
@@ -48,64 +51,79 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
     private readonly fieldsService: FieldsServicePort,
     @Inject(FORM_DATA_SERVICE)
     private readonly formDataService: FormDataServicePort,
+    @Inject(ROLE_SERVICE)
+    private readonly roleService: ApiServicePort<RoleModel, RoleModelView>,
     private readonly router: Router,
     private readonly route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.isFormView$ = this.formDataService.isFormActive();
-    const dataSub = this.authService.getUser()
+    this.initData();
+    this.initForms();
+
+    this.headers = PermissionModelView.headers;
+  }
+  ngOnDestroy(): void {
+    this.finsihSubs$.next();
+    this.finsihSubs$.complete();
+    this.fieldsService.resetControls();
+  }
+  initData(): void {
+    this.authService.getUser()
       .pipe(
         filter(user => !AppUtil.verifyEmpty(user) && !AppUtil.verifyEmpty(user.role)),
         take(1),
         tap(user => {
-          this.initData({ roleName: user.role, module: null, permission: null })
+          this.search({ roleName: user.role, module: null, permission: null });
           this.initFilters(user.role);
         })
       )
       .subscribe();
-    this.subs.push(dataSub);
-    this.headers = PermissionModelView.headers;
-  }
-
-  ngOnDestroy(): void {
-    this.subs.forEach(s => {
-      if (!s.closed)
-        s.unsubscribe();
-    });
-    this.filtersSub?.unsubscribe();
-    this.fieldsService.resetControls();
-  }
-
-  initData(filter?: PermissionFilter): void {
-    this.search(filter);
     this.cols$ = this.data$.pipe(
       map(perm => { return perm.length > 0 ? Object.keys(perm[0]) : [] })
     );
   }
+  initFilters(roleName: string): void {
+    this.filterFields = PermissionFilter.FIELDS;
+    PermissionFilter.FIELDS.find(f => f.name === 'roleName').defaultValue = roleName
+  }
+  initForms(): void {
+    this.isFormView$ = this.formDataService.isFormActive();
+    const initForm = this.router.url.includes('form');
 
+    if (initForm) {
+      this.formDataService.updateState(true);
+      this.goCreate();
+    }
+  }
   search(filterP?: PermissionFilter): void {
     this.data$ = this.service.getCanSee(filterP).pipe(
       filter(f => !AppUtil.verifyEmpty(f)),
       distinctUntilChanged()
     );
   }
-
-  initFilters(roleName: string): void {
-    this.filterFields = PermissionFilter.FIELDS;
-    PermissionFilter.FIELDS.find(f => f.name === 'roleName').defaultValue = roleName
-  }
-
   handleSearch(event: Observable<PermissionFilter>) {
-    this.filtersSub = event.pipe(
+    event.pipe(
       filter(f => !AppUtil.verifyEmpty(f)),
       distinctUntilChanged(),
       throttleTime(500, undefined, { leading: true, trailing: true }),
+      takeUntil(this.finsihSubs$)
     ).subscribe(filter => this.search(filter));
   }
+  private goForm(edit: boolean = false, id?: number) {
+    const createForm = PermissionForms.CREATE_FORM;
+    createForm.dataInitializer = this.service;
+    createForm.fields.find(f => f.name === 'role').completeOptionsFilter = this.roleService;
 
-  goCreate(): void {
+    const formRoute = (edit && !AppUtil.verifyEmpty(id)) ? `form/${id}` : `form`;
     this.formDataService.updateState(true);
-    this.router.navigate(['create'], { relativeTo: this.route });
+    this.formDataService.setForms([PermissionForms.CREATE_FORM]);
+    this.router.navigate([formRoute], { relativeTo: this.route });
+  }
+  goCreate(): void {
+    this.goForm();
+  }
+  goUpdate(id: string | number): void {
+    this.goForm(true, +id);
   }
 }

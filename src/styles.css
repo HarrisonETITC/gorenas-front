@@ -173,6 +173,11 @@ body {
   padding-bottom: 0 !important;
 }
 
+app-text .mat-mdc-form-field-infix,
+app-auto-complete .mat-mdc-form-field-infix {
+  cursor: text;
+}
+
 .mdc-text-field--filled .mat-mdc-form-field-flex {
   height: 100% !important;
   align-items: center !important;

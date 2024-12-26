@@ -4,7 +4,7 @@ import { AppUtil } from "@utils/app.util";
 import { FieldHandlerPort } from "../interfaces/field-handler.port";
 import { AutocompleteFieldAdapter } from "@Application/adapters/field-handlers/auto-complete-field.adapter";
 import { SelectFieldAdapter } from "@Application/adapters/field-handlers/select-field.adapter";
-import { FormItemModel } from "@Domain/models/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/form-item.model";
 import { FormItem } from "@models/formulario/form-item.model";
 
 export class FormsUtil {
@@ -47,9 +47,25 @@ export class FormsUtil {
         }
         return '';
     }
-
     static hasError(group: FormGroup, formControl: string): boolean {
         return group.get(formControl).invalid && group.get(formControl).touched;
+    }
+    static assignValuesOnFields(val: any, fields: Array<FormItemModel>) {
+        Object.keys(val).forEach((key) => {
+            const value = val[key];
+            const field = fields.find(field => field.name === key);
+            if (!AppUtil.verifyEmpty(value) && !AppUtil.verifyEmpty(field))
+                this.assignValue(value, field);
+
+        })
+    }
+    static assignValue(val: any, field: FormItemModel) {
+        if (field.type === FormItemModel.TYPE_SELECT) {
+            field.defaultValue = field.selectOptions?.find((opt) => opt.value == val).viewValue?? '';
+            return;
+        }
+
+        field.defaultValue = val;
     }
 
     static convertirFormObjeto<T>(form: FormGroup, campos: Array<FormItem>, id?: number): T {

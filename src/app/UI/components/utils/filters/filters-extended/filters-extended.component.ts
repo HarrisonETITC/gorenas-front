@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormBaseComponent } from '@components/utils/forms/form-base/form-base.component';
-import { FormItemModel } from '@Domain/models/form-item.model';
+import { FormItemModel } from '@Domain/models/forms/form-item.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({

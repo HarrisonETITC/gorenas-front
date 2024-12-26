@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { FormBaseComponent } from '@components/utils/forms/form-base/form-base.component';
-import { FormItemModel } from '@Domain/models/form-item.model';
+import { FormItemModel } from '@Domain/models/forms/form-item.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';

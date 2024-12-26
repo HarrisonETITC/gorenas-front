@@ -1,4 +1,4 @@
-import { FormItemModel } from "@Domain/models/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/form-item.model";
 import { AppUtil } from "@utils/app.util";
 import { FieldHandlerPort } from "src/app/core/interfaces/field-handler.port";
 
