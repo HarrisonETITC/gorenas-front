@@ -81,32 +81,8 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
     this.finsihSubs$.next();
     this.finsihSubs$.complete();
   }
-  goBackButton() {
-    this.showCloseNotification();
-    this.notificationSevice.buttonsResponse().pipe(
-      filter(res => !AppUtil.verifyEmpty(res)),
-      take(1)
-    ).subscribe(() => this.goBack());
-  }
   goBack() {
     this.router.navigate([this.getReturnRoute()], { relativeTo: this.route });
-  }
-  showCloseNotification() {
-    this.notificationSevice.showNotification({
-      ...WarningConfig('Pérdida de información', 'Si cierra el formulario va a perder los datos que no haya guardado ¿Desea continuar?'), buttons: [
-        {
-          option: { value: NotificationButton.ACCEPT_RESPONSE, viewValue: 'Aceptar' },
-          icon: 'error_outline',
-          filled: true
-        },
-        {
-          option: { value: NotificationButton.CANCEL_RESPONSE, viewValue: 'Cancelar' },
-          outlined: true
-        }
-      ],
-      hideDismissButton: true,
-      noClose: true
-    })
   }
   handleFormMainButton() {
     if (this.formBase.form.valid) {
@@ -128,13 +104,7 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
     }
   }
   closeConfirm(): Observable<boolean> {
-    if (this.doneProcess)
-      return of(true);
-
-    return this.notificationSevice.buttonsResponse().pipe(
-      filter(res => !AppUtil.verifyEmpty(res)),
-      map(res => res === NotificationButton.ACCEPT_RESPONSE)
-    );
+    return of(this.doneProcess);
   }
   getReturnRoute(): string {
     return !this.isEditForm ? '../' : '../../'
