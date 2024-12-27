@@ -1,64 +1,7 @@
-<div class="app-content">
-    <div class="app-content-header">
-        <h1 class="app-content-headerText">Permisos</h1>
-    </div>
-    @if(!(isFormView$ | async)) {
-        <div class="flex flex-col h-full">
-            <div class="app-content-actions">
-                @if (!filterExtended && (data$ | async)?.length > 0) {
-                    <app-filters-compact class="compact"
-                        [fields]="filterFields"
-                        (searchHandler)="handleSearch($event)"
-                    ></app-filters-compact>
-                }
-                <div class="app-content-actions-wrapper flex-col items-end justify-center">
-                    @if((data$ | async)?.length > 0) {
-                        <div>
-                            <button
-                                [matMenuTriggerFor]="settings"
-                                mat-icon-button>
-                                <mat-icon>settings_outline</mat-icon>
-                            </button>
-                            <mat-menu #settings="matMenu">
-                                <p class="text-white flex flex-col p-2 pl-4 h-full relative before:content-dot before:absolute before:text-white before:left-1 before:text-xl before:top-1">
-                                    Modo de filtros: {{ filterExtended? 'Extendido' : 'Compacto' }}
-                                    <mat-slide-toggle
-                                        (click)="$event.stopPropagation()"
-                                        (change)="filterExtended = !filterExtended;"
-                                        [checked]="filterExtended"
-                                    ></mat-slide-toggle>
-                                </p>
-                            </mat-menu>
-                        </div>
-                    }
-                    <button class="header-button button-icon-right-fix" (click)="goCreate()">
-                        Agregar permiso
-                        <mat-icon
-                            class="text-white p-0"
-                        >add_outline</mat-icon>
-                    </button>
-        
-                </div>
-            </div>
-            <div class="flex justify-center gap-1 h-full">
-                @if(filterExtended && (data$ | async)?.length > 0) {
-                    <app-filters-extended 
-                        [fields]="filterFields"
-                        (searchHandler)="handleSearch($event)"
-                    ></app-filters-extended>
-                }
-                <app-table
-                    class="w-full h-full"
-                    [cabeceras$]="cols$"
-                    [informacion$]="data$"
-                    [mapeos]="headers"
-                ></app-table>
-            </div>
-        </div>
-    }
-    @else {
-        <div>
-            <router-outlet></router-outlet>
-        </div>
-    }
-</div>
+<app-base-data
+    [module]="moduleName"
+    [service]="service"
+    [headers]="headers"
+    [dataForms]="getForms()"
+    [initFilter$]="getInitFilter()"
+></app-base-data>

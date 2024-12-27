@@ -1,5 +1,5 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, Inject, OnInit } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, Inject, OnInit } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { InfoConfig } from '@Application/adapters/services/notification/notification.configs';
 import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
@@ -16,8 +16,7 @@ import { PersonModelView } from '@Domain/models/model-view/person.mv';
 import { MenuItem } from '@models/menu/menu-item.model';
 import { AplicacionService } from '@services/aplicacion.service';
 import { LoginService } from '@services/login.service';
-import { AuthUtils } from '@utils/auth.util';
-import { map, Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-application',
@@ -25,8 +24,7 @@ import { map, Observable, tap } from 'rxjs';
   templateUrl: './application.component.html',
   styleUrl: './application.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [AplicacionService, LoginService],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  providers: [AplicacionService, LoginService]
 })
 export class ApplicationComponent implements OnInit {
   items: Array<MenuItem>;

@@ -35,9 +35,7 @@ export class ApplicationServiceAdapter implements ApplicationServicePort {
         return this.authService.getUser();
     }
     activeComponent(): Observable<string> {
-        return this.componentHandler.asObservable().pipe(
-            distinctUntilChanged()
-        );
+        return this.componentHandler.asObservable();
     }
     setActiveComponent(component: string): void {
         this.componentHandler.next(component);
