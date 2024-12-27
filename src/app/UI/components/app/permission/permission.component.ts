@@ -1,5 +1,5 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +26,8 @@ import { PermissionForms } from '@Application/config/forms/permissions/permissio
 import { ROLE_SERVICE } from '@Application/config/providers/role.providers';
 import { RoleModel } from '@Domain/models/base/role.model';
 import { RoleModelView } from '@Domain/models/model-view/role.mv';
+import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
+import { ApplicationServicePort } from '@Application/ports/application-service.port';
 
 @Component({
   selector: 'app-permission',
@@ -53,14 +55,19 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
     private readonly formDataService: FormDataServicePort,
     @Inject(ROLE_SERVICE)
     private readonly roleService: ApiServicePort<RoleModel, RoleModelView>,
+    @Inject(APPLICATION_SERVICE)
+    private readonly appService: ApplicationServicePort,
+    private readonly cdr: ChangeDetectorRef,
     private readonly router: Router,
     private readonly route: ActivatedRoute
-  ) { }
-
+  ) {
+    this.appService.setActiveComponent('Permisos');
+  }
+  
   ngOnInit(): void {
     this.initData();
     this.initForms();
-
+    
     this.headers = PermissionModelView.headers;
   }
   ngOnDestroy(): void {

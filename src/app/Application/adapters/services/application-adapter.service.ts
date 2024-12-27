@@ -15,6 +15,8 @@ import { apiUrl } from "src/app/environment";
     providedIn: 'root'
 })
 export class ApplicationServiceAdapter implements ApplicationServicePort {
+    private readonly componentHandler = new BehaviorSubject<string>('');
+
     constructor(
         private readonly http: HttpClient,
         @Inject(STORAGE_PROVIDER)
@@ -26,5 +28,11 @@ export class ApplicationServiceAdapter implements ApplicationServicePort {
 
     getUser(): Observable<UserModelView> {
         return this.authService.getUser();
+    }
+    activeComponent(): Observable<string> {
+        return this.componentHandler.asObservable();
+    }
+    setActiveComponent(component: string): void {
+        this.componentHandler.next(component);
     }
 }

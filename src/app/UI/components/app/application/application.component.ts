@@ -1,11 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Inject, OnInit } from '@angular/core';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, Inject, OnInit } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { InfoConfig } from '@Application/adapters/services/notification/notification.configs';
+import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
 import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
 import { NOTIFICATION_SERVICE } from '@Application/config/providers/notification.providers';
 import { PERSON_SERVICE } from '@Application/config/providers/person.providers';
 import { ApiServicePort } from '@Application/ports/api-service.port';
+import { ApplicationServicePort } from '@Application/ports/application-service.port';
 import { AuthServicePort } from '@Application/ports/auth-service.port';
 import { NotificationServicePort } from '@Application/ports/notification-service.port';
 import { PersonPort } from '@Application/ports/person.port';
@@ -15,11 +17,11 @@ import { MenuItem } from '@models/menu/menu-item.model';
 import { AplicacionService } from '@services/aplicacion.service';
 import { LoginService } from '@services/login.service';
 import { AuthUtils } from '@utils/auth.util';
-import { Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-application',
-  imports: [RouterOutlet, RouterModule, CommonModule],
+  imports: [RouterOutlet, RouterModule, AsyncPipe],
   templateUrl: './application.component.html',
   styleUrl: './application.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -28,6 +30,7 @@ import { Observable } from 'rxjs';
 export class ApplicationComponent implements OnInit {
   items: Array<MenuItem>;
   usuario$: Observable<PersonModelView>;
+  protected activeComponent$: Observable<string>;
 
   constructor(
     @Inject(PERSON_SERVICE)
@@ -36,8 +39,11 @@ export class ApplicationComponent implements OnInit {
     private readonly authService: AuthServicePort,
     @Inject(NOTIFICATION_SERVICE)
     private readonly notificationService: NotificationServicePort,
+    @Inject(APPLICATION_SERVICE)
+    private readonly appService: ApplicationServicePort,
     private readonly aplicacionService: AplicacionService,
     private readonly loginService: LoginService,
+    private readonly cdr: ChangeDetectorRef,
     private readonly router: Router
   ) { }
 
@@ -51,6 +57,11 @@ export class ApplicationComponent implements OnInit {
       item.activo = item.direccion.includes(componenteActivo);
     })
     this.usuario$ = this.personService.getPersonInfo();
+    this.appService.activeComponent().pipe(
+      tap((comp) => {
+        this.items.forEach(item => item.activo = item.nombre == comp)
+      })
+    ).subscribe();
   }
 
   activarItem(nombre: string) {

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
+import { ApplicationServicePort } from '@Application/ports/application-service.port';
 import { GenericFormComponent } from '@components/utils/genericform/genericform.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
@@ -34,9 +36,13 @@ export class RolesComponent implements OnInit {
 
   constructor(
     private readonly rolService: RolesService,
-    private readonly dialog: MatDialog
-  ) { }
-
+    private readonly dialog: MatDialog,
+    @Inject(APPLICATION_SERVICE)
+    private readonly appService: ApplicationServicePort
+  ) {
+    this.appService.setActiveComponent('Roles');
+  }
+  
   ngOnInit(): void {
     this.buscarSucursales();
     this.columnas$ = this.roles$.pipe(
