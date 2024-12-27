@@ -22,6 +22,5 @@ export class DashboardComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    this.appService.setActiveComponent(AppModel.MODULE_DASHBOARD);
   }
 }

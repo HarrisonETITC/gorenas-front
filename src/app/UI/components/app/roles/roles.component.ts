@@ -49,7 +49,6 @@ export class RolesComponent implements OnInit {
       map(suc => { return suc.length > 0 ? Object.keys(suc[0]) : [] })
     );
     this.iniciarCamposFormulario();
-    this.appService.setActiveComponent(AppModel.MODULE_ROLES);
   }
 
   buscarSucursales() {

@@ -60,7 +60,7 @@ export class ApplicationComponent implements OnInit {
   }
 
   navigate(url: string) {
-    this.router.navigate([`/app/${url}`])
+    this.router.navigate([`/app/${url}`]);
   }
 
   salir() {

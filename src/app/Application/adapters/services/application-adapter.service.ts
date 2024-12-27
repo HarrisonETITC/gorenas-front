@@ -1,8 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { URL_ID } from "@Application/config/endpoints/general.endpoints";
-import { URL_USER } from "@Application/config/endpoints/user.endpoints";
 import { AUTH_SERVICE, STORAGE_PROVIDER } from "@Application/config/providers/auth.providers";
 import { ApplicationServicePort } from "@Application/ports/application-service.port";
 import { AuthServicePort } from "@Application/ports/auth-service.port";
@@ -42,5 +40,6 @@ export class ApplicationServiceAdapter implements ApplicationServicePort {
     }
     updateActiveComponent(): void {
         const active = AppModel.MODULES.find(module => this.router.url.includes(module));
+        this.componentHandler.next(active);
     }
 }

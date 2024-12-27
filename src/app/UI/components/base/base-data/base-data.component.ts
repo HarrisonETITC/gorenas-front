@@ -61,8 +61,6 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
   ngOnInit(): void {
     this.initData();
     this.initForms();
-
-    this.appService.setActiveComponent(this.module);
   }
   ngOnDestroy(): void {
     this.finishSubs$.next();
