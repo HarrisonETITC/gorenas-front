@@ -1,6 +1,12 @@
 import { CanDeactivateFn } from '@angular/router';
-import { FormBaseDataComponent } from '@components/utils/forms/form-base-data/form-base-data.component';
+import { FormCloseComponent } from '@Domain/models/forms/form-close-component.interface';
+import { tap } from 'rxjs';
 
-export const formDataGuard: CanDeactivateFn<FormBaseDataComponent<any>> = (component, currentRoute, currentState, nextState) => {
-  return true;
+export const formDataGuard: CanDeactivateFn<FormCloseComponent> = (component) => {
+  return component.closeConfirm().pipe(
+    tap((res: boolean) => {
+      if (res) component.closeConfirmed();
+      else component.closeCanceled();
+    })
+  );
 };

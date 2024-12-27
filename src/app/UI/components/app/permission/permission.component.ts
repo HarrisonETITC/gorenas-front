@@ -118,15 +118,15 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
 
     const formRoute = (edit && !AppUtil.verifyEmpty(id)) ? `form/${id}` : `form`;
     this.formDataService.updateState(true);
-    this.formDataService.sendFormEvent({ event: '' });
+    this.formDataService.sendComponentEvent({ event: '' });
     this.formDataService.setForms([PermissionForms.CREATE_FORM]);
 
-    const formSub = this.formDataService.formDataEvent().pipe(
+    const formSub = this.formDataService.getFormEvent().pipe(
       filter(ev => ev.event === 'create' || ev.event === 'update' || ev.event === 'close'),
       takeUntil(this.finsihSubs$)
     ).subscribe((ev) => {
       if (ev.event === 'create' || ev.event === 'update')
-        this.formDataService.sendFormEvent({ event: 'done' })
+        this.formDataService.sendComponentEvent({ event: 'done' })
       if (ev.event === 'close')
         formSub.unsubscribe();
     })

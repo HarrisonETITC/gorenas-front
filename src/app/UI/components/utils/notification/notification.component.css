@@ -2,20 +2,20 @@
     padding: 1rem;
     border: 1px solid;
     border-radius: .5rem;
-    background-color: #1f2937;
-    width: 40rem;
+    background-color: var(--sidebar);
+    display: flex;
+    flex-direction: column;
 }
 
 .notification-title {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: .8rem;
-    padding-top: .5rem;
+    gap: .5rem;
     padding-bottom: .5rem;
 }
 
-.notification-title ion-icon {
+.notification-title mat-icon {
     font-size: 1.3rem;
 }
 
@@ -85,4 +85,36 @@
 .notification-list li {
     margin-left: 1rem;
     margin-bottom: .3rem;
+}
+
+.buttons-container button {
+    color: white;
+}
+
+.filled, .outlined {
+    transition: background-color .3s ease-out;
+}
+
+.warning .buttons-container .filled {
+    color: var(--sidebar)!important;
+    background-color: #faca15!important;
+}
+
+.warning .buttons-container .filled:hover {
+    background-color: #e4ab58!important;
+}
+
+.warning .buttons-container .outlined {
+    border: 1px solid #faca15!important;
+    background-color: var(--sidebar)!important;
+    color: #faca15!important;
+}
+
+.warning .buttons-container .outlined:hover {
+    background-color: #faca15!important;
+    color: var(--sidebar)!important;
+}
+
+::ng-deep .mat-mdc-snack-bar-container .mat-mdc-snackbar-surface {
+    min-width: auto;
 }

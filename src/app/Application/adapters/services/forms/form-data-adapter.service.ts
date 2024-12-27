@@ -8,7 +8,8 @@ import { BehaviorSubject, Observable } from "rxjs";
 export class FormDataServiceAdapter implements FormDataServicePort {
     private readonly stateHandler: BehaviorSubject<boolean> = new BehaviorSubject(false);
     private readonly totalForms: BehaviorSubject<Array<FormDataConfig>> = new BehaviorSubject([]);
-    private readonly eventHandler: BehaviorSubject<EventMessage> = new BehaviorSubject({ event: '' });
+    private readonly formEventHandler: BehaviorSubject<EventMessage> = new BehaviorSubject({ event: '' });
+    private readonly componentEventHandler: BehaviorSubject<EventMessage> = new BehaviorSubject({ event: '' });
 
     isFormActive(): Observable<boolean> {
         return this.stateHandler.asObservable();
@@ -23,9 +24,15 @@ export class FormDataServiceAdapter implements FormDataServicePort {
         return this.totalForms.asObservable();
     }
     sendFormEvent(event: EventMessage): void {
-        this.eventHandler.next(event);
+        this.formEventHandler.next(event);
     }
-    formDataEvent(): Observable<EventMessage> {
-        return this.eventHandler.asObservable();
+    getFormEvent(): Observable<EventMessage> {
+        return this.formEventHandler.asObservable();
+    }
+    sendComponentEvent(event: EventMessage): void {
+        this.componentEventHandler.next(event);
+    }
+    getComponentEvent(): Observable<EventMessage> {
+        return this.componentEventHandler.asObservable();
     }
 }

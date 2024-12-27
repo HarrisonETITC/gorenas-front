@@ -9,5 +9,7 @@ export interface FormDataServicePort {
     setForms(forms: Array<FormDataConfig>): void;
     getForms(): Observable<Array<FormDataConfig>>;
     sendFormEvent(event: EventMessage): void;
-    formDataEvent(): Observable<EventMessage>;
+    getFormEvent(): Observable<EventMessage>;
+    sendComponentEvent(event: EventMessage): void;
+    getComponentEvent(): Observable<EventMessage>;
 }

@@ -7,13 +7,15 @@ import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
 import { AppUtil } from '@utils/app.util';
 import { FormBaseComponent } from '../form-base/form-base.component';
-import { filter, first, Subscription, tap } from 'rxjs';
+import { filter, first, map, Observable, of, Subject, take, takeUntil, tap } from 'rxjs';
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
 import { FormsUtil } from '@utils/forms.util';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 import { NOTIFICATION_SERVICE } from '@Application/config/providers/notification.providers';
 import { NotificationServicePort } from '@Application/ports/notification-service.port';
 import { ErrorConfig, WarningConfig } from '@Application/adapters/services/notification/notification.configs';
+import { NotificationButton } from '@models/menu/notification-button.model';
+import { FormCloseComponent } from '@Domain/models/forms/form-close-component.interface';
 
 @Component({
   selector: 'app-form-base-data',
@@ -21,14 +23,16 @@ import { ErrorConfig, WarningConfig } from '@Application/adapters/services/notif
   templateUrl: './form-base-data.component.html',
   styleUrl: './form-base-data.component.css'
 })
-export class FormBaseDataComponent<T> implements OnInit, OnDestroy {
+export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseComponent {
   @Input({ transform: (id: string) => +id }) id: number;
   @ViewChild(FormBaseComponent) private readonly formBase: FormBaseComponent;
   protected forms: Array<FormDataConfig>;
   protected actualForm: FormDataConfig;
   protected actualFormIndex: number = NaN;
-  private formsSub: Subscription;
+  private readonly finsihSubs$ = new Subject<void>();
   private isEditForm: boolean = false;
+  private doneProcess: boolean = false;
+  private readonly verifyCloseOptions: Array<NotificationButton> = [];
 
   constructor(
     @Inject(FORM_DATA_SERVICE)
@@ -42,13 +46,20 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.formsSub = this.formDataService.getForms().pipe(
+    this.formDataService.getForms().pipe(
       tap(forms => {
         this.forms = forms;
         this.actualFormIndex = 0;
         this.initForm();
-      })
+      }),
+      takeUntil(this.finsihSubs$)
     ).subscribe();
+    this.initOptions();
+  }
+  initOptions() {
+    this.verifyCloseOptions.push(
+
+    );
   }
   initForm() {
     if (AppUtil.verifyEmpty(this.forms)) return;
@@ -67,27 +78,76 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy {
     }
   }
   ngOnDestroy() {
-    this.formsSub?.unsubscribe();
+    this.finsihSubs$.next();
+    this.finsihSubs$.complete();
+  }
+  goBackButton() {
+    this.showCloseNotification();
+    this.notificationSevice.buttonsResponse().pipe(
+      filter(res => !AppUtil.verifyEmpty(res)),
+      take(1)
+    ).subscribe(() => this.goBack());
   }
   goBack() {
-    const returnRoute = !this.isEditForm ? '../' : '../../';
-
-    this.formDataService.sendFormEvent({ event: '' });
-    this.formDataService.updateState(false);
-    this.router.navigate([returnRoute], { relativeTo: this.route });
+    this.router.navigate([this.getReturnRoute()], { relativeTo: this.route });
+  }
+  showCloseNotification() {
+    this.notificationSevice.showNotification({
+      ...WarningConfig('Pérdida de información', 'Si cierra el formulario va a perder los datos que no haya guardado ¿Desea continuar?'), buttons: [
+        {
+          option: { value: NotificationButton.ACCEPT_RESPONSE, viewValue: 'Aceptar' },
+          icon: 'error_outline',
+          filled: true
+        },
+        {
+          option: { value: NotificationButton.CANCEL_RESPONSE, viewValue: 'Cancelar' },
+          outlined: true
+        }
+      ],
+      hideDismissButton: true,
+      noClose: true
+    })
   }
   handleFormMainButton() {
     if (this.formBase.form.valid) {
       this.formDataService.sendFormEvent({ event: this.isEditForm ? 'update' : 'create' });
-      this.formDataService.formDataEvent().pipe(
+      this.formDataService.getComponentEvent().pipe(
         filter(ev => ev.event === 'done' || ev.event === 'error'),
         first()
       ).subscribe((ev) => {
-        if (ev.event === 'done') this.goBack();
-        else this.notificationSevice.showNotification(ErrorConfig('Hubo un error al guardar los datos', ev.message))
+        if (ev.event === 'done') {
+          this.doneProcess = true;
+          this.goBack();
+        }
+        else {
+          this.notificationSevice.showNotification(ErrorConfig('Hubo un error al guardar los datos', ev.message));
+        }
       })
     } else {
       this.notificationSevice.showNotification(WarningConfig('Errores de validación', 'Tiene errores en el formulario'));
     }
+  }
+  closeConfirm(): Observable<boolean> {
+    if (this.doneProcess)
+      return of(true);
+
+    return this.notificationSevice.buttonsResponse().pipe(
+      filter(res => !AppUtil.verifyEmpty(res)),
+      map(res => res === NotificationButton.ACCEPT_RESPONSE)
+    );
+  }
+  getReturnRoute(): string {
+    return !this.isEditForm ? '../' : '../../'
+  }
+  closeConfirmed(): void {
+    this.notificationSevice.sendButtonsResponse('');
+    this.formDataService.sendFormEvent({ event: '' });
+    this.formDataService.updateState(false);
+  }
+  closeCanceled(): void {
+    this.notificationSevice.sendButtonsResponse('');
+  }
+  preCloseComponent() {
+    throw new Error('method not implemented');
   }
 }
