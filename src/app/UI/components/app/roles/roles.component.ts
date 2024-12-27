@@ -7,6 +7,7 @@ import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers
 import { ApplicationServicePort } from '@Application/ports/application-service.port';
 import { GenericFormComponent } from '@components/utils/genericform/genericform.component';
 import { TableComponent } from '@components/utils/table/table.component';
+import { AppModel } from '@Domain/models/base/application.model';
 import { FormConfig } from '@models/formulario/form-config.model';
 import { FormItem } from '@models/formulario/form-item.model';
 import { RolModel } from '@models/rol.model';
@@ -40,7 +41,6 @@ export class RolesComponent implements OnInit {
     @Inject(APPLICATION_SERVICE)
     private readonly appService: ApplicationServicePort
   ) {
-    this.appService.setActiveComponent('Roles');
   }
   
   ngOnInit(): void {
@@ -49,6 +49,7 @@ export class RolesComponent implements OnInit {
       map(suc => { return suc.length > 0 ? Object.keys(suc[0]) : [] })
     );
     this.iniciarCamposFormulario();
+    this.appService.setActiveComponent(AppModel.MODULE_ROLES);
   }
 
   buscarSucursales() {

@@ -1,4 +1,5 @@
 import { GeneralModel } from "../general/general.model";
+import { AppModel } from "./application.model";
 
 export class PermissionModel extends GeneralModel {
     public static readonly MODULE_BRANCHES = 'Sucursales';
@@ -8,16 +9,16 @@ export class PermissionModel extends GeneralModel {
     public static readonly MODULE_PERSONS = 'Personas';
     public static readonly MODULE_ROLES = 'Roles';
     public static readonly MODULE_PERMISSIONS = 'Permisos';
-    public static readonly MODULES = new Array<string>();
+    public static readonly MODULES_MAP = new Map<string, string>();
 
     static {
-        this.MODULES.push(this.MODULE_BRANCHES);
-        this.MODULES.push(this.MODULE_EMPLOYEES);
-        this.MODULES.push(this.MODULE_SALES);
-        this.MODULES.push(this.MODULE_USERS);
-        this.MODULES.push(this.MODULE_PERSONS);
-        this.MODULES.push(this.MODULE_ROLES);
-        this.MODULES.push(this.MODULE_PERMISSIONS);
+        this.MODULES_MAP.set(AppModel.MODULE_BRANCHES ,this.MODULE_BRANCHES);
+        this.MODULES_MAP.set(AppModel.MODULE_EMPLOYEES ,this.MODULE_EMPLOYEES);
+        this.MODULES_MAP.set(AppModel.MODULE_SALES ,this.MODULE_SALES);
+        this.MODULES_MAP.set(AppModel.MODULE_USERS ,this.MODULE_USERS);
+        this.MODULES_MAP.set(AppModel.MODULE_PERSONS ,this.MODULE_PERSONS);
+        this.MODULES_MAP.set(AppModel.MODULE_ROLES ,this.MODULE_ROLES);
+        this.MODULES_MAP.set(AppModel.MODULE_PERMISSIONS ,this.MODULE_PERMISSIONS);
     }
 
     name: string;

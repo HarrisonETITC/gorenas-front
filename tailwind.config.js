@@ -22,12 +22,15 @@ module.exports = {
         right: "0rem 5rem 5rem 0rem",
       },
       borderColor: {
-        action: "var(--action-color)"
+        action: "var(--action-color)",
+        sidebar: "var(--sidebar)",
+        sidebarActive: "var(--sidebar-active-link)"
       },
       textColor: {
         contentMain: "var(--app-content-main-color)",
         warning: "var(--app-warning)",
-        warningBold: "var(--app-warning-bold)"
+        warningBold: "var(--app-warning-bold)",
+        sidebarActive: "var(--sidebar-active-link)"
       },
       content: {
         dot: "'•'"

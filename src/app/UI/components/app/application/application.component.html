@@ -11,8 +11,8 @@
         @if ((canSeeSection(item.roles) | async)) {
           <li
             class="sidebar-list-item "
-            [class.active]="item.activo">
-            <button (click)="activarItem(item.nombre);" [routerLink]="item.direccion" type="button" class="menu-item">
+            [class.active]="(activeComponent$ | async) == item.direccion">
+            <button (click)="navigate(item.direccion);" type="button" class="menu-item">
               <ion-icon name="{{item.icono}}" class="menu-icono"></ion-icon>
               <span>{{ item.nombre }}</span>
             </button>

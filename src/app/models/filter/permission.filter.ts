@@ -24,7 +24,9 @@ export class PermissionFilter extends GeneralFilter {
                 icon: 'view_module_outline',
                 type: FormItemModel.TYPE_SELECT,
                 defaultValue: '',
-                selectOptions: [{ value: '', viewValue: 'Todos' }].concat(PermissionModel.MODULES.map(mod => { return { value: mod, viewValue: mod } })),
+                selectOptions: [{ value: '', viewValue: 'Todos' }].concat(Array.from(PermissionModel.MODULES_MAP.keys()).map(
+                    key => { return { value: key, viewValue: PermissionModel.MODULES_MAP.get(key) } }
+                )),
                 transparent: true
             },
             {

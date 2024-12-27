@@ -13,6 +13,7 @@ import { LoginComponent } from '@components/auth/login/login.component';
 import { RoleModel } from '@Domain/models/base/role.model';
 import { PermissionComponent } from '@components/app/permission/permission.component';
 import { formDataGuard } from './core/guards/form-data.guard';
+import { AppModel } from '@Domain/models/base/application.model';
 
 const createUpdateRoutes: Routes = [
     {
@@ -40,35 +41,35 @@ export const routes: Routes = [
     },
     {
         path: 'app', component: ApplicationComponent, canActivate: [appGuard], children: [
-            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+            { path: '', redirectTo: AppModel.MODULE_DASHBOARD, pathMatch: 'full' },
             {
-                path: 'dashboard', component: DashboardComponent, canActivate: [appGuard]
+                path: AppModel.MODULE_DASHBOARD, component: DashboardComponent, canActivate: [appGuard]
             },
             {
-                path: 'branches', component: BranchesComponent, canActivate: [appGuard], children: createUpdateRoutes
+                path: AppModel.MODULE_BRANCHES, component: BranchesComponent, canActivate: [appGuard], children: createUpdateRoutes
             },
             {
-                path: 'employees', component: EmployeesComponent, canActivate: [appGuard], children: createUpdateRoutes
+                path: AppModel.MODULE_EMPLOYEES, component: EmployeesComponent, canActivate: [appGuard], children: createUpdateRoutes
             },
             {
-                path: 'sales', component: SalesComponent, canActivate: [appGuard], children: createUpdateRoutes
+                path: AppModel.MODULE_SALES, component: SalesComponent, canActivate: [appGuard], children: createUpdateRoutes
             },
             {
-                path: 'users', component: UsuariosComponent, canActivate: [appGuard], children: createUpdateRoutes,
+                path: AppModel.MODULE_USERS, component: UsuariosComponent, canActivate: [appGuard], children: createUpdateRoutes,
                 data: { acceptedRoles: [RoleModel.ROLE_ADMINISTRATOR, RoleModel.ROLE_PROPIETARY, RoleModel.ROLE_MANAGER] }
             },
             {
-                path: 'persons', component: PersonsComponent, canActivate: [appGuard], children: createUpdateRoutes
+                path: AppModel.MODULE_PERSONS, component: PersonsComponent, canActivate: [appGuard], children: createUpdateRoutes
             },
             {
-                path: 'roles', component: RolesComponent, canActivate: [appGuard], children: createUpdateRoutes,
+                path: AppModel.MODULE_ROLES, component: RolesComponent, canActivate: [appGuard], children: createUpdateRoutes,
                 data: { acceptedRoles: [RoleModel.ROLE_ADMINISTRATOR] }
             },
             {
-                path: 'permissions', component: PermissionComponent, canActivate: [appGuard], children: createUpdateRoutes,
+                path: AppModel.MODULE_PERMISSIONS, component: PermissionComponent, canActivate: [appGuard], children: createUpdateRoutes,
                 data: { acceptedRoles: [RoleModel.ROLE_ADMINISTRATOR] }
             },
-            { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
+            { path: '**', redirectTo: AppModel.MODULE_DASHBOARD, pathMatch: 'full' }
         ]
     }
 ];

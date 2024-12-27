@@ -25,7 +25,8 @@ import { map, Observable, tap } from 'rxjs';
   templateUrl: './application.component.html',
   styleUrl: './application.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [AplicacionService, LoginService]
+  providers: [AplicacionService, LoginService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ApplicationComponent implements OnInit {
   items: Array<MenuItem>;
@@ -57,19 +58,11 @@ export class ApplicationComponent implements OnInit {
       item.activo = item.direccion.includes(componenteActivo);
     })
     this.usuario$ = this.personService.getPersonInfo();
-    this.appService.activeComponent().pipe(
-      tap((comp) => {
-        this.items.forEach(item => item.activo = item.nombre == comp)
-      })
-    ).subscribe();
+    this.activeComponent$ = this.appService.activeComponent();
   }
 
-  activarItem(nombre: string) {
-    this.items.forEach(item => { item.activo = item.nombre == nombre; })
-  }
-
-  navegar(url: string) {
-    this.router.navigate([`${url}`])
+  navigate(url: string) {
+    this.router.navigate([`/app/${url}`])
   }
 
   salir() {

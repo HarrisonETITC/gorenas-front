@@ -28,6 +28,7 @@ import { RoleModel } from '@Domain/models/base/role.model';
 import { RoleModelView } from '@Domain/models/model-view/role.mv';
 import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
 import { ApplicationServicePort } from '@Application/ports/application-service.port';
+import { AppModel } from '@Domain/models/base/application.model';
 
 @Component({
   selector: 'app-permission',
@@ -40,7 +41,7 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
   cols$: Observable<string[]>;
   headers: Map<string, string>;
   filterFields: Array<FormItemModel>;
-  protected filterType: boolean = false;
+  protected filterExtended: boolean = false;
   protected isFormView$: Observable<boolean>;
   private readonly finsihSubs$ = new Subject<void>();
 
@@ -61,7 +62,6 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
     private readonly router: Router,
     private readonly route: ActivatedRoute
   ) {
-    this.appService.setActiveComponent('Permisos');
   }
   
   ngOnInit(): void {
@@ -69,6 +69,7 @@ export class PermissionComponent implements OnInit, OnDestroy, UseTable<Permissi
     this.initForms();
     
     this.headers = PermissionModelView.headers;
+    this.appService.setActiveComponent(AppModel.MODULE_PERMISSIONS);
   }
   ngOnDestroy(): void {
     this.finsihSubs$.next();
