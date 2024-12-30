@@ -23,7 +23,7 @@
                                 Modo de filtros: {{ filterExtended? 'Extendido' : 'Compacto' }}
                                 <mat-slide-toggle
                                     (click)="$event.stopPropagation()"
-                                    (change)="filterExtended = !filterExtended;"
+                                    (change)="filterExtended = !filterExtended; initialSearch = true;"
                                     [checked]="filterExtended"
                                 ></mat-slide-toggle>
                             </p>
@@ -48,7 +48,7 @@
                 <app-table
                     class="w-full h-full"
                     [cabeceras$]="cols$"
-                    [informacion$]="data$"
+                    [informacion]="data$"
                     [mapeos]="headers"
                 ></app-table>
             </div>

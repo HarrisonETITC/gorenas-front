@@ -9,7 +9,7 @@ export const FieldsServiceProvier = (): FieldsServicePort => {
     return new FieldsServiceAdapter();
 }
 export const FORM_DATA_SERVICE = new InjectionToken<FormDataServicePort>('FormDataService');
-export const FormDataServiceProvier = (): FormDataServicePort => {
+export const FormDataServiceProvider = (): FormDataServicePort => {
     return new FormDataServiceAdapter();
 }
 
@@ -20,6 +20,6 @@ export const FormsProviders: Array<Provider> = [
     },
     {
         provide: FORM_DATA_SERVICE,
-        useFactory: FormDataServiceProvier
+        useFactory: FormDataServiceProvider
     }
 ]

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { PaginatorServiceAdapter } from '@Application/adapters/services/utils/paginator-adapter.service';
+import { PAGINATOR_SERVICE } from '@Application/config/providers/utils/utils.providers';
+import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
 import { AppUtil } from '@utils/app.util';
-import { BehaviorSubject, distinctUntilChanged, Observable, Subscription, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, Observable, Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'app-paginator',
@@ -10,40 +12,40 @@ import { BehaviorSubject, distinctUntilChanged, Observable, Subscription, tap } 
   templateUrl: './paginator.component.html',
   styleUrl: './paginator.component.css'
 })
-export class PaginatorComponent implements OnInit, OnDestroy {
+export class PaginatorComponent<T = any> implements OnInit, OnDestroy {
   @Input({ required: true }) registros: number = 25;
   @Input({ required: true }) data: Observable<Array<any>>;
   @Output() protected cambioPagina = new EventEmitter<Observable<Array<any>>>();
 
   private readonly dataHandler: BehaviorSubject<Array<any>> = new BehaviorSubject([]);
   protected items: Array<any>;
-  protected paginaActual: number = 0;
-  protected totalPaginas: number = 0;
-  protected paginas: Array<number> = [];
-  protected botonSiguiente: boolean = false;
-  protected botonAnterior: boolean = false;
-  protected maxPaginasVisible: number = 8;
-  protected paginasVisibles: Array<number> = [];
+  protected actualPage: number = 0;
+  protected totalPages: number = 0;
+  protected pages: Array<number> = [];
+  protected buttonNext: boolean = false;
+  protected buttonPrevious: boolean = false;
+  protected maxVisiblePages: number = 8;
+  protected visiblePages: Array<number> = [];
 
   private dataSub: Subscription;
 
   constructor(
-    private readonly service: PaginatorServiceAdapter
+    @Inject(PAGINATOR_SERVICE)
+    private readonly paginatorService: PaginatorServicePort<T>,
   ) { }
 
   ngOnInit(): void {
-    this.dataSub = this.data?.pipe(
+    this.paginatorService.originalData$.pipe(
+      filter(values => !AppUtil.verifyEmpty(values)),
       distinctUntilChanged(),
-      tap((valores) => {
-        if (!AppUtil.verificarVacio(valores)) {
-          this.paginaActual = 1;
-          this.totalPaginas = Math.ceil(valores.length / this.registros);
-          for (let i = 1; i <= this.totalPaginas; i++) {
-            this.paginas.push(i);
-          }
-          this.items = valores;
-          this.refrescarInformacion();
+      tap((values) => {
+        this.actualPage = 1;
+        this.totalPages = Math.ceil(values.length / this.registros);
+        for (let i = 1; i <= this.totalPages; i++) {
+          this.pages.push(i);
         }
+        this.items = values;
+        this.refreshInfo();
       })
     ).subscribe();
   }
@@ -52,54 +54,52 @@ export class PaginatorComponent implements OnInit, OnDestroy {
     this.dataSub?.unsubscribe();
   }
 
-  protected irPagina(pagina: number) {
-    this.paginaActual = pagina;
-    this.refrescarInformacion();
+  protected goPage(page: number) {
+    this.actualPage = page;
+    this.refreshInfo();
   }
 
-  protected paginaSiguiente() {
-    this.paginaActual++;
-    this.refrescarInformacion();
+  protected goNextPage() {
+    this.actualPage++;
+    this.refreshInfo();
   }
 
-  protected paginaAnterior() {
-    this.paginaActual--;
-    this.refrescarInformacion();
+  protected goPreviousPage() {
+    this.actualPage--;
+    this.refreshInfo();
   }
 
-  protected refrescarInformacion() {
-    this.botonAnterior = (this.paginaActual != 1);
-    this.botonSiguiente = (this.paginaActual < this.totalPaginas);
+  protected refreshInfo() {
+    this.buttonPrevious = (this.actualPage != 1);
+    this.buttonNext = (this.actualPage < this.totalPages);
 
-    const indexInicio = (this.paginaActual - 1) * this.registros;
-    const indexFin = indexInicio + this.registros;
-    const paginatedItems = this.items.slice(indexInicio, indexFin);
+    const initIndex = (this.actualPage - 1) * this.registros;
+    const endIndex = initIndex + this.registros;
+    const paginatedItems = this.items.slice(initIndex, endIndex);
 
-    this.dataHandler.next(paginatedItems);
+    this.paginatorService.filteredData = paginatedItems;
 
-    this.service.setData(paginatedItems);
-
-    this.actualizarPaginasVisibles();
+    this.updateVisiblePages();
   }
 
   refrescarManual(nuevosItems: Array<any>) {
-    this.botonAnterior = (this.paginaActual != 1);
-    this.botonSiguiente = (this.paginaActual < this.totalPaginas);
+    this.buttonPrevious = (this.actualPage != 1);
+    this.buttonNext = (this.actualPage < this.totalPages);
 
-    const indexInicio = (this.paginaActual - 1) * this.registros;
+    const indexInicio = (this.actualPage - 1) * this.registros;
     const indexFin = indexInicio + this.registros;
     const paginatedItems = nuevosItems.slice(indexInicio, indexFin);
 
-    this.actualizarPaginasVisibles();
+    this.updateVisiblePages();
   }
 
-  protected actualizarPaginasVisibles() {
-    const paginaInicial = Math.max(1, this.paginaActual - Math.floor(this.maxPaginasVisible / 2));
-    const paginaFinal = Math.min(this.totalPaginas, paginaInicial + this.maxPaginasVisible - 1);
+  protected updateVisiblePages() {
+    const initPage = Math.max(1, this.actualPage - Math.floor(this.maxVisiblePages / 2));
+    const endPage = Math.min(this.totalPages, initPage + this.maxVisiblePages - 1);
 
-    this.paginasVisibles = [];
-    for (let i = paginaInicial; i <= paginaFinal; i++) {
-      this.paginasVisibles.push(i);
+    this.visiblePages = [];
+    for (let i = initPage; i <= endPage; i++) {
+      this.visiblePages.push(i);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { FormItemModel } from "./form-item.model";
+import { FormItemModel } from "./items/form-item.model";
 import { GetByIdPort } from "@Application/ports/get-by-id.port";
 
 export class FormDataConfig<T = any> {

@@ -1,18 +1,20 @@
 import { FormControl, FormGroup } from "@angular/forms";
 import { IIdValor } from "@models/base/id-valor.interface";
 import { AppUtil } from "@utils/app.util";
-import { FieldHandlerPort } from "../interfaces/field-handler.port";
+import { FieldInitializerPort } from "../interfaces/field-handler.port";
 import { AutocompleteFieldAdapter } from "@Application/adapters/field-handlers/auto-complete-field.adapter";
 import { SelectFieldAdapter } from "@Application/adapters/field-handlers/select-field.adapter";
-import { FormItemModel } from "@Domain/models/forms/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/items/form-item.model";
 import { FormItem } from "@models/formulario/form-item.model";
+import { NumberFieldAdapter } from "@Application/adapters/field-handlers/number-field.adapter";
 
 export class FormsUtil {
-    static readonly FORMS_HANDLER = new Map<string, FieldHandlerPort>();
+    static readonly FORMS_HANDLER = new Map<string, FieldInitializerPort>();
 
     static {
         FormsUtil.FORMS_HANDLER.set(FormItemModel.TYPE_AUTO_COMPLETE, new AutocompleteFieldAdapter());
         FormsUtil.FORMS_HANDLER.set(FormItemModel.TYPE_SELECT, new SelectFieldAdapter());
+        FormsUtil.FORMS_HANDLER.set(FormItemModel.TYPE_NUMBER, new NumberFieldAdapter())
     }
 
     static errorMessage(group: FormGroup, formControl: string, control?: FormControl): string {
@@ -61,7 +63,7 @@ export class FormsUtil {
     }
     static assignValue(val: any, field: FormItemModel) {
         if (field.type === FormItemModel.TYPE_SELECT) {
-            field.defaultValue = field.selectOptions?.find((opt) => opt.value == val).viewValue?? '';
+            field.defaultValue = field.selectOptions?.options.find((opt) => opt.value == val).viewValue ?? '';
             return;
         }
 

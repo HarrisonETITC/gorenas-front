@@ -1,13 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Usuario } from '@models/usuario.model';
 import { AppUtil } from '@utils/app.util';
-import { BehaviorSubject, catchError, distinctUntilChanged, filter, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, distinctUntilChanged, filter, map, Observable, of, tap } from 'rxjs';
 import { PaginatorComponent } from '../paginator/paginator.component';
 import { IIdValor } from '@models/base/id-valor.interface';
 import { Router, RouterModule } from '@angular/router';
 import { AuthUtils } from '@utils/auth.util';
 import { PaginatorServiceAdapter } from '@Application/adapters/services/utils/paginator-adapter.service';
+import { PAGINATOR_SERVICE } from '@Application/config/providers/utils/utils.providers';
+import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
+import { ChildUpdatePort } from '@Application/ports/utils/child-update.port';
 
 @Component({
   selector: 'app-table',
@@ -16,13 +19,13 @@ import { PaginatorServiceAdapter } from '@Application/adapters/services/utils/pa
   styleUrl: './table.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class TableComponent<T extends { id?: number }> implements OnInit, AfterViewInit {
+export class TableComponent<T extends { id?: number }> implements OnInit, AfterViewInit, ChildUpdatePort {
   @Input({ required: true }) cabeceras$: Observable<Array<string>>;
-  @Input({ required: true }) informacion$: Observable<Array<T>>;
+  @Input({ required: true }) informacion: Observable<Array<T>>;
   @Input({ required: true }) mapeos: Map<string, string>;
   @Input() mapeosValores: Map<string, Array<IIdValor>>;
   @ViewChild(PaginatorComponent) paginador: PaginatorComponent;
-  private firstLoad = true;
+  firstLoad = true;
 
   @Output() protected btnInactivar = new EventEmitter<T>();
   @Output() protected btnEditar = new EventEmitter<T>();
@@ -34,9 +37,10 @@ export class TableComponent<T extends { id?: number }> implements OnInit, AfterV
   rutaActual: string = '';
 
   constructor(
+    @Inject(PAGINATOR_SERVICE)
+    private readonly paginatorService: PaginatorServicePort<T>,
     private readonly router: Router,
-    private readonly pService: PaginatorServiceAdapter,
-    private readonly cdr: ChangeDetectorRef
+    readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -45,18 +49,27 @@ export class TableComponent<T extends { id?: number }> implements OnInit, AfterV
   }
 
   ngAfterViewInit(): void {
-    this.pService.getData()
+    this.paginatorService.filteredData$
       .pipe(
         filter(data => !AppUtil.verifyEmpty(data)),
+        distinctUntilChanged(),
+        tap((info) => {
+          this.filteredInfo.next(info);
+        }),
+        map(info => Object.keys(info[0])),
         distinctUntilChanged()
       )
       .subscribe((info) => {
-        this.filteredInfo.next(info);
+        this.cabeceras$ = of(info);
         if (this.firstLoad) {
           this.firstLoad = false;
           this.cdr.detectChanges();
         }
       });
+  }
+
+  get informacion$() {
+    return this.paginatorService.originalData$;
   }
 
   obtenerLlaves(valor: T) {

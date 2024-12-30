@@ -1,8 +1,11 @@
 import { ValidatorFn } from "@angular/forms";
 import { ViewValue } from "@Domain/types/view-value.type";
 import { Observable } from "rxjs";
-import { IdValue } from "../general/id-value.interface";
+import { IdValue } from "../../general/id-value.interface";
 import { GetAvailablePort } from "@Application/ports/get-available.port";
+import { SelectOptions } from "./select.options";
+import { AutocompleteOptions } from "./auto-complete.options";
+import { NumberFieldOptions } from "./number.options";
 
 export class FormItemModel<T = any> {
     public static readonly TYPE_TEXT = 'text';
@@ -29,9 +32,9 @@ export class FormItemModel<T = any> {
     icon?: string;
     defaultValue?: T;
     validators?: Array<ValidatorFn>;
-    selectOptions?: Array<ViewValue>;
-    completeOptions?: Observable<Array<IdValue>>;
-    completeOptionsFilter?: GetAvailablePort;
+    selectOptions?: SelectOptions;
+    autocompleteOptions?: AutocompleteOptions;
+    numberOptions?: NumberFieldOptions;
     active?: boolean;
     transparent?: boolean;
 }

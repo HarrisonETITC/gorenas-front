@@ -1,5 +1,5 @@
 import { FormDataConfig } from "@Domain/models/forms/form-data-config.model";
-import { FormItemModel } from "@Domain/models/forms/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/items/form-item.model";
 import { GeneralFilter } from "@models/base/general.filter";
 import { Observable } from "rxjs";
 

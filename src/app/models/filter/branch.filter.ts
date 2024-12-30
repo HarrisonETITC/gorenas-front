@@ -1,4 +1,4 @@
-import { FormItemModel } from "@Domain/models/forms/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/items/form-item.model";
 import { GeneralFilter } from "@models/base/general.filter";
 
 export class BranchFilter extends GeneralFilter {
@@ -27,8 +27,14 @@ export class BranchFilter extends GeneralFilter {
                 label: 'Ganancias de este mes',
                 name: 'earnings',
                 icon: 'attach_money',
-                type: FormItemModel.TYPE_TEXT,
-                defaultValue: '',
+                type: FormItemModel.TYPE_NUMBER,
+                numberOptions: {
+                    enableGreatherThan: true,
+                    enableLessThan: true,
+                    greatherThanLabel: ' (Mayor que)',
+                    lessThanLabel: ' (Menor que)'
+                },
+                defaultValue: NaN,
                 transparent: true
             }
         )

@@ -1,14 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { FormBaseComponent } from '@components/utils/forms/form-base/form-base.component';
-import { FormItemModel } from '@Domain/models/forms/form-item.model';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { FormItemModel } from '@Domain/models/forms/items/form-item.model';
+import { BehaviorSubject, filter, Observable, tap } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IdValue } from '@Domain/models/general/id-value.interface';
 import { ViewValue } from '@Domain/types/view-value.type';
 import { AppUtil } from '@utils/app.util';
 import { AsyncPipe } from '@angular/common';
+import { ChildUpdatePort } from '@Application/ports/utils/child-update.port';
+import { FIELDS_SERVICE } from '@Application/config/providers/form.providers';
+import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 
 @Component({
   selector: 'app-filters-compact',
@@ -16,7 +19,7 @@ import { AsyncPipe } from '@angular/common';
   templateUrl: './filters-compact.component.html',
   styleUrl: './filters-compact.component.css'
 })
-export class FiltersCompactComponent implements OnInit {
+export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
   @Input({ required: true }) fields: Array<FormItemModel>;
   @Output() searchHandler = new EventEmitter<Observable<any>>();
   @ViewChild(FormBaseComponent) protected readonly formBase: FormBaseComponent;
@@ -24,10 +27,29 @@ export class FiltersCompactComponent implements OnInit {
   private readonly appliedFiltersHandler = new BehaviorSubject<Array<ViewValue>>([]);
   protected appliedFilters$: Observable<Array<ViewValue>>;
   protected controlsMap: Map<string, FormControl> = new Map();
+  protected procesedFields: Array<FormItemModel> = [];
+  firstLoad: boolean = true;
+
+  constructor(
+    readonly cdr: ChangeDetectorRef,
+    @Inject(FIELDS_SERVICE)
+    private readonly fieldsService: FieldsServicePort
+  ) { }
 
   ngOnInit(): void {
     this.appliedFilters$ = this.appliedFiltersHandler.asObservable();
     this.searchHandler.emit(this.outputEventHandler.asObservable());
+
+    this.fieldsService.getFields().pipe(
+      filter(fields => !AppUtil.verifyEmpty(fields)),
+      tap(fields => {
+        this.procesedFields = fields;
+        if (this.firstLoad) {
+          this.firstLoad = false;
+          this.cdr.detectChanges();
+        }
+      })
+    ).subscribe();
   }
   protected handleEvents() {
     this.sendSearchEvent();
@@ -37,7 +59,7 @@ export class FiltersCompactComponent implements OnInit {
     this.outputEventHandler.next(send);
   }
   protected updateActiveFilter(name: string) {
-    this.fields.forEach(field => field.active = (field.name === name));
+    this.procesedFields.forEach(field => field.active = (field.name === name));
   }
   protected getAppliedFilters(): void {
     this.appliedFiltersHandler.next(Array.from(this.formBase.controlsMap.keys())
@@ -47,9 +69,9 @@ export class FiltersCompactComponent implements OnInit {
       })
       .map(key => {
         const control = this.formBase.controlsMap.get(key);
-        const field = this.fields.find(f => f.name === key);
+        const field = this.procesedFields.find(f => f.name === key);
         if (field.type === FormItemModel.TYPE_SELECT) {
-          return { value: field.label, viewValue: field.selectOptions.find(o => o.value === control.value).viewValue };
+          return { value: field.label, viewValue: field.selectOptions.options.find(o => o.value === control.value).viewValue };
         } else if (field.type === FormItemModel.TYPE_AUTO_COMPLETE) {
           return { value: field.label, viewValue: (control.value as IdValue).value };
         } else {

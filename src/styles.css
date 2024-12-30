@@ -72,9 +72,7 @@ body {
 }
 
 .data-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  @apply h-full flex flex-col justify-between;
 }
 
 html,

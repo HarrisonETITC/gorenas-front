@@ -3,9 +3,9 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FormItemModel } from '@Domain/models/forms/form-item.model';
+import { FormItemModel } from '@Domain/models/forms/items/form-item.model';
 import { AppUtil } from '@utils/app.util';
-import { filter, Observable, tap } from 'rxjs';
+import { filter, ignoreElements, Observable, take, tap } from 'rxjs';
 import { AutoCompleteComponent } from '../auto-complete/auto-complete.component';
 import { DatePickerComponent } from '../date-picker/date-picker.component';
 import { SelectComponent } from '../select/select.component';
@@ -56,6 +56,14 @@ export class FormBaseComponent<T = any> implements OnInit {
       this.service.init(this.fields, this.form);
     else
       this.controlsMap = this.service.init(this.fields);
+
+    this.service.manualUpdateFields();
+
+    this.service.getFields().pipe(
+      take(1),
+      tap((fields: Array<FormItemModel>) => this.fields = fields),
+      ignoreElements()
+    ).subscribe();
   }
   protected isBasicControl(type: string) {
     return type === FormItemModel.TYPE_TEXT || type === FormItemModel.TYPE_PASSWORD || type === FormItemModel.TYPE_NUMBER;

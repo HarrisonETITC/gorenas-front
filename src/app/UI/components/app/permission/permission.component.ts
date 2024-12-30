@@ -4,7 +4,7 @@ import { PERMISSION_SERVICE } from '@Application/config/providers/permission.pro
 import { ApiServicePort } from '@Application/ports/api-service.port';
 import { AuthServicePort } from '@Application/ports/auth-service.port';
 import { PermissionModel } from '@Domain/models/base/permission.model';
-import { FormItemModel } from '@Domain/models/forms/form-item.model';
+import { FormItemModel } from '@Domain/models/forms/items/form-item.model';
 import { PermissionModelView } from '@Domain/models/model-view/permission.mv';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
@@ -17,12 +17,16 @@ import { AppModel } from '@Domain/models/base/application.model';
 import { BaseDataComponent } from '@components/base/base-data/base-data.component';
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
 import { UseBaseDataComponent } from 'src/app/core/interfaces/use-base-data.interface';
+import { FormsProviders } from '@Application/config/providers/form.providers';
 
 @Component({
   selector: 'app-permission',
   imports: [BaseDataComponent],
   templateUrl: './permission.component.html',
-  styleUrl: './permission.component.css'
+  styleUrl: './permission.component.css',
+  providers: [
+    ...FormsProviders
+  ]
 })
 export class PermissionComponent implements OnInit, UseBaseDataComponent {
   protected readonly moduleName = AppModel.MODULE_PERMISSIONS;
@@ -54,7 +58,7 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
   getForms(): Array<FormDataConfig> {
     const createForm = PermissionForms.CREATE_FORM;
     createForm.dataInitializer = this.service;
-    createForm.fields.find(f => f.name === 'role').completeOptionsFilter = this.roleService;
+    createForm.fields.find(f => f.name === 'role').autocompleteOptions.filter = this.roleService;
 
     return [createForm];
   }

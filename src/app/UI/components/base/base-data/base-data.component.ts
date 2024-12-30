@@ -9,16 +9,18 @@ import { PaginatorServiceAdapter } from '@Application/adapters/services/utils/pa
 import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
 import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
 import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers/form.providers';
+import { PAGINATOR_SERVICE, UtilsProviders } from '@Application/config/providers/utils/utils.providers';
 import { ApiServicePort } from '@Application/ports/api-service.port';
 import { ApplicationServicePort } from '@Application/ports/application-service.port';
 import { AuthServicePort } from '@Application/ports/auth-service.port';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
+import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
 import { FiltersCompactComponent } from '@components/utils/filters/filters-compact/filters-compact.component';
 import { FiltersExtendedComponent } from '@components/utils/filters/filters-extended/filters-extended.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
-import { FormItemModel } from '@Domain/models/forms/form-item.model';
+import { FormItemModel } from '@Domain/models/forms/items/form-item.model';
 import { ViewValue } from '@Domain/types/view-value.type';
 import { GeneralFilter } from '@models/base/general.filter';
 import { PermissionFilter } from '@models/filter/permission.filter';
@@ -31,7 +33,9 @@ import { UseTable } from 'src/app/core/interfaces/use-table.interface';
   imports: [CommonModule, TableComponent, FiltersExtendedComponent, MatIconModule, FiltersCompactComponent, MatSlideToggleModule, MatButtonModule, MatMenuModule, RouterOutlet, AsyncPipe],
   templateUrl: './base-data.component.html',
   styleUrl: './base-data.component.css',
-  providers: [PaginatorServiceAdapter]
+  providers: [
+    ...UtilsProviders
+  ]
 })
 export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U> {
   @Input({ required: true }) module: string;
@@ -46,6 +50,7 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
   protected isFormView$: Observable<boolean>;
   private readonly finishSubs$ = new Subject<void>();
   private readonly dataManager = new BehaviorSubject<Array<U>>([]);
+  protected initialSearch = true;
 
   constructor(
     @Inject(AUTH_SERVICE)
@@ -54,8 +59,8 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     private readonly fieldsService: FieldsServicePort,
     @Inject(FORM_DATA_SERVICE)
     private readonly formDataService: FormDataServicePort,
-    @Inject(APPLICATION_SERVICE)
-    private readonly appService: ApplicationServicePort,
+    @Inject(PAGINATOR_SERVICE)
+    private readonly paginatorService: PaginatorServicePort<T>,
     private readonly router: Router,
     private readonly route: ActivatedRoute
   ) { }
@@ -96,17 +101,25 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     this.service.getCanSee(dataFilter).pipe(
       defaultIfEmpty([]),
       distinctUntilChanged(),
-      tap(data => this.dataManager.next(data))
+      tap(data => {
+        this.paginatorService.originalData = (data as T[]);
+      })
     ).subscribe();
   }
   handleSearch(event: Observable<PermissionFilter>) {
     event.pipe(
       filter(f => {
-        return !AppUtil.verifyEmptySimple(f)}),
+        return !AppUtil.verifyEmptySimple(f)
+      }),
       distinctUntilChanged(),
       throttleTime(500, undefined, { leading: true, trailing: true }),
       takeUntil(this.finishSubs$)
-    ).subscribe(filter => this.search(filter));
+    ).subscribe(filter => {
+      if (this.initialSearch)
+        this.initialSearch = false;
+      else
+        this.search(filter)
+    });
   }
   goCreate(): void {
     this.goForm();

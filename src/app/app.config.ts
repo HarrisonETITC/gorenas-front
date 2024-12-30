@@ -29,7 +29,6 @@ export const appConfig: ApplicationConfig = {
     ...PersonProviders,
     ...PermissionProviders,
     ...BranchProviders,
-    ...FormsProviders,
     ...RoleProviders,
     ...NotificationProviders
   ]

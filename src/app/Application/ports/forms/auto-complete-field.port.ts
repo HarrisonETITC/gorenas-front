@@ -1,4 +1,4 @@
-import { FormItemModel } from "@Domain/models/forms/form-item.model";
+import { FormItemModel } from "@Domain/models/forms/items/form-item.model";
 import { Observable } from "rxjs";
 
 export interface AutocompleteFieldPort {

@@ -7,10 +7,11 @@ import { FormFieldComponentPort } from '@Application/ports/forms/form-field.port
 import { AppUtil } from '@utils/app.util';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { FormsUtil } from '@utils/forms.util';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-text',
-  imports: [MatIconModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule],
+  imports: [MatIconModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatTooltipModule],
   templateUrl: './text.component.html',
   styleUrl: './text.component.css'
 })

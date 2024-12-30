@@ -14,7 +14,7 @@
         ></app-form-base>
     
         <mat-menu #filterOptions="matMenu">
-            @for (field of fields; track $index) {
+            @for (field of procesedFields; track $index) {
                 <button mat-menu-item (click)="updateActiveFilter(field.name)">{{ field.label }}</button>
             }
         </mat-menu>
