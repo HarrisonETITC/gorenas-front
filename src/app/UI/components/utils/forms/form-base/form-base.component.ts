@@ -5,7 +5,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormItemModel } from '@Domain/models/forms/form-item.model';
 import { AppUtil } from '@utils/app.util';
-import { Observable, tap } from 'rxjs';
+import { filter, Observable, tap } from 'rxjs';
 import { AutoCompleteComponent } from '../auto-complete/auto-complete.component';
 import { DatePickerComponent } from '../date-picker/date-picker.component';
 import { SelectComponent } from '../select/select.component';
@@ -44,10 +44,14 @@ export class FormBaseComponent<T = any> implements OnInit {
     this.init();
     if (this.automaticUpdate)
       this.service.getFields().pipe(
+        filter(fields => !AppUtil.verifyEmptySimple(fields)),
         tap(fields => this.fields = fields)
       ).subscribe(() => { this.form = new FormGroup({}); this.init() });
   }
   init() {
+    if (AppUtil.verifyEmptySimple(this.fields))
+      this.fields = [];
+
     if (this.mode === FormBaseComponent.MODE_FORM)
       this.service.init(this.fields, this.form);
     else

@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { PaginatorServiceAdapter } from '@Application/adapters/services/utils/paginator-adapter.service';
 import { AppUtil } from '@utils/app.util';
-import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, Observable, Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'app-paginator',
@@ -15,7 +16,6 @@ export class PaginatorComponent implements OnInit, OnDestroy {
   @Output() protected cambioPagina = new EventEmitter<Observable<Array<any>>>();
 
   private readonly dataHandler: BehaviorSubject<Array<any>> = new BehaviorSubject([]);
-  protected itemsMostrados$: Observable<Array<any>>;
   protected items: Array<any>;
   protected paginaActual: number = 0;
   protected totalPaginas: number = 0;
@@ -27,8 +27,13 @@ export class PaginatorComponent implements OnInit, OnDestroy {
 
   private dataSub: Subscription;
 
+  constructor(
+    private readonly service: PaginatorServiceAdapter
+  ) { }
+
   ngOnInit(): void {
     this.dataSub = this.data?.pipe(
+      distinctUntilChanged(),
       tap((valores) => {
         if (!AppUtil.verificarVacio(valores)) {
           this.paginaActual = 1;
@@ -71,8 +76,8 @@ export class PaginatorComponent implements OnInit, OnDestroy {
     const paginatedItems = this.items.slice(indexInicio, indexFin);
 
     this.dataHandler.next(paginatedItems);
-    this.itemsMostrados$ = this.dataHandler.asObservable();
-    this.cambioPagina.emit(this.itemsMostrados$);
+
+    this.service.setData(paginatedItems);
 
     this.actualizarPaginasVisibles();
   }
@@ -84,10 +89,6 @@ export class PaginatorComponent implements OnInit, OnDestroy {
     const indexInicio = (this.paginaActual - 1) * this.registros;
     const indexFin = indexInicio + this.registros;
     const paginatedItems = nuevosItems.slice(indexInicio, indexFin);
-
-    this.dataHandler.next(paginatedItems);
-    this.itemsMostrados$ = this.dataHandler.asObservable();
-    this.cambioPagina.emit(this.itemsMostrados$);
 
     this.actualizarPaginasVisibles();
   }

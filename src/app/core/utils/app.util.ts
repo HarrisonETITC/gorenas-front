@@ -18,7 +18,7 @@ export class AppUtil {
     }
 
     public static verifyEmpty(value: any): boolean {
-        const basic: boolean = (value === undefined || value === null);
+        const basic: boolean = this.verifyEmptySimple(value);
         if (typeof value === 'string')
             return basic || value === '' || value === "" || value === ``;
         else if (typeof value === 'number')

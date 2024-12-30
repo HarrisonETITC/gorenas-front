@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Usuario } from '@models/usuario.model';
 import { AppUtil } from '@utils/app.util';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, catchError, distinctUntilChanged, filter, Observable } from 'rxjs';
 import { PaginatorComponent } from '../paginator/paginator.component';
 import { IIdValor } from '@models/base/id-valor.interface';
 import { Router, RouterModule } from '@angular/router';
 import { AuthUtils } from '@utils/auth.util';
+import { PaginatorServiceAdapter } from '@Application/adapters/services/utils/paginator-adapter.service';
 
 @Component({
   selector: 'app-table',
@@ -15,15 +16,18 @@ import { AuthUtils } from '@utils/auth.util';
   styleUrl: './table.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class TableComponent<T extends { id?: number }> implements OnInit {
+export class TableComponent<T extends { id?: number }> implements OnInit, AfterViewInit {
   @Input({ required: true }) cabeceras$: Observable<Array<string>>;
   @Input({ required: true }) informacion$: Observable<Array<T>>;
   @Input({ required: true }) mapeos: Map<string, string>;
   @Input() mapeosValores: Map<string, Array<IIdValor>>;
   @ViewChild(PaginatorComponent) paginador: PaginatorComponent;
+  private firstLoad = true;
 
   @Output() protected btnInactivar = new EventEmitter<T>();
   @Output() protected btnEditar = new EventEmitter<T>();
+  private readonly filteredInfo = new BehaviorSubject<Array<T>>([]);
+  private filteredDataNotifier: Observable<Array<T>>;
 
   mapaEstados = Usuario.MAPEOS_ESTADOS;
   headersDinero = ['ganancias', 'mes', 'total', 'totales', 'monto'];
@@ -31,11 +35,28 @@ export class TableComponent<T extends { id?: number }> implements OnInit {
 
   constructor(
     private readonly router: Router,
-  ) {}
+    private readonly pService: PaginatorServiceAdapter,
+    private readonly cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     const url = this.router.routerState.snapshot.url;
     this.rutaActual = url.split('/').pop();
+  }
+
+  ngAfterViewInit(): void {
+    this.pService.getData()
+      .pipe(
+        filter(data => !AppUtil.verifyEmpty(data)),
+        distinctUntilChanged()
+      )
+      .subscribe((info) => {
+        this.filteredInfo.next(info);
+        if (this.firstLoad) {
+          this.firstLoad = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   obtenerLlaves(valor: T) {
@@ -66,7 +87,11 @@ export class TableComponent<T extends { id?: number }> implements OnInit {
   }
 
   protected refrescarInformacion(data: Observable<Array<T>>) {
-    this.informacion$ = data;
+    this.filteredDataNotifier = data;
+  }
+
+  get filtered$(): Observable<Array<T>> {
+    return this.filteredInfo.asObservable();
   }
 
   refrescarManual(data: Array<T>) {

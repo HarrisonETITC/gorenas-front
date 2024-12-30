@@ -103,7 +103,7 @@ body {
 }
 
 .app-content-header {
-  @apply flex items-center justify-between px-1 py-0;
+  @apply flex items-center justify-between px-1 pb-4;
 }
 
 .app-content-headerText {
@@ -111,7 +111,7 @@ body {
 }
 
 .app-content-actions {
-  @apply flex justify-between items-center py-4 px-1;
+  @apply flex justify-between items-center pb-4 px-1;
 }
 
 .app-content-actions-wrapper {
@@ -332,4 +332,14 @@ mat-form-field.transparent
 
 .mat-icon-button .mat-icon {
   transform: translateY(-0.125rem)!important;
+}
+
+.mat-mdc-form-field .mdc-floating-label {
+  width: 100%;
+  padding-right: 1rem;
+}
+
+.mat-mdc-form-field.mat-focused .mdc-floating-label {
+  overflow: visible;
+  transition: all .3s ease-in;
 }

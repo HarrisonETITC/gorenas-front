@@ -1,13 +1,13 @@
 <div class="data-container">
   @if((informacion$ | async)?.length > 0) {
-    <div class="products-area-wrapper tableView h-full max-h-full">
+    <div class="products-area-wrapper tableView h-full max-h-[39rem]">
       <div class="products-header">
         @for (col of (cabeceras$ | async)?? []; track $index) {
           <div class="product-cell">{{ mapeos.get(col) }}</div>
         }
         <div class="product-cell">Acciones</div>
       </div>
-      @for (valor of (informacion$ | async)?? []; track $index) {
+      @for (valor of (filtered$ | async)?? []; track $index) {
         <div class="products-row">
           @for (clave of obtenerLlaves(valor); track $index) {
             @if (clave == 'estado') {
@@ -34,7 +34,6 @@
     <app-paginator class="w-full"
       [registros]="15"
       [data]="informacion$"
-      (cambioPagina)="refrescarInformacion($event)"
     ></app-paginator>
   }
   @else {

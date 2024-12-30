@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { PaginatorServiceAdapter } from '@Application/adapters/services/utils/paginator-adapter.service';
 import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
 import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
 import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers/form.providers';
@@ -22,14 +23,15 @@ import { ViewValue } from '@Domain/types/view-value.type';
 import { GeneralFilter } from '@models/base/general.filter';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
-import { defaultIfEmpty, distinctUntilChanged, filter, ignoreElements, map, Observable, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
+import { BehaviorSubject, defaultIfEmpty, distinctUntilChanged, filter, ignoreElements, map, Observable, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
 import { UseTable } from 'src/app/core/interfaces/use-table.interface';
 
 @Component({
   selector: 'app-base-data',
   imports: [CommonModule, TableComponent, FiltersExtendedComponent, MatIconModule, FiltersCompactComponent, MatSlideToggleModule, MatButtonModule, MatMenuModule, RouterOutlet, AsyncPipe],
   templateUrl: './base-data.component.html',
-  styleUrl: './base-data.component.css'
+  styleUrl: './base-data.component.css',
+  providers: [PaginatorServiceAdapter]
 })
 export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U> {
   @Input({ required: true }) module: string;
@@ -39,11 +41,11 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
   @Input({ required: false }) infoMaps?: Map<string, Array<ViewValue>>;
   @Input({ required: false }) filters?: Array<FormItemModel>;
   @Input({ required: false }) dataForms?: Array<FormDataConfig>;
-  data$: Observable<Array<U>>;
   cols$: Observable<Array<string>>;
   protected filterExtended: boolean = false;
   protected isFormView$: Observable<boolean>;
   private readonly finishSubs$ = new Subject<void>();
+  private readonly dataManager = new BehaviorSubject<Array<U>>([]);
 
   constructor(
     @Inject(AUTH_SERVICE)
@@ -75,7 +77,8 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     ).subscribe();
     this.cols$ = this.data$.pipe(
       defaultIfEmpty([]),
-      map(all => Object.keys(all[0]))
+      distinctUntilChanged(),
+      map(all => AppUtil.verifyEmpty(all) ? [] : Object.keys(all[0]))
     )
   }
   initForms(): void {
@@ -86,15 +89,20 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
       this.notifyForms();
     }
   }
+  get data$(): Observable<Array<U>> {
+    return this.dataManager.asObservable();
+  }
   search(dataFilter?: GeneralFilter): void {
-    this.data$ = this.service.getCanSee(dataFilter).pipe(
-      filter(f => !AppUtil.verifyEmpty(f)),
-      distinctUntilChanged()
-    );
+    this.service.getCanSee(dataFilter).pipe(
+      defaultIfEmpty([]),
+      distinctUntilChanged(),
+      tap(data => this.dataManager.next(data))
+    ).subscribe();
   }
   handleSearch(event: Observable<PermissionFilter>) {
     event.pipe(
-      filter(f => !AppUtil.verifyEmpty(f)),
+      filter(f => {
+        return !AppUtil.verifyEmptySimple(f)}),
       distinctUntilChanged(),
       throttleTime(500, undefined, { leading: true, trailing: true }),
       takeUntil(this.finishSubs$)

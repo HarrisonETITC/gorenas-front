@@ -14,6 +14,7 @@ import { ValidationErrorInterceptor } from '@Application/config/interceptors/val
 import { PermissionProviders } from '@Application/config/providers/permission.providers';
 import { FormsProviders } from '@Application/config/providers/form.providers';
 import { RoleProviders } from '@Application/config/providers/role.providers';
+import { BranchProviders } from '@Application/config/providers/branch.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,6 +28,7 @@ export const appConfig: ApplicationConfig = {
     ...ApplicationProviders,
     ...PersonProviders,
     ...PermissionProviders,
+    ...BranchProviders,
     ...FormsProviders,
     ...RoleProviders,
     ...NotificationProviders

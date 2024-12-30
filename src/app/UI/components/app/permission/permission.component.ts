@@ -9,7 +9,6 @@ import { PermissionModelView } from '@Domain/models/model-view/permission.mv';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
 import { filter, map, Observable, take, tap } from 'rxjs';
-import { UseTable } from 'src/app/core/interfaces/use-table.interface';
 import { PermissionForms } from '@Application/config/forms/permissions/permission.forms';
 import { ROLE_SERVICE } from '@Application/config/providers/role.providers';
 import { RoleModel } from '@Domain/models/base/role.model';
@@ -17,6 +16,7 @@ import { RoleModelView } from '@Domain/models/model-view/role.mv';
 import { AppModel } from '@Domain/models/base/application.model';
 import { BaseDataComponent } from '@components/base/base-data/base-data.component';
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
+import { UseBaseDataComponent } from 'src/app/core/interfaces/use-base-data.interface';
 
 @Component({
   selector: 'app-permission',
@@ -24,14 +24,10 @@ import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
   templateUrl: './permission.component.html',
   styleUrl: './permission.component.css'
 })
-export class PermissionComponent implements OnInit, UseTable<PermissionModelView> {
+export class PermissionComponent implements OnInit, UseBaseDataComponent {
   protected readonly moduleName = AppModel.MODULE_PERMISSIONS;
-  data$: Observable<Array<PermissionModelView>>;
-  cols$: Observable<string[]>;
   headers: Map<string, string>;
-  filterFields: Array<FormItemModel>;
-  protected filterExtended: boolean = false;
-  protected isFormView$: Observable<boolean>;
+  filterFields: Array<FormItemModel> = PermissionFilter.FIELDS;
 
   constructor(
     @Inject(PERMISSION_SERVICE)
@@ -40,8 +36,7 @@ export class PermissionComponent implements OnInit, UseTable<PermissionModelView
     private readonly authService: AuthServicePort,
     @Inject(ROLE_SERVICE)
     private readonly roleService: ApiServicePort<RoleModel, RoleModelView>,
-  ) {
-  }
+  ) { }
 
   ngOnInit(): void {
     this.headers = PermissionModelView.headers;
@@ -63,8 +58,7 @@ export class PermissionComponent implements OnInit, UseTable<PermissionModelView
 
     return [createForm];
   }
-  initFilters(roleName: string): void {
-    this.filterFields = PermissionFilter.FIELDS;
-    PermissionFilter.FIELDS.find(f => f.name === 'roleName').defaultValue = roleName
+  initFilters(data: string): void {
+    PermissionFilter.FIELDS.find(f => f.name === 'roleName').defaultValue = data;
   }
 }
