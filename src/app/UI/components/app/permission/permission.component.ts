@@ -58,7 +58,12 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
   getForms(): Array<FormDataConfig> {
     const createForm = PermissionForms.CREATE_FORM;
     createForm.dataInitializer = this.service;
-    createForm.fields.find(f => f.name === 'role').autocompleteOptions.filter = this.roleService;
+    const roleAutocompleteField = createForm.fields.find(f => f.name === 'role');
+
+    if (AppUtil.verifyEmpty(roleAutocompleteField.autocompleteOptions))
+      roleAutocompleteField.autocompleteOptions = {
+        filter: this.roleService
+      };
 
     return [createForm];
   }

@@ -7,25 +7,25 @@
         }
         <div class="product-cell">Acciones</div>
       </div>
-      @for (valor of (filtered$ | async)?? []; track $index) {
+      @for (value of (filtered$ | async)?? []; track $index) {
         <div class="products-row">
-          @for (clave of getKeys(valor); track $index) {
-            @if (clave == 'estado') {
+          @for (key of getKeys(value); track $index) {
+            @if (key == 'estado') {
               <div class="product-cell status-cell">
-                <span class="status {{ valor[clave] == 'A' ? 'active' : 'disabled' }}">{{ mapaEstados.get(valor[clave]) }}</span>
+                <span class="status {{ value[key] == 'A' ? 'active' : 'disabled' }}">{{ mapaEstados.get(value[key]) }}</span>
               </div>
             } @else {
               <div class="product-cell">
-                {{ transformValue(valor[clave], clave) }}
+                {{ transformValue(value[key], key) }}
               </div>
             }
           }
           <div class="product-cell btn-container">
             @if(canSee('editar')) {
-              <button class="header-button btn-editar" (click)="handleEditBtn(valor)"><ion-icon name="create-outline"></ion-icon></button>
+              <button class="header-button btn-editar" (click)="handleEditBtn(value)"><ion-icon name="create-outline"></ion-icon></button>
             }
             @if(false) {
-              <button class="header-button btn-inactivar" (click)="handleDeactivateBtn(valor)">Inactivar</button>
+              <button class="header-button btn-inactivar" (click)="handleDeactivateBtn(value)">Inactivar</button>
             }
           </div>
         </div>

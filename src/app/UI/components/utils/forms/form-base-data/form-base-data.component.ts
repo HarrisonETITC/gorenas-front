@@ -3,36 +3,38 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers/form.providers';
+import { FIELDS_SERVICE, FORM_DATA_SERVICE, FormsProviders } from '@Application/config/providers/form.providers';
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
 import { AppUtil } from '@utils/app.util';
 import { FormBaseComponent } from '../form-base/form-base.component';
-import { filter, first, map, Observable, of, Subject, take, takeUntil, tap } from 'rxjs';
+import { filter, first, Observable, of, Subject, takeUntil, tap } from 'rxjs';
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
 import { FormsUtil } from '@utils/forms.util';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 import { NOTIFICATION_SERVICE } from '@Application/config/providers/notification.providers';
 import { NotificationServicePort } from '@Application/ports/notification-service.port';
 import { ErrorConfig, WarningConfig } from '@Application/adapters/services/notification/notification.configs';
-import { NotificationButton } from '@models/menu/notification-button.model';
 import { FormCloseComponent } from '@Domain/models/forms/form-close-component.interface';
+import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 
 @Component({
   selector: 'app-form-base-data',
   imports: [MatIconModule, MatButtonModule, MatTooltipModule, FormBaseComponent],
   templateUrl: './form-base-data.component.html',
-  styleUrl: './form-base-data.component.css'
+  styleUrl: './form-base-data.component.css',
+  providers: [
+    FormsProviders[0]
+  ]
 })
-export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseComponent {
+export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseComponent, DestroySubsPort {
   @Input({ transform: (id: string) => +id }) id: number;
   @ViewChild(FormBaseComponent) private readonly formBase: FormBaseComponent;
   protected forms: Array<FormDataConfig>;
   protected actualForm: FormDataConfig;
   protected actualFormIndex: number = NaN;
-  private readonly finsihSubs$ = new Subject<void>();
+  readonly finishSubs$ = new Subject<void>();
   private isEditForm: boolean = false;
   private doneProcess: boolean = false;
-  private readonly verifyCloseOptions: Array<NotificationButton> = [];
 
   constructor(
     @Inject(FORM_DATA_SERVICE)
@@ -52,16 +54,37 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
         this.actualFormIndex = 0;
         this.initForm();
       }),
-      takeUntil(this.finsihSubs$)
+      takeUntil(this.finishSubs$)
     ).subscribe();
-    this.initOptions();
   }
-  initOptions() {
-    this.verifyCloseOptions.push(
+  ngOnDestroy() {
+    this.destroySubs();
+    this.fieldsService.flushService();
+  }
 
-    );
+  destroySubs(): void {
+    this.finishSubs$.next();
+    this.finishSubs$.complete();
   }
-  initForm() {
+  preCloseComponent() {
+    throw new Error('method not implemented');
+  }
+  closeConfirm(): Observable<boolean> {
+    return of(this.doneProcess);
+  }
+  getReturnRoute(): string {
+    return !this.isEditForm ? '../' : '../../'
+  }
+  closeConfirmed(): void {
+    this.notificationSevice.sendButtonsResponse('');
+    this.formDataService.sendFormEvent({ event: '' });
+    this.formDataService.updateState(false);
+  }
+  closeCanceled(): void {
+    this.notificationSevice.sendButtonsResponse('');
+  }
+
+  protected initForm() {
     if (AppUtil.verifyEmpty(this.forms)) return;
 
     this.isEditForm = !AppUtil.verifyEmpty(this.id);
@@ -77,14 +100,10 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
       ).subscribe(() => this.fieldsService.updateFields(this.actualForm.fields));
     }
   }
-  ngOnDestroy() {
-    this.finsihSubs$.next();
-    this.finsihSubs$.complete();
-  }
-  goBack() {
+  protected goBack() {
     this.router.navigate([this.getReturnRoute()], { relativeTo: this.route });
   }
-  handleFormMainButton() {
+  protected handleFormMainButton() {
     if (this.formBase.form.valid) {
       this.formDataService.sendFormEvent({ event: this.isEditForm ? 'update' : 'create' });
       this.formDataService.getComponentEvent().pipe(
@@ -102,22 +121,5 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
     } else {
       this.notificationSevice.showNotification(WarningConfig('Errores de validación', 'Tiene errores en el formulario'));
     }
-  }
-  closeConfirm(): Observable<boolean> {
-    return of(this.doneProcess);
-  }
-  getReturnRoute(): string {
-    return !this.isEditForm ? '../' : '../../'
-  }
-  closeConfirmed(): void {
-    this.notificationSevice.sendButtonsResponse('');
-    this.formDataService.sendFormEvent({ event: '' });
-    this.formDataService.updateState(false);
-  }
-  closeCanceled(): void {
-    this.notificationSevice.sendButtonsResponse('');
-  }
-  preCloseComponent() {
-    throw new Error('method not implemented');
   }
 }

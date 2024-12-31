@@ -1,5 +1,5 @@
 import { CommonModule, AsyncPipe } from '@angular/common';
-import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -13,6 +13,7 @@ import { AuthServicePort } from '@Application/ports/auth-service.port';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
 import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
+import { ChildUpdatePort } from '@Application/ports/utils/child-update.port';
 import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 import { FiltersCompactComponent } from '@components/utils/filters/filters-compact/filters-compact.component';
 import { FiltersExtendedComponent } from '@components/utils/filters/filters-extended/filters-extended.component';
@@ -36,7 +37,7 @@ import { UseTable } from 'src/app/core/interfaces/use-table.interface';
     ...FormsProviders
   ]
 })
-export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort {
+export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort, ChildUpdatePort {
   @Input({ required: true }) module: string;
   @Input({ required: true }) service: ApiServicePort<T, U>;
   @Input({ required: true }) headers: Map<string, string>;
@@ -50,7 +51,8 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
   private readonly dataManager = new BehaviorSubject<Array<U>>([]);
   protected initialSearch = true;
 
-  finishSubs$ = new Subject<void>();
+  readonly finishSubs$ = new Subject<void>();
+  readonly firstLoad: boolean;
 
   constructor(
     @Inject(AUTH_SERVICE)
@@ -62,7 +64,8 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     @Inject(PAGINATOR_SERVICE)
     private readonly paginatorService: PaginatorServicePort<T>,
     private readonly router: Router,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -74,14 +77,14 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     this.destroySubs();
   }
 
-  get data$(): Observable<Array<U>> {
-    return this.dataManager.asObservable();
-  }
-
   destroySubs(): void {
     this.finishSubs$.next();
     this.finishSubs$.complete();
     this.fieldsService.resetControls();
+  }
+
+  get data$(): Observable<Array<U>> {
+    return this.dataManager.asObservable();
   }
 
   protected initData() {
@@ -90,9 +93,19 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
       tap(filter => this.search(filter)),
       ignoreElements()
     ).subscribe();
+
+    this.isFormView$ = this.formDataService.isFormActive().pipe(
+      distinctUntilChanged(),
+      tap(value => {
+        if (!this.initialSearch && !value) {
+          this.initialSearch = true;
+          this.paginatorService.sendChangeEvent('detect');
+          this.fieldsService.sendCleanFilters();
+        }
+      })
+    );
   }
   protected initForms(): void {
-    this.isFormView$ = this.formDataService.isFormActive();
     const initForm = this.router.url.includes('form');
 
     if (initForm) {
@@ -149,5 +162,8 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
       if (ev.event === 'close')
         formSub.unsubscribe();
     });
+  }
+  protected verifyEmpty(data: any): boolean {
+    return AppUtil.verifyEmpty(data);
   }
 }

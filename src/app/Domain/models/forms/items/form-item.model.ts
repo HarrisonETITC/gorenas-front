@@ -1,8 +1,4 @@
 import { ValidatorFn } from "@angular/forms";
-import { ViewValue } from "@Domain/types/view-value.type";
-import { Observable } from "rxjs";
-import { IdValue } from "../../general/id-value.interface";
-import { GetAvailablePort } from "@Application/ports/get-available.port";
 import { SelectOptions } from "./select.options";
 import { AutocompleteOptions } from "./auto-complete.options";
 import { NumberFieldOptions } from "./number.options";

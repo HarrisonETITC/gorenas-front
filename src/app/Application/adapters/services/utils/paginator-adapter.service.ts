@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 export class PaginatorServiceAdapter<T = any> implements PaginatorServicePort<T> {
     private readonly filteredDataManager = new BehaviorSubject<Array<T>>([]);
     private readonly originalDataManager = new BehaviorSubject<Array<T>>([]);
+    private readonly detectChangesHandler = new BehaviorSubject<string>('');
 
     get originalData$(): Observable<T[]> {
         return this.originalDataManager.asObservable();
@@ -18,5 +19,11 @@ export class PaginatorServiceAdapter<T = any> implements PaginatorServicePort<T>
     }
     set filteredData(data: T[]) {
         this.filteredDataManager.next(data);
+    }
+    get detectChanges$(): Observable<string> {
+        return this.detectChangesHandler.asObservable();
+    }
+    sendChangeEvent(ev: string = 'detect'): void {
+        this.detectChangesHandler.next(ev);
     }
 }

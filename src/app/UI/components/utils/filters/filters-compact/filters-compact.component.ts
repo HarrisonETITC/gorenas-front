@@ -31,9 +31,9 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
   firstLoad: boolean = true;
 
   constructor(
-    readonly cdr: ChangeDetectorRef,
     @Inject(FIELDS_SERVICE)
-    private readonly fieldsService: FieldsServicePort
+    private readonly fieldsService: FieldsServicePort,
+    readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -55,7 +55,7 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
     this.sendSearchEvent();
   }
   protected sendSearchEvent() {
-    const send = this.formBase.buildObjectFromForm();
+    const send = this.fieldsService.getObject();
     this.outputEventHandler.next(send);
   }
   protected updateActiveFilter(name: string) {
@@ -81,6 +81,6 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
     );
   }
   protected setDefaultValues() {
-    this.formBase.resetDefaultValues();
+    this.fieldsService.sendCleanFilters();
   }
 }

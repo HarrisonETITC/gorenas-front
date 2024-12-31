@@ -67,6 +67,14 @@ export class TableComponent<T extends { id?: number }> implements OnInit, OnDest
           this.cdr.detectChanges();
         }
       });
+    this.paginatorService.detectChanges$.pipe(
+      filter(val => val === 'detect'),
+      tap(_ => {
+        this.cdr.detectChanges();
+        this.paginatorService.sendChangeEvent('');
+      }),
+      takeUntil(this.finishSubs$)
+    ).subscribe();
   }
   get info$() {
     return this.paginatorService.originalData$;

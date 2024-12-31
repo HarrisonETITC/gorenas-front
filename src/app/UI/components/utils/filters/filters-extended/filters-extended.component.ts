@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { FIELDS_SERVICE } from '@Application/config/providers/form.providers';
+import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 import { FormBaseComponent } from '@components/utils/forms/form-base/form-base.component';
 import { FormItemModel } from '@Domain/models/forms/items/form-item.model';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -20,12 +22,17 @@ export class FiltersExtendedComponent implements OnInit {
   @ViewChild(FormBaseComponent) formBase: FormBaseComponent;
   protected autoSearch: boolean = false;
 
+  constructor(
+    @Inject(FIELDS_SERVICE)
+    private readonly fieldsService: FieldsServicePort
+  ) { }
+
   ngOnInit(): void {
     this.searchHandler.emit(this.outputEventHandler.asObservable());
   }
 
   protected sendSearchEvent() {
-    const send = this.formBase.buildObjectFromForm();
+    const send = this.fieldsService.getObject();
     this.outputEventHandler.next(send);
   }
 
@@ -35,6 +42,6 @@ export class FiltersExtendedComponent implements OnInit {
   }
 
   protected setDefaultValues() {
-    this.formBase.resetDefaultValues();
+    this.fieldsService.sendCleanFilters();
   }
 }

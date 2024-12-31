@@ -18,12 +18,14 @@ import { AppModel } from '@Domain/models/base/application.model';
 const createUpdateRoutes: Routes = [
     {
         path: 'form',
-        loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent),
+        loadComponent: () =>
+            import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent),
         canDeactivate: [formDataGuard]
     },
     {
         path: 'form/:id',
-        loadComponent: () => import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent),
+        loadComponent: () =>
+            import('@UI/components/utils/forms/form-base-data/form-base-data.component').then(m => m.FormBaseDataComponent),
         canDeactivate: [formDataGuard]
     }
 ]

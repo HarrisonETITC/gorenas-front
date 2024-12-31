@@ -8,11 +8,11 @@ import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable()
 export class FieldsServiceAdapter implements FieldsServicePort {
-    private controls = new Map<string, FormControl>();
     private readonly fieldsHandler = new BehaviorSubject<Array<FormItemModel>>([]);
+    private readonly cleanFiltersHandler = new BehaviorSubject<string>('');
+    private controls = new Map<string, FormControl>();
     private originalFields: Array<FormItemModel> = [];
     private actualFields: Array<FormItemModel> = [];
-    private actualForm: FormGroup;
 
     init(fields: Array<FormItemModel>, form?: FormGroup) {
         if (this.initEarlyReturn(fields, form))
@@ -45,7 +45,6 @@ export class FieldsServiceAdapter implements FieldsServicePort {
 
         if (!AppUtil.verifyEmpty(form)) {
             this.initForm(fields, form);
-            this.actualForm = form;
         } else {
             this.initFields(fields);
         }
@@ -92,7 +91,28 @@ export class FieldsServiceAdapter implements FieldsServicePort {
         this.fieldsHandler.next([]);
         this.originalFields = [];
         this.actualFields = [];
-        this.actualForm = null;
+    }
+    cleanFiltersEvent(): Observable<string> {
+        return this.cleanFiltersHandler.asObservable();
+    }
+    sendCleanFilters(): void {
+        this.cleanFiltersHandler.next('clean');
+    }
+    confirmCleanFilters(): void {
+        this.cleanFiltersHandler.next('');
+    }
+    getObject() {
+        const obj = {};
+
+        for (const controlKey of Array.from(this.controls.keys())) {
+            const control = this.getControl(controlKey);
+
+            if (!AppUtil.verifyEmpty(control.value))
+                obj[controlKey] = control.value;
+
+        }
+
+        return obj;
     }
     /*
         Verifica si los campos ya se encuentran inicializados, caso de que así sea, también verifica si se está inicizalizando un
@@ -105,19 +125,11 @@ export class FieldsServiceAdapter implements FieldsServicePort {
         */
         if (this.compareLocalFields(fields)) {
             /*
-                Segunda validación: Se verifican 2 casos, que el formulario que llega está vacío, es decir, no se está inicializando un formulario,
-                o si el formulario actual no se encuentra vacío. En cualquiera de estos 2 casos ya se puede hacer un retorno temprano para no
-                inicializar los campos nuevamente.
+                Si llega un formulario no vacío entonces se asignan los controles guardados al mismo.
             */
-            if (AppUtil.verifyEmpty(form) || !AppUtil.verifyEmpty(this.actualForm)) {
-                /*
-                    Tercera validación: Se verifica si el formulario que llega se encuentra vacío, en caso de que lo esté y el formulario guardado en
-                    memoria no esté vacío, entonces se copian los campos del formulario guardado en memoria al formulario que llega.
-                */
-                if (!AppUtil.verifyEmpty(form)) {
-                    for (const controlKey of Object.keys(this.actualForm.controls)) {
-                        form.setControl(controlKey, this.actualForm.get(controlKey));
-                    }
+            if (!AppUtil.verifyEmpty(form)) {
+                for (const controlKey of Array.from(this.controls.keys())) {
+                    form.setControl(controlKey, this.controls.get(controlKey));
                 }
 
                 return true;

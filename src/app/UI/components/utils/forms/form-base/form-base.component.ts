@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormItemModel } from '@Domain/models/forms/items/form-item.model';
 import { AppUtil } from '@utils/app.util';
-import { filter, ignoreElements, Observable, take, tap } from 'rxjs';
+import { filter, ignoreElements, Observable, Subject, take, takeUntil, tap } from 'rxjs';
 import { AutoCompleteComponent } from '../auto-complete/auto-complete.component';
 import { DatePickerComponent } from '../date-picker/date-picker.component';
 import { SelectComponent } from '../select/select.component';
@@ -14,6 +14,7 @@ import { FormsUtil } from '@utils/forms.util';
 import { AutocompleteFieldPort } from '@Application/ports/forms/auto-complete-field.port';
 import { FIELDS_SERVICE } from '@Application/config/providers/form.providers';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
+import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 
 @Component({
   selector: 'app-form-base',
@@ -21,9 +22,10 @@ import { FieldsServicePort } from '@Application/ports/forms/fields-service.port'
   templateUrl: './form-base.component.html',
   styleUrl: './form-base.component.css'
 })
-export class FormBaseComponent<T = any> implements OnInit {
+export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySubsPort {
   public static readonly MODE_FORM = 'form';
   public static readonly MODE_CONTROLS = 'controls';
+
   @Input({ required: true }) fields: Array<FormItemModel>;
   @Input({ required: true }) mode: 'form' | 'controls';
   @Input({ required: false }) automaticUpdate: boolean;
@@ -35,6 +37,8 @@ export class FormBaseComponent<T = any> implements OnInit {
   controlsMap: Map<string, FormControl> = new Map();
   form = new FormGroup({});
 
+  readonly finishSubs$: Subject<void> = new Subject();
+
   constructor(
     @Inject(FIELDS_SERVICE)
     private readonly service: FieldsServicePort
@@ -45,10 +49,20 @@ export class FormBaseComponent<T = any> implements OnInit {
     if (this.automaticUpdate)
       this.service.getFields().pipe(
         filter(fields => !AppUtil.verifyEmptySimple(fields)),
-        tap(fields => this.fields = fields)
+        tap(fields => this.fields = fields),
+        takeUntil(this.finishSubs$)
       ).subscribe(() => { this.form = new FormGroup({}); this.init() });
   }
-  init() {
+  ngOnDestroy(): void {
+    this.destroySubs();
+  }
+
+  destroySubs(): void {
+    this.finishSubs$.next();
+    this.finishSubs$.complete();
+  }
+
+  protected init() {
     if (AppUtil.verifyEmptySimple(this.fields))
       this.fields = [];
 
@@ -57,12 +71,25 @@ export class FormBaseComponent<T = any> implements OnInit {
     else
       this.controlsMap = this.service.init(this.fields);
 
-    this.service.manualUpdateFields();
+    if (!this.automaticUpdate)
+      this.service.manualUpdateFields();
 
     this.service.getFields().pipe(
       take(1),
       tap((fields: Array<FormItemModel>) => this.fields = fields),
-      ignoreElements()
+      ignoreElements(),
+      takeUntil(this.finishSubs$)
+    ).subscribe();
+    this.service.cleanFiltersEvent().pipe(
+      filter(event => !AppUtil.verifyEmpty(event)),
+      tap(event => {
+        if (event === 'clean') {
+          this.resetDefaultValues();
+          this.service.confirmCleanFilters();
+        }
+      }),
+      ignoreElements(),
+      takeUntil(this.finishSubs$)
     ).subscribe();
   }
   protected isBasicControl(type: string) {
@@ -89,19 +116,6 @@ export class FormBaseComponent<T = any> implements OnInit {
   }
   protected handleEvents() {
     this.onFieldChange.emit();
-  }
-  buildObjectFromForm(): T {
-    const obj = {};
-
-    for (const field of this.fields) {
-      const control = this.getControl(field.name);
-
-      if (!AppUtil.verifyEmpty(control.value))
-        obj[field.name] = control.value;
-
-    }
-
-    return (obj as T);
   }
   resetDefaultValues() {
     for (const field of this.fields) {

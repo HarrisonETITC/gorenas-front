@@ -15,4 +15,8 @@ export interface FieldsServicePort {
     manualUpdateFields(): void;
     getFields(): Observable<Array<FormItemModel>>;
     flushService(): void;
+    cleanFiltersEvent(): Observable<string>;
+    sendCleanFilters(): void;
+    confirmCleanFilters(): void;
+    getObject(): any;
 }
