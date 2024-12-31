@@ -6,7 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
-import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers/form.providers';
+import { FIELDS_SERVICE, FORM_DATA_SERVICE, FormsProviders } from '@Application/config/providers/form.providers';
 import { PAGINATOR_SERVICE, UtilsProviders } from '@Application/config/providers/utils/utils.providers';
 import { ApiServicePort } from '@Application/ports/api-service.port';
 import { AuthServicePort } from '@Application/ports/auth-service.port';
@@ -32,7 +32,8 @@ import { UseTable } from 'src/app/core/interfaces/use-table.interface';
   templateUrl: './base-data.component.html',
   styleUrl: './base-data.component.css',
   providers: [
-    ...UtilsProviders
+    ...UtilsProviders,
+    ...FormsProviders
   ]
 })
 export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort {
@@ -69,6 +70,7 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     this.initForms();
   }
   ngOnDestroy(): void {
+    this.fieldsService.flushService();
     this.destroySubs();
   }
 

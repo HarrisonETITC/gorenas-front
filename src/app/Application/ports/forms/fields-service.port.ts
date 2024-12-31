@@ -14,4 +14,5 @@ export interface FieldsServicePort {
     updateFields(fields: Array<FormItemModel>): void;
     manualUpdateFields(): void;
     getFields(): Observable<Array<FormItemModel>>;
+    flushService(): void;
 }

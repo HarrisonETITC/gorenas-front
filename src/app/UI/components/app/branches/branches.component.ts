@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { BRANCH_SERVICE } from '@Application/config/providers/branch.providers';
-import { FormsProviders } from '@Application/config/providers/form.providers';
 import { ApiServicePort } from '@Application/ports/api-service.port';
 import { BaseDataComponent } from '@components/base/base-data/base-data.component';
 import { AppModel } from '@Domain/models/base/application.model';
@@ -19,7 +18,7 @@ import { UseBaseDataComponent } from 'src/app/core/interfaces/use-base-data.inte
   imports: [BaseDataComponent],
   templateUrl: './branches.component.html',
   styleUrl: './branches.component.css',
-  providers: [SucursalesService, RestauranteService, ...FormsProviders]
+  providers: [SucursalesService, RestauranteService]
 })
 export class BranchesComponent implements OnInit, UseBaseDataComponent {
   protected readonly moduleName = AppModel.MODULE_BRANCHES;

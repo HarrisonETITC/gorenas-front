@@ -18,18 +18,30 @@ export class FieldsServiceAdapter implements FieldsServicePort {
         if (this.initEarlyReturn(fields, form))
             return this.controls;
 
-        this.originalFields = fields;
-        const extraFields: Array<FormItemModel> = [];
-        this.controls = new Map<string, FormControl>();
-        for (const field of fields) {
-            if (FormsUtil.FORMS_HANDLER.has(field.type)) {
-                FormsUtil.FORMS_HANDLER.get(field.type).validateField(field);
-                FormsUtil.FORMS_HANDLER.get(field.type).initField(field);
-                extraFields.push(...FormsUtil.FORMS_HANDLER.get(field.type).getExtraFields(field));
+        /*
+            Verificar si los campos que llegan son diferentes a los que están actualmente guardados en memoria, si es el caso, hay que procesarlos.
+            Se compara contra los campos originales ya que los campos actuales podrían haber sido modificados por los diferentes handler de campos
+            implementados.
+        */
+        if (!this.compareLocalFields(fields)) {
+            this.controls = new Map<string, FormControl>();
+            this.originalFields = fields;
+
+            const extraFields: Array<FormItemModel> = [];
+            for (const field of fields) {
+                if (FormsUtil.FORMS_HANDLER.has(field.type)) {
+                    FormsUtil.FORMS_HANDLER.get(field.type).validateField(field);
+                    FormsUtil.FORMS_HANDLER.get(field.type).initField(field);
+                    extraFields.push(...FormsUtil.FORMS_HANDLER.get(field.type).getExtraFields(field));
+                }
             }
+            for (const key of Array.from(FormsUtil.FORMS_HANDLER.keys()))
+                fields = FormsUtil.FORMS_HANDLER.get(key).processExtraFields(extraFields, fields);
+
+            this.actualFields = fields;
+        } else {
+            fields = this.actualFields;
         }
-        for (const key of Array.from(FormsUtil.FORMS_HANDLER.keys()))
-            fields = FormsUtil.FORMS_HANDLER.get(key).processExtraFields(extraFields, fields);
 
         if (!AppUtil.verifyEmpty(form)) {
             this.initForm(fields, form);
@@ -38,7 +50,6 @@ export class FieldsServiceAdapter implements FieldsServicePort {
             this.initFields(fields);
         }
 
-        this.actualFields = fields;
         return this.controls;
     }
     setControlValue(name: string, value: any, form?: FormGroup) {
@@ -76,10 +87,33 @@ export class FieldsServiceAdapter implements FieldsServicePort {
     getFields(): Observable<Array<FormItemModel>> {
         return this.fieldsHandler.asObservable();
     }
+    flushService() {
+        this.controls.clear();
+        this.fieldsHandler.next([]);
+        this.originalFields = [];
+        this.actualFields = [];
+        this.actualForm = null;
+    }
+    /*
+        Verifica si los campos ya se encuentran inicializados, caso de que así sea, también verifica si se está inicizalizando un
+        formulario o si este ya existe.
+    */
     private initEarlyReturn(fields: Array<FormItemModel>, form?: FormGroup): boolean {
-        if (this.originalFields.length > 0 && this.originalFields.length === fields.length
-            && this.originalFields.every(f => !AppUtil.verifyEmpty(fields.find(f2 => f.name === f2.name)))) {
+        /* 
+            Primera validación: Que los campos originales (la cantidad de campos puede variar ya que un campo de tipo número, por ejemplo
+            puede tener otros campos compuestos) no estén vacios y los compara con los campos que llegan. 
+        */
+        if (this.compareLocalFields(fields)) {
+            /*
+                Segunda validación: Se verifican 2 casos, que el formulario que llega está vacío, es decir, no se está inicializando un formulario,
+                o si el formulario actual no se encuentra vacío. En cualquiera de estos 2 casos ya se puede hacer un retorno temprano para no
+                inicializar los campos nuevamente.
+            */
             if (AppUtil.verifyEmpty(form) || !AppUtil.verifyEmpty(this.actualForm)) {
+                /*
+                    Tercera validación: Se verifica si el formulario que llega se encuentra vacío, en caso de que lo esté y el formulario guardado en
+                    memoria no esté vacío, entonces se copian los campos del formulario guardado en memoria al formulario que llega.
+                */
                 if (!AppUtil.verifyEmpty(form)) {
                     for (const controlKey of Object.keys(this.actualForm.controls)) {
                         form.setControl(controlKey, this.actualForm.get(controlKey));
@@ -90,6 +124,10 @@ export class FieldsServiceAdapter implements FieldsServicePort {
             }
         }
         return false;
+    }
+    private compareLocalFields(fields: Array<FormItemModel>): boolean {
+        return this.originalFields.length > 0 && this.originalFields.length === fields.length
+            && this.originalFields.every(f => !AppUtil.verifyEmpty(fields.find(f2 => f.name === f2.name)));
     }
     private initForm(fields: Array<FormItemModel>, form: FormGroup) {
         for (const field of fields) {
@@ -103,8 +141,12 @@ export class FieldsServiceAdapter implements FieldsServicePort {
             this.initControl(field);
     }
     private initControl(field: FormItemModel): FormControl {
-        const insertControl = (this.existsControl(field.name)) ? this.getControl(field.name)
-            : new FormControl(field.defaultValue, { validators: (AppUtil.verifyEmpty(field.validators) ? [] : field.validators) });
+        let insertControl = null;
+
+        if (this.existsControl(field.name))
+            insertControl = this.getControl(field.name);
+        else
+            insertControl = new FormControl(field.defaultValue, { validators: (AppUtil.verifyEmpty(field.validators) ? [] : field.validators) });
 
         if (!this.existsControl(field.name))
             this.setControl(field.name, insertControl);
