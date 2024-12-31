@@ -1,4 +1,4 @@
-import { HttpRequest, HttpHandlerFn, HttpEvent, HttpResponse, HttpEventType } from "@angular/common/http";
+import { HttpRequest, HttpHandlerFn, HttpEvent, HttpResponse } from "@angular/common/http";
 import { AppUtil } from "@utils/app.util";
 import { Observable, filter, map } from "rxjs";
 

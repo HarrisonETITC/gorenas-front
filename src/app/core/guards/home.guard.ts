@@ -1,7 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
-import { LoginService } from '@services/login.service';
 import { map } from 'rxjs';
 
 export const homeGuard: CanActivateFn = (route, state) => {

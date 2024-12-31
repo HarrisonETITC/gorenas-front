@@ -8,7 +8,7 @@ export class AppModel {
     public static readonly MODULE_PERMISSIONS = 'permissions';
     public static readonly MODULE_DASHBOARD = 'dashboard';
 
-    public static MODULES = new Array<string>();
+    public static readonly MODULES = new Array<string>();
 
     static {
         this.MODULES.push(this.MODULE_BRANCHES);

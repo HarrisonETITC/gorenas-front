@@ -12,7 +12,6 @@ import { NotificationProviders } from '@Application/config/providers/notificatio
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ValidationErrorInterceptor } from '@Application/config/interceptors/validation-error.interceptor';
 import { PermissionProviders } from '@Application/config/providers/permission.providers';
-import { FormsProviders } from '@Application/config/providers/form.providers';
 import { RoleProviders } from '@Application/config/providers/role.providers';
 import { BranchProviders } from '@Application/config/providers/branch.providers';
 

@@ -15,19 +15,22 @@ export const formDataGuard: CanDeactivateFn<FormCloseComponent> = (component) =>
     concatMap((res: boolean) => {
       if (res)
         return of(res);
-      else {
-        notificationService.sendButtonsResponse('');
-        showNotification(notificationService);
 
-        return notificationService.buttonsResponse().pipe(
-          filter(res => !AppUtil.verifyEmpty(res)),
-          map(res => res === NotificationButton.ACCEPT_RESPONSE)
-        );
-      }
+      notificationService.sendButtonsResponse('');
+      showNotification(notificationService);
+
+      return notificationService.buttonsResponse().pipe(
+        filter(res => !AppUtil.verifyEmpty(res)),
+        map(res => res === NotificationButton.ACCEPT_RESPONSE)
+      );
     }),
     tap((res: boolean) => {
-      if (res) component.closeConfirmed();
-      else component.closeCanceled();
+      if (res) {
+        component.closeConfirmed();
+        return;
+      }
+
+      component.closeCanceled();
     })
   );
 };
