@@ -48,6 +48,7 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
   protected filterExtended: boolean = false;
   protected isFormView$: Observable<boolean>;
   protected initFilterRaw: GeneralFilter;
+  protected showFilters: boolean = false;
 
   readonly finishSubs$ = new Subject<void>();
 
@@ -77,7 +78,6 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
   destroySubs(): void {
     this.finishSubs$.next();
     this.finishSubs$.complete();
-    this.fieldsService.resetControls();
   }
 
   protected initData() {
@@ -90,6 +90,13 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
       ignoreElements()
     ).subscribe();
 
+    this.fieldsService.getFields().pipe(
+      filter(fields => !AppUtil.verifyEmpty(fields)),
+      take(1),
+      takeUntil(this.finishSubs$),
+      tap(_ => this.showFilters = true),
+      ignoreElements()
+    ).subscribe();
     this.isFormView$ = this.formDataService.isFormActive().pipe(
       distinctUntilChanged(),
       skip(1),
