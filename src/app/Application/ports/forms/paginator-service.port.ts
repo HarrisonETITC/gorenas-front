@@ -5,6 +5,4 @@ export interface PaginatorServicePort<T = any> {
     set originalData(data: Array<T>);
     get filteredData$(): Observable<Array<T>>;
     set filteredData(data: Array<T>);
-    get detectChanges$(): Observable<string>;
-    sendChangeEvent(ev: string): void;
 }

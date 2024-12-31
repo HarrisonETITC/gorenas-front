@@ -13,7 +13,6 @@ import { AuthServicePort } from '@Application/ports/auth-service.port';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
 import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
-import { ChildUpdatePort } from '@Application/ports/utils/child-update.port';
 import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 import { FiltersCompactComponent } from '@components/utils/filters/filters-compact/filters-compact.component';
 import { FiltersExtendedComponent } from '@components/utils/filters/filters-extended/filters-extended.component';
@@ -24,7 +23,7 @@ import { ViewValue } from '@Domain/types/view-value.type';
 import { GeneralFilter } from '@models/base/general.filter';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
-import { BehaviorSubject, defaultIfEmpty, distinctUntilChanged, filter, ignoreElements, Observable, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
+import { defaultIfEmpty, distinctUntilChanged, filter, ignoreElements, Observable, skip, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
 import { UseTable } from 'src/app/core/interfaces/use-table.interface';
 
 @Component({
@@ -37,7 +36,7 @@ import { UseTable } from 'src/app/core/interfaces/use-table.interface';
     ...FormsProviders
   ]
 })
-export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort, ChildUpdatePort {
+export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort {
   @Input({ required: true }) module: string;
   @Input({ required: true }) service: ApiServicePort<T, U>;
   @Input({ required: true }) headers: Map<string, string>;
@@ -48,11 +47,9 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
 
   protected filterExtended: boolean = false;
   protected isFormView$: Observable<boolean>;
-  private readonly dataManager = new BehaviorSubject<Array<U>>([]);
-  protected initialSearch = true;
+  protected initFilterRaw: GeneralFilter;
 
   readonly finishSubs$ = new Subject<void>();
-  readonly firstLoad: boolean;
 
   constructor(
     @Inject(AUTH_SERVICE)
@@ -83,24 +80,23 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     this.fieldsService.resetControls();
   }
 
-  get data$(): Observable<Array<U>> {
-    return this.dataManager.asObservable();
-  }
-
   protected initData() {
     this.initFilter$.pipe(
       take(1),
-      tap(filter => this.search(filter)),
+      tap(filter => {
+        this.initFilterRaw = filter;
+        this.fieldsService.sendFiltersEvent();
+      }),
       ignoreElements()
     ).subscribe();
 
     this.isFormView$ = this.formDataService.isFormActive().pipe(
       distinctUntilChanged(),
+      skip(1),
       tap(value => {
-        if (!this.initialSearch && !value) {
-          this.initialSearch = true;
-          this.paginatorService.sendChangeEvent('detect');
-          this.fieldsService.sendCleanFilters();
+        if (!value) {
+          this.paginatorService.originalData = [];
+          this.fieldsService.sendFiltersEvent();
         }
       })
     );
@@ -123,14 +119,12 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
       filter(f => {
         return !AppUtil.verifyEmptySimple(f)
       }),
+      skip(1),
       distinctUntilChanged(),
       throttleTime(500, undefined, { leading: true, trailing: true }),
       takeUntil(this.finishSubs$)
     ).subscribe(filter => {
-      if (this.initialSearch)
-        this.initialSearch = false;
-      else
-        this.search(filter)
+      this.search(filter)
     });
   }
   private search(dataFilter?: GeneralFilter): void {

@@ -42,6 +42,6 @@ export class FiltersExtendedComponent implements OnInit {
   }
 
   protected setDefaultValues() {
-    this.fieldsService.sendCleanFilters();
+    this.fieldsService.sendFiltersEvent();
   }
 }

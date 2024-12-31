@@ -7,9 +7,7 @@ import { AuthServicePort } from "@Application/ports/auth-service.port";
 import { StoragePort } from "@Application/ports/storage.port";
 import { AppModel } from "@Domain/models/base/application.model";
 import { UserModelView } from "@Domain/models/model-view/user.mv";
-import { AppUtil } from "@utils/app.util";
-import { BehaviorSubject, distinctUntilChanged, ignoreElements, Observable, tap } from "rxjs";
-import { apiUrl } from "src/app/environment";
+import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable({
     providedIn: 'root'

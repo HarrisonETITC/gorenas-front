@@ -23,7 +23,7 @@
                                 Modo de filtros: {{ filterExtended? 'Extendido' : 'Compacto' }}
                                 <mat-slide-toggle
                                     (click)="$event.stopPropagation()"
-                                    (change)="filterExtended = !filterExtended; initialSearch = true;"
+                                    (change)="filterExtended = !filterExtended;"
                                     [checked]="filterExtended"
                                 ></mat-slide-toggle>
                             </p>

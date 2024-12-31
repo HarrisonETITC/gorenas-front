@@ -92,14 +92,11 @@ export class FieldsServiceAdapter implements FieldsServicePort {
         this.originalFields = [];
         this.actualFields = [];
     }
-    cleanFiltersEvent(): Observable<string> {
+    filtersEvent(): Observable<string> {
         return this.cleanFiltersHandler.asObservable();
     }
-    sendCleanFilters(): void {
-        this.cleanFiltersHandler.next('clean');
-    }
-    confirmCleanFilters(): void {
-        this.cleanFiltersHandler.next('');
+    sendFiltersEvent(ev: string = 'clean'): void {
+        this.cleanFiltersHandler.next(ev);
     }
     getObject() {
         const obj = {};

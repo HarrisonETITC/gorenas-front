@@ -80,12 +80,12 @@ export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySub
       ignoreElements(),
       takeUntil(this.finishSubs$)
     ).subscribe();
-    this.service.cleanFiltersEvent().pipe(
+    this.service.filtersEvent().pipe(
       filter(event => !AppUtil.verifyEmpty(event)),
       tap(event => {
         if (event === 'clean') {
           this.resetDefaultValues();
-          this.service.confirmCleanFilters();
+          this.service.sendFiltersEvent('');
         }
       }),
       ignoreElements(),

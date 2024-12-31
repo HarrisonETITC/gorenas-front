@@ -4,7 +4,7 @@ import { PAGINATOR_SERVICE } from '@Application/config/providers/utils/utils.pro
 import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
 import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 import { AppUtil } from '@utils/app.util';
-import { distinctUntilChanged, filter, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { defaultIfEmpty, distinctUntilChanged, Observable, Subject, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-paginator',
@@ -25,6 +25,7 @@ export class PaginatorComponent<T = any> implements OnInit, OnDestroy, DestroySu
   protected buttonPrevious: boolean = false;
   protected maxVisiblePages: number = 8;
   protected visiblePages: Array<number> = [];
+  
   finishSubs$: Subject<void> = new Subject();
 
   constructor(
@@ -34,16 +35,20 @@ export class PaginatorComponent<T = any> implements OnInit, OnDestroy, DestroySu
 
   ngOnInit(): void {
     this.paginatorService.originalData$.pipe(
-      filter(values => !AppUtil.verifyEmpty(values)),
+      defaultIfEmpty([]),
       distinctUntilChanged(),
       tap((values) => {
-        this.actualPage = 1;
-        this.totalPages = Math.ceil(values.length / this.registros);
-        for (let i = 1; i <= this.totalPages; i++) {
-          this.pages.push(i);
+        if (!AppUtil.verifyEmpty(values)) {
+          this.actualPage = 1;
+          this.totalPages = Math.ceil(values.length / this.registros);
+          for (let i = 1; i <= this.totalPages; i++) {
+            this.pages.push(i);
+          }
+          this.items = values;
+          this.refreshInfo();
+        } else {
+          this.paginatorService.filteredData = [];
         }
-        this.items = values;
-        this.refreshInfo();
       }),
       takeUntil(this.finishSubs$)
     ).subscribe();
@@ -51,10 +56,12 @@ export class PaginatorComponent<T = any> implements OnInit, OnDestroy, DestroySu
   ngOnDestroy(): void {
     this.destroySubs();
   }
+
   destroySubs(): void {
-      this.finishSubs$.next();
-      this.finishSubs$.complete();
+    this.finishSubs$.next();
+    this.finishSubs$.complete();
   }
+
   protected goPage(page: number) {
     this.actualPage = page;
     this.refreshInfo();

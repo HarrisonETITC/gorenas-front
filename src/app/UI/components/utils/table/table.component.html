@@ -1,8 +1,8 @@
 <div class="data-container">
-  @if((info$ | async)?.length > 0) {
+  @if(!loadingData) {
     <div class="products-area-wrapper tableView h-full max-h-[39rem]">
       <div class="products-header">
-        @for (col of (headers$ | async)?? []; track $index) {
+        @for (col of headers?? []; track $index) {
           <div class="product-cell">{{ headersMap.get(col) }}</div>
         }
         <div class="product-cell">Acciones</div>
@@ -10,7 +10,7 @@
       @for (value of (filtered$ | async)?? []; track $index) {
         <div class="products-row">
           @for (key of getKeys(value); track $index) {
-            @if (key == 'estado') {
+            @if (key == 'state') {
               <div class="product-cell status-cell">
                 <span class="status {{ value[key] == 'A' ? 'active' : 'disabled' }}">{{ mapaEstados.get(value[key]) }}</span>
               </div>
@@ -31,10 +31,6 @@
         </div>
       }
     </div>
-    <app-paginator class="w-full"
-      [registros]="15"
-      [data]="info$"
-    ></app-paginator>
   }
   @else {
     <div
@@ -42,4 +38,13 @@
       <span class="text-5xl text-center">No hay información aquí</span>
     </div>
   }
+  <app-paginator class="w-full"
+    [ngClass]="{ 'absolute z-[-10] hidden': loadingData }"
+    [registros]="15"
+    [data]="info$"
+  ></app-paginator>
+</div>
+
+<div class="data-container">
+
 </div>

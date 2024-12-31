@@ -81,6 +81,6 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
     );
   }
   protected setDefaultValues() {
-    this.fieldsService.sendCleanFilters();
+    this.fieldsService.sendFiltersEvent();
   }
 }

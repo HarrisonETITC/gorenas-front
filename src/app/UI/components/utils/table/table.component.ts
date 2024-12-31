@@ -2,36 +2,36 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Usuario } from '@models/usuario.model';
 import { AppUtil } from '@utils/app.util';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, Subject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, filter, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { PaginatorComponent } from '../paginator/paginator.component';
 import { Router, RouterModule } from '@angular/router';
 import { AuthUtils } from '@utils/auth.util';
 import { PAGINATOR_SERVICE } from '@Application/config/providers/utils/utils.providers';
 import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
-import { ChildUpdatePort } from '@Application/ports/utils/child-update.port';
 import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 import { IdValue } from '@Domain/models/general/id-value.interface';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-table',
-  imports: [CommonModule, PaginatorComponent, RouterModule],
+  imports: [CommonModule, PaginatorComponent, RouterModule, MatTableModule],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class TableComponent<T extends { id?: number }> implements OnInit, OnDestroy, AfterViewInit, ChildUpdatePort, DestroySubsPort {
+export class TableComponent<T extends { id?: number }> implements OnInit, OnDestroy, AfterViewInit, DestroySubsPort {
   @Input({ required: true }) headersMap: Map<string, string>;
   @Input() valuesMap: Map<string, Array<IdValue>>;
   @Output() protected OnDeactivateBtn = new EventEmitter<T>();
   @Output() protected OnEditBtn = new EventEmitter<T>();
 
   private readonly filteredInfo = new BehaviorSubject<Array<T>>([]);
-  protected headers$: Observable<Array<string>>;
+  protected headers: Array<string>;
   protected actualPath: string = '';
   protected mapaEstados = Usuario.MAPEOS_ESTADOS;
   protected headersDinero = ['ganancias', 'mes', 'total', 'totales', 'monto'];
+  protected loadingData = true;
 
-  firstLoad = true;
   finishSubs$: Subject<void> = new Subject();
 
   constructor(
@@ -51,30 +51,21 @@ export class TableComponent<T extends { id?: number }> implements OnInit, OnDest
   ngAfterViewInit(): void {
     this.paginatorService.filteredData$
       .pipe(
-        filter(data => !AppUtil.verifyEmpty(data)),
-        distinctUntilChanged(),
+        filter(data => !AppUtil.verifyEmptySimple(data)),
         tap((info) => {
-          this.filteredInfo.next(info);
+          if (AppUtil.verifyEmpty(info)) {
+            this.loadingData = true;
+          } else {
+            this.filteredInfo.next(info);
+            this.loadingData = false;
+          }
         }),
-        map(info => Object.keys(info[0])),
-        distinctUntilChanged(),
+        map(info => AppUtil.verifyEmpty(info) ? [] : Object.keys(info[0])),
         takeUntil(this.finishSubs$)
       )
       .subscribe((info) => {
-        this.headers$ = of(info);
-        if (this.firstLoad) {
-          this.firstLoad = false;
-          this.cdr.detectChanges();
-        }
+        this.headers = info;
       });
-    this.paginatorService.detectChanges$.pipe(
-      filter(val => val === 'detect'),
-      tap(_ => {
-        this.cdr.detectChanges();
-        this.paginatorService.sendChangeEvent('');
-      }),
-      takeUntil(this.finishSubs$)
-    ).subscribe();
   }
   get info$() {
     return this.paginatorService.originalData$;
@@ -82,6 +73,7 @@ export class TableComponent<T extends { id?: number }> implements OnInit, OnDest
   get filtered$(): Observable<Array<T>> {
     return this.filteredInfo.asObservable();
   }
+
   destroySubs(): void {
     this.finishSubs$.next();
     this.finishSubs$.complete();
