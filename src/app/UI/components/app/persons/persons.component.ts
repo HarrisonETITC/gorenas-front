@@ -17,7 +17,7 @@ import { concatMap, EMPTY, map, Observable, Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'app-persons',
-  imports: [TableComponent, ReactiveFormsModule, MatDialogModule],
+  imports: [ReactiveFormsModule, MatDialogModule],
   templateUrl: './persons.component.html',
   styleUrl: './persons.component.css',
   providers: [PersonasService, LoginService, RolesService]
@@ -109,7 +109,6 @@ export class PersonsComponent {
       }),
       tap((lista) => {
         if (!AppUtil.verificarVacio(lista)) {
-          this.tabla.refrescarManual(lista);
           this.dialog.closeAll()
         }
       })

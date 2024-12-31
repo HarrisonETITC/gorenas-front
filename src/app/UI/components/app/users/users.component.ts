@@ -18,7 +18,7 @@ import { concatMap, EMPTY, map, Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, MatDialogModule, ReactiveFormsModule, TableComponent],
+  imports: [CommonModule, MatDialogModule, ReactiveFormsModule],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css',
   providers: [LoginService, PersonasService]
@@ -91,7 +91,6 @@ export class UsuariosComponent implements OnInit {
       }),
       tap((lista) => {
         if (!AppUtil.verificarVacio(lista)) {
-          this.tabla.refrescarManual(lista);
           this.dialog.closeAll();
         }
       })

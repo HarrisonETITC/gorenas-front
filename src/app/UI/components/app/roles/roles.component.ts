@@ -18,7 +18,7 @@ import { concatMap, EMPTY, map, Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-roles',
-  imports: [TableComponent, CommonModule, ReactiveFormsModule, MatDialogModule],
+  imports: [CommonModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.css',
   providers: [RolesService]
@@ -89,7 +89,6 @@ export class RolesComponent implements OnInit {
       }),
       tap((lista) => {
         if (!AppUtil.verificarVacio(lista)) {
-          this.tabla.refrescarManual(lista);
           this.dialog.closeAll();
         }
       })

@@ -1,31 +1,31 @@
 <div class="data-container">
-  @if((informacion$ | async)?.length > 0) {
+  @if((info$ | async)?.length > 0) {
     <div class="products-area-wrapper tableView h-full max-h-[39rem]">
       <div class="products-header">
-        @for (col of (cabeceras$ | async)?? []; track $index) {
-          <div class="product-cell">{{ mapeos.get(col) }}</div>
+        @for (col of (headers$ | async)?? []; track $index) {
+          <div class="product-cell">{{ headersMap.get(col) }}</div>
         }
         <div class="product-cell">Acciones</div>
       </div>
       @for (valor of (filtered$ | async)?? []; track $index) {
         <div class="products-row">
-          @for (clave of obtenerLlaves(valor); track $index) {
+          @for (clave of getKeys(valor); track $index) {
             @if (clave == 'estado') {
               <div class="product-cell status-cell">
                 <span class="status {{ valor[clave] == 'A' ? 'active' : 'disabled' }}">{{ mapaEstados.get(valor[clave]) }}</span>
               </div>
             } @else {
               <div class="product-cell">
-                {{ transformarValor(valor[clave], clave) }}
+                {{ transformValue(valor[clave], clave) }}
               </div>
             }
           }
           <div class="product-cell btn-container">
-            @if(puedeVer('editar')) {
-              <button class="header-button btn-editar" (click)="botonEditar(valor)"><ion-icon name="create-outline"></ion-icon></button>
+            @if(canSee('editar')) {
+              <button class="header-button btn-editar" (click)="handleEditBtn(valor)"><ion-icon name="create-outline"></ion-icon></button>
             }
             @if(false) {
-              <button class="header-button btn-inactivar" (click)="botonInactivar(valor)">Inactivar</button>
+              <button class="header-button btn-inactivar" (click)="handleDeactivateBtn(valor)">Inactivar</button>
             }
           </div>
         </div>
@@ -33,7 +33,7 @@
     </div>
     <app-paginator class="w-full"
       [registros]="15"
-      [data]="informacion$"
+      [data]="info$"
     ></app-paginator>
   }
   @else {

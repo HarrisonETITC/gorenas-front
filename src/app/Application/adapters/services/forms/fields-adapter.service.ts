@@ -15,17 +15,8 @@ export class FieldsServiceAdapter implements FieldsServicePort {
     private actualForm: FormGroup;
 
     init(fields: Array<FormItemModel>, form?: FormGroup) {
-        if (this.originalFields.length > 0 && this.originalFields.length === fields.length && this.originalFields.every(f => !AppUtil.verifyEmpty(fields.find(f2 => f.name === f2.name)))) {
-            if (AppUtil.verifyEmpty(form) || !AppUtil.verifyEmpty(this.actualForm)) {
-                if (!AppUtil.verifyEmpty(form)) {
-                    for(const controlKey of Object.keys(this.actualForm.controls)) {
-                        form.setControl(controlKey, this.actualForm.get(controlKey));
-                    }
-                }
-
-                return this.controls;
-            }
-        }
+        if (this.initEarlyReturn(fields, form))
+            return this.controls;
 
         this.originalFields = fields;
         const extraFields: Array<FormItemModel> = [];
@@ -84,6 +75,21 @@ export class FieldsServiceAdapter implements FieldsServicePort {
     }
     getFields(): Observable<Array<FormItemModel>> {
         return this.fieldsHandler.asObservable();
+    }
+    private initEarlyReturn(fields: Array<FormItemModel>, form?: FormGroup): boolean {
+        if (this.originalFields.length > 0 && this.originalFields.length === fields.length
+            && this.originalFields.every(f => !AppUtil.verifyEmpty(fields.find(f2 => f.name === f2.name)))) {
+            if (AppUtil.verifyEmpty(form) || !AppUtil.verifyEmpty(this.actualForm)) {
+                if (!AppUtil.verifyEmpty(form)) {
+                    for (const controlKey of Object.keys(this.actualForm.controls)) {
+                        form.setControl(controlKey, this.actualForm.get(controlKey));
+                    }
+                }
+
+                return true;
+            }
+        }
+        return false;
     }
     private initForm(fields: Array<FormItemModel>, form: FormGroup) {
         for (const field of fields) {

@@ -5,17 +5,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
-import { PaginatorServiceAdapter } from '@Application/adapters/services/utils/paginator-adapter.service';
-import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
 import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
 import { FIELDS_SERVICE, FORM_DATA_SERVICE } from '@Application/config/providers/form.providers';
 import { PAGINATOR_SERVICE, UtilsProviders } from '@Application/config/providers/utils/utils.providers';
 import { ApiServicePort } from '@Application/ports/api-service.port';
-import { ApplicationServicePort } from '@Application/ports/application-service.port';
 import { AuthServicePort } from '@Application/ports/auth-service.port';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
 import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
+import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 import { FiltersCompactComponent } from '@components/utils/filters/filters-compact/filters-compact.component';
 import { FiltersExtendedComponent } from '@components/utils/filters/filters-extended/filters-extended.component';
 import { TableComponent } from '@components/utils/table/table.component';
@@ -25,7 +23,7 @@ import { ViewValue } from '@Domain/types/view-value.type';
 import { GeneralFilter } from '@models/base/general.filter';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
-import { BehaviorSubject, defaultIfEmpty, distinctUntilChanged, filter, ignoreElements, map, Observable, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
+import { BehaviorSubject, defaultIfEmpty, distinctUntilChanged, filter, ignoreElements, Observable, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
 import { UseTable } from 'src/app/core/interfaces/use-table.interface';
 
 @Component({
@@ -37,7 +35,7 @@ import { UseTable } from 'src/app/core/interfaces/use-table.interface';
     ...UtilsProviders
   ]
 })
-export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U> {
+export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort {
   @Input({ required: true }) module: string;
   @Input({ required: true }) service: ApiServicePort<T, U>;
   @Input({ required: true }) headers: Map<string, string>;
@@ -45,12 +43,13 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
   @Input({ required: false }) infoMaps?: Map<string, Array<ViewValue>>;
   @Input({ required: false }) filters?: Array<FormItemModel>;
   @Input({ required: false }) dataForms?: Array<FormDataConfig>;
-  cols$: Observable<Array<string>>;
+
   protected filterExtended: boolean = false;
   protected isFormView$: Observable<boolean>;
-  private readonly finishSubs$ = new Subject<void>();
   private readonly dataManager = new BehaviorSubject<Array<U>>([]);
   protected initialSearch = true;
+
+  finishSubs$ = new Subject<void>();
 
   constructor(
     @Inject(AUTH_SERVICE)
@@ -70,23 +69,27 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     this.initForms();
   }
   ngOnDestroy(): void {
+    this.destroySubs();
+  }
+
+  get data$(): Observable<Array<U>> {
+    return this.dataManager.asObservable();
+  }
+
+  destroySubs(): void {
     this.finishSubs$.next();
     this.finishSubs$.complete();
     this.fieldsService.resetControls();
   }
-  initData() {
+
+  protected initData() {
     this.initFilter$.pipe(
       take(1),
       tap(filter => this.search(filter)),
       ignoreElements()
     ).subscribe();
-    this.cols$ = this.data$.pipe(
-      defaultIfEmpty([]),
-      distinctUntilChanged(),
-      map(all => AppUtil.verifyEmpty(all) ? [] : Object.keys(all[0]))
-    )
   }
-  initForms(): void {
+  protected initForms(): void {
     this.isFormView$ = this.formDataService.isFormActive();
     const initForm = this.router.url.includes('form');
 
@@ -94,19 +97,13 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
       this.notifyForms();
     }
   }
-  get data$(): Observable<Array<U>> {
-    return this.dataManager.asObservable();
+  protected goCreate(): void {
+    this.goForm();
   }
-  search(dataFilter?: GeneralFilter): void {
-    this.service.getCanSee(dataFilter).pipe(
-      defaultIfEmpty([]),
-      distinctUntilChanged(),
-      tap(data => {
-        this.paginatorService.originalData = (data as T[]);
-      })
-    ).subscribe();
+  protected goUpdate(id: string | number): void {
+    this.goForm(true, +id);
   }
-  handleSearch(event: Observable<PermissionFilter>) {
+  protected handleSearch(event: Observable<PermissionFilter>) {
     event.pipe(
       filter(f => {
         return !AppUtil.verifyEmptySimple(f)
@@ -121,11 +118,14 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
         this.search(filter)
     });
   }
-  goCreate(): void {
-    this.goForm();
-  }
-  goUpdate(id: string | number): void {
-    this.goForm(true, +id);
+  private search(dataFilter?: GeneralFilter): void {
+    this.service.getCanSee(dataFilter).pipe(
+      defaultIfEmpty([]),
+      distinctUntilChanged(),
+      tap(data => {
+        this.paginatorService.originalData = (data as T[]);
+      })
+    ).subscribe();
   }
   private goForm(edit: boolean = false, id?: number) {
     const formRoute = (edit && !AppUtil.verifyEmpty(id)) ? `form/${id}` : `form`;
