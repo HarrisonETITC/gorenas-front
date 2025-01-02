@@ -29,6 +29,10 @@
   --mdc-switch-state-layer-size: 1.5rem;
   --mdc-switch-track-width: 2.75rem;
   --mdc-filled-text-field-focus-label-text-color: var(--action-color);
+  --scroll-size: .5rem;
+  --scroll-radius: 20px;
+  --scroll-track: rgb(255 255 255 / 10%);
+  --scroll-thumb: linear-gradient(45deg, #00aeff, #a68eff);
 }
 
 .light:root {

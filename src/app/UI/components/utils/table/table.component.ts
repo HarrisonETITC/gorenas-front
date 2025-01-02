@@ -11,6 +11,7 @@ import { PaginatorServicePort } from '@Application/ports/forms/paginator-service
 import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 import { IdValue } from '@Domain/models/general/id-value.interface';
 import { MatTableModule } from '@angular/material/table';
+import { GeneralModel } from '@Domain/models/general/general.model';
 
 @Component({
   selector: 'app-table',
@@ -19,7 +20,7 @@ import { MatTableModule } from '@angular/material/table';
   styleUrl: './table.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class TableComponent<T extends { id?: number }> implements OnInit, OnDestroy, AfterViewInit, DestroySubsPort {
+export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy, AfterViewInit, DestroySubsPort {
   @Input({ required: true }) headersMap: Map<string, string>;
   @Input() valuesMap: Map<string, Array<IdValue>>;
   @Output() protected OnDeactivateBtn = new EventEmitter<T>();
@@ -28,6 +29,7 @@ export class TableComponent<T extends { id?: number }> implements OnInit, OnDest
   private readonly filteredInfo = new BehaviorSubject<Array<T>>([]);
   protected headers: Array<string>;
   protected actualPath: string = '';
+  protected data: Array<T>;
   protected mapaEstados = Usuario.MAPEOS_ESTADOS;
   protected headersDinero = ['ganancias', 'mes', 'total', 'totales', 'monto'];
   protected loadingData = true;
@@ -56,11 +58,19 @@ export class TableComponent<T extends { id?: number }> implements OnInit, OnDest
           if (AppUtil.verifyEmpty(info)) {
             this.loadingData = true;
           } else {
+            this.data = info;
             this.filteredInfo.next(info);
             this.loadingData = false;
           }
         }),
-        map(info => AppUtil.verifyEmpty(info) ? [] : Object.keys(info[0])),
+        map(info => {
+          if (AppUtil.verifyEmpty(info))
+            return [];
+
+          const headers = Object.keys(info[0]);
+          headers.push('actions');
+          return headers;
+        }),
         takeUntil(this.finishSubs$)
       )
       .subscribe((info) => {
@@ -99,6 +109,12 @@ export class TableComponent<T extends { id?: number }> implements OnInit, OnDest
     }
 
     return value;
+  }
+  showElement(el: any) {
+    console.log(el);
+  }
+  protected filterActionsRow(headers: Array<string>) {
+    return headers.filter(header => header !== 'actions');
   }
   protected handleDeactivateBtn(register: T) {
     this.OnDeactivateBtn.emit(register);
