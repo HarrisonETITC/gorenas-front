@@ -1,8 +1,10 @@
 <div class="notification-container {{ data.type }}">
     <div class="notification-data-container">
-        <div class>
-            <div class="notification-title">
-                <ion-icon name="{{ data.icon }}"></ion-icon>
+        <div>
+            <div class="notification-title text-base font-medium uppercase">
+                @if(data.icon) {
+                    <mat-icon>{{ data.icon }}</mat-icon>
+                }
                 <h3>{{ data.title }}</h3>
             </div>
             <div class="notification-message">
@@ -15,12 +17,29 @@
                     </ul>
                 }
             </div>
+            @if(config.buttons && config.buttons.length > 0) {
+                <div class="flex items-center buttons-container gap-4 pt-2">
+                    @for(button of config.buttons; track $index) {
+                        <button
+                        class="bg-blue-600 py-1 px-2 rounded-general flex items-center justify-center gap-2 h-8 {{ getButtonStyles(button) }}"
+                        (click)="buttonAction(button.option.value)">
+                        @if(!verifyEmpty(button.icon)) {
+                            <mat-icon>{{ button.icon }}</mat-icon>
+                        }
+                        {{ button.option.viewValue }}
+                    </button>
+                }
+                </div>
+            }
         </div>
-        <button
-            class="btn-dismiss-notification"
-            (click)="dismissNotification()"
-        >
-            <ion-icon name="close-outline"></ion-icon>
-        </button>
+        @if(!config.hideDismissButton) {
+            <button
+                class="btn-dismiss-notification"
+                matTooltip="Cerrar notificación"
+                (click)="dismissNotification()"
+            >
+                <ion-icon name="close-outline"></ion-icon>
+            </button>
+        }
     </div>
 </div>

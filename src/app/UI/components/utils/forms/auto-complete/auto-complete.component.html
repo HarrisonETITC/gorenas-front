@@ -1,0 +1,15 @@
+<mat-form-field class="w-full {{ getTransparentClass() }}">
+    <mat-label>{{ label }}</mat-label>
+    @if (!verifyEmpty(icon)) {
+      <mat-icon matIconPrefix>{{ icon }}</mat-icon>
+    }
+    <input type="text" matInput [formControl]="control" [matAutocomplete]="auto">
+    <mat-autocomplete (optionSelected)="handleOptionSelected($event)" #auto="matAutocomplete" [displayWith]="displayName">
+      @for (option of (data$ | async); track $index) {
+        <mat-option [value]="option">{{option.value}}</mat-option>
+      }
+    </mat-autocomplete>
+    @if(control.invalid) {
+      <mat-error>{{ getErrorMessage() }}</mat-error>
+    }
+</mat-form-field>

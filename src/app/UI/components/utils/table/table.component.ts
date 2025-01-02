@@ -1,87 +1,112 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Usuario } from '@models/usuario.model';
 import { AppUtil } from '@utils/app.util';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, filter, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { PaginatorComponent } from '../paginator/paginator.component';
-import { IIdValor } from '@models/base/id-valor.interface';
 import { Router, RouterModule } from '@angular/router';
 import { AuthUtils } from '@utils/auth.util';
+import { PAGINATOR_SERVICE } from '@Application/config/providers/utils/utils.providers';
+import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
+import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
+import { IdValue } from '@Domain/models/general/id-value.interface';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-table',
-  imports: [CommonModule, PaginatorComponent, RouterModule],
+  imports: [CommonModule, PaginatorComponent, RouterModule, MatTableModule],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class TableComponent<T extends { id?: number }> implements OnInit {
-  @Input({ required: true }) cabeceras$: Observable<Array<string>>;
-  @Input({ required: true }) informacion$: Observable<Array<T>>;
-  @Input({ required: true }) mapeos: Map<string, string>;
-  @Input() mapeosValores: Map<string, Array<IIdValor>>;
-  @ViewChild(PaginatorComponent) paginador: PaginatorComponent;
+export class TableComponent<T extends { id?: number }> implements OnInit, OnDestroy, AfterViewInit, DestroySubsPort {
+  @Input({ required: true }) headersMap: Map<string, string>;
+  @Input() valuesMap: Map<string, Array<IdValue>>;
+  @Output() protected OnDeactivateBtn = new EventEmitter<T>();
+  @Output() protected OnEditBtn = new EventEmitter<T>();
 
-  @Output() protected btnInactivar = new EventEmitter<T>();
-  @Output() protected btnEditar = new EventEmitter<T>();
+  private readonly filteredInfo = new BehaviorSubject<Array<T>>([]);
+  protected headers: Array<string>;
+  protected actualPath: string = '';
+  protected mapaEstados = Usuario.MAPEOS_ESTADOS;
+  protected headersDinero = ['ganancias', 'mes', 'total', 'totales', 'monto'];
+  protected loadingData = true;
 
-  mapaEstados = Usuario.MAPEOS_ESTADOS;
-  headersDinero = ['ganancias', 'mes', 'total', 'totales', 'monto'];
-  rutaActual: string = '';
+  finishSubs$: Subject<void> = new Subject();
 
   constructor(
+    @Inject(PAGINATOR_SERVICE)
+    private readonly paginatorService: PaginatorServicePort<T>,
     private readonly router: Router,
-  ) {}
+    readonly cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     const url = this.router.routerState.snapshot.url;
-    this.rutaActual = url.split('/').pop();
+    this.actualPath = url.split('/').pop();
+  }
+  ngOnDestroy(): void {
+    this.destroySubs();
+  }
+  ngAfterViewInit(): void {
+    this.paginatorService.filteredData$
+      .pipe(
+        filter(data => !AppUtil.verifyEmptySimple(data)),
+        tap((info) => {
+          if (AppUtil.verifyEmpty(info)) {
+            this.loadingData = true;
+          } else {
+            this.filteredInfo.next(info);
+            this.loadingData = false;
+          }
+        }),
+        map(info => AppUtil.verifyEmpty(info) ? [] : Object.keys(info[0])),
+        takeUntil(this.finishSubs$)
+      )
+      .subscribe((info) => {
+        this.headers = info;
+      });
+  }
+  get info$() {
+    return this.paginatorService.originalData$;
+  }
+  get filtered$(): Observable<Array<T>> {
+    return this.filteredInfo.asObservable();
   }
 
-  obtenerLlaves(valor: T) {
+  destroySubs(): void {
+    this.finishSubs$.next();
+    this.finishSubs$.complete();
+  }
+  protected getKeys(valor: T) {
     return Object.keys(valor);
   }
+  protected transformValue(value: any, key?: string) {
+    const datePattern = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):([0-5]\d):([0-5]\d)(\.\d+)?(Z|[+-][01]\d:[0-5]\d)?$/;
 
-  transformarValor(valor: any, llave?: string) {
-    const expFecha = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):([0-5]\d):([0-5]\d)(\.\d+)?(Z|[+-][01]\d:[0-5]\d)?$/;
-
-    if (expFecha.test(valor)) {
-      const fecha = new Date(valor);
-      return `${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
+    if (datePattern.test(value)) {
+      const resultDate = new Date(value);
+      return `${resultDate.toLocaleDateString()} ${resultDate.toLocaleTimeString()}`;
     }
 
-    if (!AppUtil.verificarVacio(valor['valor']))
-      return valor.valor;
-
-    if (!AppUtil.verificarVacio(llave) && this.headersDinero.includes(llave)) {
-      return Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(valor);
+    if (!AppUtil.verifyEmpty(key) && this.headersDinero.includes(key)) {
+      return Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(value);
     }
 
-    if (!AppUtil.verificarVacio(this.mapeosValores) && !AppUtil.verificarVacio(this.mapeosValores.get(llave))) {
-      const obj = this.mapeosValores.get(llave).find((r) => r.id = valor);
-      return obj.valor;
+    if (!AppUtil.verifyEmpty(this.valuesMap) && !AppUtil.verifyEmpty(this.valuesMap.get(key))) {
+      const obj = this.valuesMap.get(key).find((r) => r.id = value);
+      return obj.value;
     }
 
-    return valor;
+    return value;
   }
-
-  protected refrescarInformacion(data: Observable<Array<T>>) {
-    this.informacion$ = data;
+  protected handleDeactivateBtn(register: T) {
+    this.OnDeactivateBtn.emit(register);
   }
-
-  refrescarManual(data: Array<T>) {
-    this.paginador.refrescarManual(data);
+  protected handleEditBtn(register: T) {
+    this.OnEditBtn.emit(register);
   }
-
-  protected botonInactivar(registro: T) {
-    this.btnInactivar.emit(registro);
-  }
-
-  protected botonEditar(registro: T) {
-    this.btnEditar.emit(registro);
-  }
-
-  puedeVer(btn: string) {
-    return AuthUtils.verificarPuedeVer(`${this.rutaActual}-${btn}`)
+  protected canSee(btn: string) {
+    return AuthUtils.verificarPuedeVer(`${this.actualPath}-${btn}`)
   }
 }

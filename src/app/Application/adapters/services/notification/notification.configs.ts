@@ -1,7 +1,7 @@
 import { NotificationConfig } from "@Domain/models/notification-config.type";
 
 export const WarningConfig = (title: string, text: string): NotificationConfig => {
-    return GetConfig(title, text, "warning", "warning-outline");
+    return GetConfig(title, text, "warning", "warning_outline");
 }
 
 export const SuccessConfig = (title: string, text: string): NotificationConfig => {

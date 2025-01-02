@@ -1,0 +1,11 @@
+::ng-deep .app-content-actions-wrapper .mat-mdc-icon-button {
+    padding: 0!important;
+}
+
+::ng-deep .mat-mdc-menu-trigger {
+    transition: .3s all cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+
+::ng-deep .mat-mdc-menu-trigger:hover {
+    color: white;
+}

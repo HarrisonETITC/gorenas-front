@@ -1,0 +1,47 @@
+<div class="flex flex-col">
+    <div class="flex h-12 mb-1">
+        <button
+            [matMenuTriggerFor]="filterOptions"
+            class="text-white header-button rounded-left h-auto"
+        >Filtros</button>
+        <app-form-base
+            class="w-[14rem] border-solid border-[2px] border-action rounded-right"
+            [fields]="fields"
+            [transparentFields]="true"
+            [mode]="'controls'"
+            [showAll]="false"
+            (onFieldChange)="handleEvents()"
+        ></app-form-base>
+    
+        <mat-menu #filterOptions="matMenu">
+            @for (field of procesedFields; track $index) {
+                <button mat-menu-item (click)="updateActiveFilter(field.name)">{{ field.label }}</button>
+            }
+        </mat-menu>
+    </div>
+    <div class="flex z-10 text-white text-sm justify-between">
+        <button
+            (click)="getAppliedFilters()"
+            class="m-0 p-0 ml-4 cursor-pointer"
+            matTooltip="Presiona para ver los filtros aplicados"
+            [matMenuTriggerFor]="appliedFilters"
+        >Filtros aplicados</button>
+        <button
+            matTooltip="Presiona para regresar los filtros a su valor por defecto"
+            class="text-warning mr-4 hover:text-warningBold hover:underline underline-offset-2"
+            (click)="setDefaultValues()">
+            Limpiar Filtros
+        </button>
+        <mat-menu
+            class="p-4 bg-primary"         
+            #appliedFilters="matMenu">
+            <ul class="text-gray-400 list-disc list-inside">
+                @for (item of (appliedFilters$ | async); track $index) {
+                    <li class="{{ (appliedFilters$ | async).length - 1 == $index? '' : 'mb-1' }} text-sm">
+                        {{ item.value }}: <span class="text-white">{{ item.viewValue }}</span>
+                    </li>
+                }
+            </ul>
+        </mat-menu>
+    </div>
+</div>

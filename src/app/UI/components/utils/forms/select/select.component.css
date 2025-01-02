@@ -1,0 +1,19 @@
+::ng-deep.mat-pseudo-checkbox-minimal {
+    margin: 0!important;
+}
+
+::ng-deep.mat-mdc-select-panel {
+    border-radius: .5rem!important;
+}
+
+::ng-deep.cdk-overlay-pane {
+    width: auto!important;
+}
+
+::ng-deep.mat-mdc-option .mat-icon {
+    padding: 0!important;
+}
+
+::ng-deep.mat-mdc-option.mdc-list-item {
+    gap: .3rem;
+}

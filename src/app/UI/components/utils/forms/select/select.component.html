@@ -1,0 +1,20 @@
+
+<mat-form-field class="w-full {{ getTransparentClass() }}">
+    <mat-label>{{ label }}</mat-label>
+    @if (!verifyEmpty(icon)) {
+      <mat-icon matIconPrefix>{{ icon }}</mat-icon>
+    }
+    <mat-select [formControl]="control">
+      @for (val of values; track $index) {
+        <mat-option [value]="val.value">
+          @if (!verifyEmpty(val.icon)) {
+            <mat-icon>{{ val.icon }}</mat-icon>
+          }
+          {{val.viewValue}}
+        </mat-option>
+      }
+    </mat-select>
+    @if(control.invalid) {
+        <mat-error>{{ getErrorMessage() }}</mat-error>
+    }
+</mat-form-field>

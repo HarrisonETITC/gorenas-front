@@ -16,7 +16,7 @@ import { concatMap, EMPTY, map, Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-sales',
-  imports: [TableComponent, CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './sales.component.html',
   styleUrl: './sales.component.css',
   providers: [EmpleadosService, VentasService]
@@ -91,7 +91,6 @@ export class SalesComponent {
       }),
       tap((lista) => {
         if (!AppUtil.verificarVacio(lista)) {
-          this.tabla.refrescarManual(lista);
           this.dialog.closeAll()
           this.ventasService.notificarTerminado();
         }

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
+import { ApplicationServicePort } from '@Application/ports/application-service.port';
 import { GenericFormComponent } from '@components/utils/genericform/genericform.component';
 import { TableComponent } from '@components/utils/table/table.component';
 import { FormConfig } from '@models/formulario/form-config.model';
@@ -15,7 +17,7 @@ import { concatMap, EMPTY, map, Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-roles',
-  imports: [TableComponent, CommonModule, ReactiveFormsModule, MatDialogModule],
+  imports: [CommonModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.css',
   providers: [RolesService]
@@ -34,9 +36,12 @@ export class RolesComponent implements OnInit {
 
   constructor(
     private readonly rolService: RolesService,
-    private readonly dialog: MatDialog
-  ) { }
-
+    private readonly dialog: MatDialog,
+    @Inject(APPLICATION_SERVICE)
+    private readonly appService: ApplicationServicePort
+  ) {
+  }
+  
   ngOnInit(): void {
     this.buscarSucursales();
     this.columnas$ = this.roles$.pipe(
@@ -83,7 +88,6 @@ export class RolesComponent implements OnInit {
       }),
       tap((lista) => {
         if (!AppUtil.verificarVacio(lista)) {
-          this.tabla.refrescarManual(lista);
           this.dialog.closeAll();
         }
       })

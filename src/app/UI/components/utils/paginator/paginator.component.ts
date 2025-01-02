@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { PAGINATOR_SERVICE } from '@Application/config/providers/utils/utils.providers';
+import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
+import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 import { AppUtil } from '@utils/app.util';
-import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
+import { defaultIfEmpty, distinctUntilChanged, Observable, Subject, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-paginator',
@@ -9,96 +12,87 @@ import { BehaviorSubject, Observable, Subscription, tap } from 'rxjs';
   templateUrl: './paginator.component.html',
   styleUrl: './paginator.component.css'
 })
-export class PaginatorComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) registros: number = 15;
-  @Input({ required: true }) data: Observable<Array<any>>;
-  @Output() protected cambioPagina = new EventEmitter<Observable<Array<any>>>();
+export class PaginatorComponent<T = any> implements OnInit, OnDestroy, DestroySubsPort {
+  @Input({ required: true }) registros: number = 25;
+  @Input({ required: true }) data: Observable<Array<T>>;
+  @Output() protected cambioPagina = new EventEmitter<Observable<Array<T>>>();
 
-  private readonly dataHandler: BehaviorSubject<Array<any>> = new BehaviorSubject([]);
-  protected itemsMostrados$: Observable<Array<any>>;
   protected items: Array<any>;
-  protected paginaActual: number = 0;
-  protected totalPaginas: number = 0;
-  protected paginas: Array<number> = [];
-  protected botonSiguiente: boolean = false;
-  protected botonAnterior: boolean = false;
-  protected maxPaginasVisible: number = 8;
-  protected paginasVisibles: Array<number> = [];
+  protected actualPage: number = 0;
+  protected totalPages: number = 0;
+  protected pages: Array<number> = [];
+  protected buttonNext: boolean = false;
+  protected buttonPrevious: boolean = false;
+  protected maxVisiblePages: number = 8;
+  protected visiblePages: Array<number> = [];
+  
+  finishSubs$: Subject<void> = new Subject();
 
-  private dataSub: Subscription;
+  constructor(
+    @Inject(PAGINATOR_SERVICE)
+    private readonly paginatorService: PaginatorServicePort<T>,
+  ) { }
 
   ngOnInit(): void {
-    this.dataSub = this.data.pipe(
-      tap((valores) => {
-        if (!AppUtil.verificarVacio(valores)) {
-          this.paginaActual = 1;
-          this.totalPaginas = Math.ceil(valores.length / this.registros);
-          for (let i = 1; i <= this.totalPaginas; i++) {
-            this.paginas.push(i);
+    this.paginatorService.originalData$.pipe(
+      defaultIfEmpty([]),
+      distinctUntilChanged(),
+      tap((values) => {
+        if (!AppUtil.verifyEmpty(values)) {
+          this.actualPage = 1;
+          this.totalPages = Math.ceil(values.length / this.registros);
+          for (let i = 1; i <= this.totalPages; i++) {
+            this.pages.push(i);
           }
-          this.items = valores;
-          this.refrescarInformacion();
+          this.items = values;
+          this.refreshInfo();
+        } else {
+          this.paginatorService.filteredData = [];
         }
-      })
+      }),
+      takeUntil(this.finishSubs$)
     ).subscribe();
   }
-
   ngOnDestroy(): void {
-    this.dataSub?.unsubscribe();
+    this.destroySubs();
   }
 
-  protected irPagina(pagina: number) {
-    this.paginaActual = pagina;
-    this.refrescarInformacion();
+  destroySubs(): void {
+    this.finishSubs$.next();
+    this.finishSubs$.complete();
   }
 
-  protected paginaSiguiente() {
-    this.paginaActual++;
-    this.refrescarInformacion();
+  protected goPage(page: number) {
+    this.actualPage = page;
+    this.refreshInfo();
   }
-
-  protected paginaAnterior() {
-    this.paginaActual--;
-    this.refrescarInformacion();
+  protected goNextPage() {
+    this.actualPage++;
+    this.refreshInfo();
   }
-
-  protected refrescarInformacion() {
-    this.botonAnterior = (this.paginaActual != 1);
-    this.botonSiguiente = (this.paginaActual < this.totalPaginas);
-
-    const indexInicio = (this.paginaActual - 1) * this.registros;
-    const indexFin = indexInicio + this.registros;
-    const paginatedItems = this.items.slice(indexInicio, indexFin);
-
-    this.dataHandler.next(paginatedItems);
-    this.itemsMostrados$ = this.dataHandler.asObservable();
-    this.cambioPagina.emit(this.itemsMostrados$);
-
-    this.actualizarPaginasVisibles();
+  protected goPreviousPage() {
+    this.actualPage--;
+    this.refreshInfo();
   }
+  protected refreshInfo() {
+    this.buttonPrevious = (this.actualPage != 1);
+    this.buttonNext = (this.actualPage < this.totalPages);
 
-  refrescarManual(nuevosItems: Array<any>) {
-    this.botonAnterior = (this.paginaActual != 1);
-    this.botonSiguiente = (this.paginaActual < this.totalPaginas);
+    const initIndex = (this.actualPage - 1) * this.registros;
+    const endIndex = initIndex + this.registros;
+    const paginatedItems = this.items.slice(initIndex, endIndex);
 
-    const indexInicio = (this.paginaActual - 1) * this.registros;
-    const indexFin = indexInicio + this.registros;
-    const paginatedItems = nuevosItems.slice(indexInicio, indexFin);
+    this.paginatorService.filteredData = paginatedItems;
 
-    this.dataHandler.next(paginatedItems);
-    this.itemsMostrados$ = this.dataHandler.asObservable();
-    this.cambioPagina.emit(this.itemsMostrados$);
-
-    this.actualizarPaginasVisibles();
+    this.updateVisiblePages();
   }
+  protected updateVisiblePages() {
+    const initPage = Math.max(1, this.actualPage - Math.floor(this.maxVisiblePages / 2));
+    const endPage = Math.min(this.totalPages, initPage + this.maxVisiblePages - 1);
 
-  protected actualizarPaginasVisibles() {
-    const paginaInicial = Math.max(1, this.paginaActual - Math.floor(this.maxPaginasVisible / 2));
-    const paginaFinal = Math.min(this.totalPaginas, paginaInicial + this.maxPaginasVisible - 1);
-
-    this.paginasVisibles = [];
-    for (let i = paginaInicial; i <= paginaFinal; i++) {
-      this.paginasVisibles.push(i);
+    this.visiblePages = [];
+    for (let i = initPage; i <= endPage; i++) {
+      this.visiblePages.push(i);
     }
   }
 }

@@ -17,7 +17,7 @@ import { concatMap, EMPTY, map, Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-employees',
-  imports: [TableComponent, CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './employees.component.html',
   styleUrl: './employees.component.css',
   providers: [PersonasService, EmpleadosService, SucursalesService]
@@ -93,7 +93,6 @@ export class EmployeesComponent implements OnInit {
       }),
       tap((lista) => {
         if (!AppUtil.verificarVacio(lista)) {
-          this.tabla.refrescarManual(lista);
           this.dialog.closeAll()
           this.personaService.notificarTerminado();
         }

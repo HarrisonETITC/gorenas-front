@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import { APPLICATION_SERVICE } from '@Application/config/providers/app.providers';
+import { ApplicationServicePort } from '@Application/ports/application-service.port';
 import { LoginService } from '@services/login.service';
 
 @Component({
@@ -10,15 +12,12 @@ import { LoginService } from '@services/login.service';
   styleUrl: './dashboard.component.css',
   providers: [LoginService]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
 
   constructor(
-    private readonly loginService: LoginService,
-    private readonly dialog: MatDialog
+    @Inject(APPLICATION_SERVICE)
+    private readonly appService: ApplicationServicePort
   ) {
 
-  }
-  ngOnInit(): void {
-    console.log();
   }
 }

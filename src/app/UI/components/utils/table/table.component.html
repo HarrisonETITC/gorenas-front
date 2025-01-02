@@ -1,39 +1,50 @@
 <div class="data-container">
-  <div class="products-area-wrapper tableView">
-    <div class="products-header">
-      @for (col of (cabeceras$ | async)?? []; track $index) {
-        <div class="product-cell">{{ mapeos.get(col) }}</div>
-      }
-      <div class="product-cell">Acciones</div>
-    </div>
-    @for (valor of (informacion$ | async)?? []; track $index) {
-      <div class="products-row">
-        @for (clave of obtenerLlaves(valor); track $index) {
-          @if (clave == 'estado') {
-            <div class="product-cell status-cell">
-              <span class="status {{ valor[clave] == 'A' ? 'active' : 'disabled' }}">{{ mapaEstados.get(valor[clave]) }}</span>
-            </div>
-          } @else {
-            <div class="product-cell">
-              {{ transformarValor(valor[clave], clave) }}
-            </div>
-          }
+  @if(!loadingData) {
+    <div class="products-area-wrapper tableView h-full max-h-[39rem]">
+      <div class="products-header">
+        @for (col of headers?? []; track $index) {
+          <div class="product-cell">{{ headersMap.get(col) }}</div>
         }
-        <div class="product-cell btn-container">
-          @if(puedeVer('editar')) {
-            <button class="app-content-headerButton btn-editar" (click)="botonEditar(valor)"><ion-icon name="create-outline"></ion-icon></button>
-          }
-          @if(false) {
-            <button class="app-content-headerButton btn-inactivar" (click)="botonInactivar(valor)">Inactivar</button>
-          }
-        </div>
+        <div class="product-cell">Acciones</div>
       </div>
-    }
-  </div>
-  <app-paginator
+      @for (value of (filtered$ | async)?? []; track $index) {
+        <div class="products-row">
+          @for (key of getKeys(value); track $index) {
+            @if (key == 'state') {
+              <div class="product-cell status-cell">
+                <span class="status {{ value[key] == 'A' ? 'active' : 'disabled' }}">{{ mapaEstados.get(value[key]) }}</span>
+              </div>
+            } @else {
+              <div class="product-cell">
+                {{ transformValue(value[key], key) }}
+              </div>
+            }
+          }
+          <div class="product-cell btn-container">
+            @if(canSee('editar')) {
+              <button class="header-button btn-editar" (click)="handleEditBtn(value)"><ion-icon name="create-outline"></ion-icon></button>
+            }
+            @if(false) {
+              <button class="header-button btn-inactivar" (click)="handleDeactivateBtn(value)">Inactivar</button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+  @else {
+    <div
+      class="h-full w-full border-8 border-solid rounded-3xl border-sidebarActive text-sidebarActive flex items-center justify-center">
+      <span class="text-5xl text-center">No hay información aquí</span>
+    </div>
+  }
+  <app-paginator class="w-full"
+    [ngClass]="{ 'absolute z-[-10] hidden': loadingData }"
     [registros]="15"
-    [data]="informacion$"
-    (cambioPagina)="refrescarInformacion($event)"
-    style="height: 15%; width: 100%;"
+    [data]="info$"
   ></app-paginator>
+</div>
+
+<div class="data-container">
+
 </div>

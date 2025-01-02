@@ -3,22 +3,22 @@
         <button
             type="button"
             class="paginador-button izquierda"
-            [disabled]="!botonAnterior"
-            (click)="paginaAnterior()"
+            [disabled]="!buttonPrevious"
+            (click)="goPreviousPage()"
         >back</button>
-            @for(numero of paginasVisibles; track $index){
+            @for(page of visiblePages; track $index){
                 <button
                     type="button"
-                    class="paginador-button centro {{(numero == paginaActual)? 'focus' : ''}}"
-                    [disabled]="paginaActual == numero"
-                    (click)="irPagina(numero)"
-                >{{ numero }}</button>
+                    class="paginador-button centro {{(page == actualPage)? 'focus' : ''}}"
+                    [disabled]="actualPage == page"
+                    (click)="goPage(page)"
+                >{{ page }}</button>
             }
         <button
             type="button"
             class="paginador-button derecha"
-            [disabled]="!botonSiguiente"
-            (click)="paginaSiguiente()"    
+            [disabled]="!buttonNext"
+            (click)="goNextPage()"    
         >next</button>
     </div>
 </div>

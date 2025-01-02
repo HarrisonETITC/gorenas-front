@@ -1,16 +1,8 @@
-<div class="app-content">
-    <div class="app-content-header">
-      <h1 class="app-content-headerText">Roles</h1>
-    </div>
-    <div class="app-content-actions">
-      <div class="app-content-actions-wrapper">
-        <button class="app-content-headerButton">Agregar permiso</button>
-      </div>
-    </div>
-    <app-table
-      style="height: 90%;"
-      [cabeceras$]="cols$"
-      [informacion$]="data$"
-      [mapeos]="headers"
-    ></app-table>
-</div>
+<app-base-data
+    [module]="moduleName"
+    [service]="service"
+    [headers]="headers"
+    [filters]="filterFields"
+    [dataForms]="getForms()"
+    [initFilter$]="getInitFilter()"
+></app-base-data>

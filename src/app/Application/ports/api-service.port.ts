@@ -2,8 +2,9 @@ import { GeneralModel } from "@Domain/models/general/general.model";
 import { IdValue } from "@Domain/models/general/id-value.interface";
 import { GeneralFilter } from "@models/base/general.filter";
 import { Observable } from "rxjs";
+import { GetAvailablePort } from "./get-available.port";
 
-export interface ApiServicePort<T extends GeneralModel, U = T> {
+export interface ApiServicePort<T extends GeneralModel, U = T> extends GetAvailablePort {
     getAll(): Observable<Array<U>>;
     getById(id: number): Observable<U>;
     create(data: T): Observable<T>;
