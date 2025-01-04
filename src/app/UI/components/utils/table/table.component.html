@@ -1,7 +1,7 @@
 <div class="data-container">
   @if(!loadingData) {
     <div class="h-full max-h-[39rem] overflow-y-auto rounded-lg table-container">
-      <table mat-table [dataSource]="data" class="border-separate">
+      <table mat-table [dataSource]="filteredData" class="border-separate">
         @for (column of filterActionsRow(headers); track $index) {
           <ng-container [matColumnDef]="column">
             <th mat-header-cell *matHeaderCellDef class="border-none">{{ headersMap.get(column) }}</th>
@@ -10,8 +10,8 @@
                 <div class="product-cell status-cell">
                   <span
                     class="status"
-                    [ngClass]="element[column] == 'A' ? 'active' : 'disabled'"
-                  >{{ mapaEstados.get(element[column]) }}</span>
+                    [ngClass]="statesMap.get(element[column]).style"
+                  >{{ statesMap.get(element[column]).showValue }}</span>
                 </div>
               } @else {
                 <div class="product-cell">
@@ -21,19 +21,33 @@
             </td>
           </ng-container>
         }
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef class="border-none">Acciones</th>
-          <td mat-cell class="border-none" *matCellDef="let element">
-            <div class="product-cell btn-container">
-              @if(canSee('editar')) {
-                <button class="header-button btn-editar" (click)="handleEditBtn(element)">Editar</button>
-              }
-              @if(false) {
-                <button class="header-button btn-inactivar" (click)="handleDeactivateBtn(element)">Inactivar</button>
-              }
-            </div>
-          </td>
-        </ng-container>
+        @if(!verifyEmpty(generalConfig.buttons)) {
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="border-none">Acciones</th>
+            <td mat-cell class="border-none" *matCellDef="let element">
+              <div
+                class="flex items-center"
+                [ngClass]="generalConfig.buttons.length > 1? 'justify-around gap-1': 'justify-center'">
+                @for(btn of generalConfig.buttons; track $index) {
+                  @if(btn.show) {
+                    <button
+                      class="h-8 rounded-lg flex items-center"
+                      [ngClass]="getBtnStyle(btn)"
+                      (click)="hanbleBtnAction(btn.action, element)"
+                      [matTooltip]="btn.tooltip ?? ''">
+                      @if (!verifyEmpty(btn.icon)) {
+                        <mat-icon>{{ btn.icon }}</mat-icon>
+                      }
+                      @if (!verifyEmpty(btn.label)) {
+                        <span>{{ btn.label }}</span>
+                      }
+                    </button>
+                  }
+                }
+              </div>
+            </td>
+          </ng-container>
+        }
 
         <tr mat-header-row *matHeaderRowDef="headers"></tr>
         <tr mat-row *matRowDef="let row; columns: headers;"></tr>

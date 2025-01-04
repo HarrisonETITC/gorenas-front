@@ -1,36 +1,40 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Usuario } from '@models/usuario.model';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { AppUtil } from '@utils/app.util';
-import { BehaviorSubject, filter, map, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { distinctUntilChanged, filter, ignoreElements, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { PaginatorComponent } from '../paginator/paginator.component';
-import { Router, RouterModule } from '@angular/router';
-import { AuthUtils } from '@utils/auth.util';
+import { RouterModule } from '@angular/router';
 import { PAGINATOR_SERVICE } from '@Application/config/providers/utils/utils.providers';
 import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
 import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 import { IdValue } from '@Domain/models/general/id-value.interface';
 import { MatTableModule } from '@angular/material/table';
 import { GeneralModel } from '@Domain/models/general/general.model';
+import { StateModel } from '@Domain/models/general/state.model';
+import { StateStyle } from '@Domain/types/state-style.type';
+import { TableConfig } from '@Domain/models/general/table-config.model';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BtnConfig } from '@Domain/models/general/btn.config';
 
 @Component({
   selector: 'app-table',
-  imports: [CommonModule, PaginatorComponent, RouterModule, MatTableModule],
+  imports: [CommonModule, PaginatorComponent, RouterModule, MatTableModule, MatIconModule, MatTooltipModule],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: []
 })
 export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy, AfterViewInit, DestroySubsPort {
+  @Input({ required: true }) dataNotifier$: Observable<Array<T>>;
   @Input({ required: true }) headersMap: Map<string, string>;
+  @Input({ required: true }) generalConfig: TableConfig;
+  @Input({ required: false }) statesMap: Map<string, StateStyle>;
   @Input() valuesMap: Map<string, Array<IdValue>>;
-  @Output() protected OnDeactivateBtn = new EventEmitter<T>();
-  @Output() protected OnEditBtn = new EventEmitter<T>();
+  @Output() protected onBtnClick = new EventEmitter<{ event: string, element: T }>();
 
-  private readonly filteredInfo = new BehaviorSubject<Array<T>>([]);
   protected headers: Array<string>;
-  protected actualPath: string = '';
-  protected data: Array<T>;
-  protected mapaEstados = Usuario.MAPEOS_ESTADOS;
+  protected rawData: Array<T>;
+  protected filteredData: Array<T>;
   protected headersDinero = ['ganancias', 'mes', 'total', 'totales', 'monto'];
   protected loadingData = true;
 
@@ -38,56 +42,61 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
 
   constructor(
     @Inject(PAGINATOR_SERVICE)
-    private readonly paginatorService: PaginatorServicePort<T>,
-    private readonly router: Router,
-    readonly cdr: ChangeDetectorRef
+    private readonly paginatorService: PaginatorServicePort<T>
   ) { }
 
   ngOnInit(): void {
-    const url = this.router.routerState.snapshot.url;
-    this.actualPath = url.split('/').pop();
+    this.dataNotifier$.pipe(
+      tap((rawData) => {
+        if (AppUtil.verifyEmpty(rawData)) {
+          this.loadingData = true;
+          this.rawData = [];
+          this.paginatorService.originalData = [];
+        } else {
+          this.rawData = rawData;
+          this.paginatorService.originalData = this.rawData;
+        }
+      }),
+      takeUntil(this.finishSubs$),
+      ignoreElements()
+    ).subscribe();
   }
   ngOnDestroy(): void {
     this.destroySubs();
   }
   ngAfterViewInit(): void {
+    if (AppUtil.verifyEmptySimple(this.statesMap))
+      this.statesMap = StateModel.STATES_MAP;
+
     this.paginatorService.filteredData$
       .pipe(
-        filter(data => !AppUtil.verifyEmptySimple(data)),
+        filter(data => !AppUtil.verifyEmpty(data)),
         tap((info) => {
-          if (AppUtil.verifyEmpty(info)) {
-            this.loadingData = true;
-          } else {
-            this.data = info;
-            this.filteredInfo.next(info);
-            this.loadingData = false;
-          }
+          this.filteredData = info;
+          this.loadingData = false;
         }),
         map(info => {
-          if (AppUtil.verifyEmpty(info))
-            return [];
-
           const headers = Object.keys(info[0]);
           headers.push('actions');
           return headers;
         }),
+        distinctUntilChanged(),
         takeUntil(this.finishSubs$)
       )
       .subscribe((info) => {
         this.headers = info;
       });
   }
-  get info$() {
-    return this.paginatorService.originalData$;
-  }
-  get filtered$(): Observable<Array<T>> {
-    return this.filteredInfo.asObservable();
-  }
 
   destroySubs(): void {
     this.finishSubs$.next();
     this.finishSubs$.complete();
   }
+
+  get info$() {
+    return this.paginatorService.originalData$;
+  }
+
   protected getKeys(valor: T) {
     return Object.keys(valor);
   }
@@ -110,19 +119,23 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
 
     return value;
   }
-  showElement(el: any) {
+  protected showElement(el: any) {
     console.log(el);
   }
   protected filterActionsRow(headers: Array<string>) {
     return headers.filter(header => header !== 'actions');
   }
-  protected handleDeactivateBtn(register: T) {
-    this.OnDeactivateBtn.emit(register);
+  protected hanbleBtnAction(event: string, element: T) {
+    this.onBtnClick.emit({ event, element });
   }
-  protected handleEditBtn(register: T) {
-    this.OnEditBtn.emit(register);
+  protected verifyEmpty(value: any) {
+    return AppUtil.verifyEmpty(value);
   }
-  protected canSee(btn: string) {
-    return AuthUtils.verificarPuedeVer(`${this.actualPath}-${btn}`)
+  getBtnStyle(btn: BtnConfig): string {
+    const basicStyle = btn.style;
+    if (!this.verifyEmpty(btn.icon) && !this.verifyEmpty(btn.label))
+      return `${basicStyle} px-2 gap-1`;
+
+    return `${basicStyle} justify-center w-8`;
   }
 }

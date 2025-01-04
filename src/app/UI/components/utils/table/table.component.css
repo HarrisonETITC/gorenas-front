@@ -34,19 +34,21 @@
     background-color: #59719d;
 }
 
+.status.default {
+    color: lightgray;
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+.status.default:before {
+    background-color: lightgray;
+}
+
 .btn-editar {
     background-color: var(--action-color);
 }
 
 .btn-inactivar {
     background-color: var(--error-color);
-}
-
-.btn-container {
-    display: flex;
-    flex-direction: column;
-    gap: .4em;
-    padding: .2em!important;
 }
 
 /* Estilos para el scroll del div contenedor de la tabla */

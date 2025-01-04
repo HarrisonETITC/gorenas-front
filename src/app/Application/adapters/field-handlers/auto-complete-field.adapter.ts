@@ -1,7 +1,7 @@
 import { AutocompleteFieldPort } from "@Application/ports/forms/auto-complete-field.port";
 import { FormItemModel } from "@Domain/models/forms/items/form-item.model";
 import { AppUtil } from "@utils/app.util";
-import { distinctUntilChanged, Observable, of, throttleTime } from "rxjs";
+import { distinctUntilChanged, filter, map, Observable, of, take, tap, throttleTime } from "rxjs";
 import { FieldInitializerPort } from "src/app/core/interfaces/field-handler.port";
 
 export class AutocompleteFieldAdapter implements FieldInitializerPort, AutocompleteFieldPort {
@@ -9,7 +9,7 @@ export class AutocompleteFieldAdapter implements FieldInitializerPort, Autocompl
         if (AppUtil.verifyEmpty(field.autocompleteOptions))
             throw new Error(`Debe proveer las opciones de autoComplete para un campo de tipo AutoComplete. Nombre del campo sin opciones: '${field.name}'`);
 
-        if (AppUtil.verifyEmpty(field.autocompleteOptions.filter))
+        if (AppUtil.verifyEmpty(field.autocompleteOptions.endpoint))
             throw new Error(`Debe proveer un servicio para filtrar las opciones del campo autocomplete. Nombre del campo sin servicio: '${field.name}'`);
     }
     initField(field: FormItemModel): void {
@@ -32,7 +32,20 @@ export class AutocompleteFieldAdapter implements FieldInitializerPort, Autocompl
         )
             .subscribe(query => this.initAutoCompleteData(field, query));
     }
+    setValue(val: any, field: FormItemModel) {
+        return field.autocompleteOptions.endpoint.getIdValueMany([val]).pipe(
+            filter(data => !AppUtil.verifyEmptySimple(data)),
+            tap(data => {
+                if (AppUtil.verifyEmpty(data))
+                    field.defaultValue = '';
+                else
+                    field.defaultValue = data[0];
+            }),
+            take(1),
+            map(_ => { return })
+        );
+    }
     private initAutoCompleteData(field: FormItemModel, query?: string) {
-        field.autocompleteOptions.options = field.autocompleteOptions.filter.getAvailable(query);
+        field.autocompleteOptions.options = field.autocompleteOptions.endpoint.getAvailable(query);
     }
 }

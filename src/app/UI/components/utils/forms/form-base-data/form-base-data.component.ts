@@ -7,7 +7,7 @@ import { FIELDS_SERVICE, FORM_DATA_SERVICE, FormsProviders } from '@Application/
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
 import { AppUtil } from '@utils/app.util';
 import { FormBaseComponent } from '../form-base/form-base.component';
-import { filter, first, Observable, of, Subject, takeUntil, tap } from 'rxjs';
+import { concatMap, filter, first, Observable, of, Subject, takeUntil, tap } from 'rxjs';
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
 import { FormsUtil } from '@utils/forms.util';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
@@ -94,10 +94,10 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
       this.fieldsService.updateFields(this.actualForm.fields);
     else {
       this.actualForm.dataInitializer.getById(this.id).pipe(
-        tap(data => {
-          FormsUtil.assignValuesOnFields(data, this.actualForm.fields)
-        })
-      ).subscribe(() => this.fieldsService.updateFields(this.actualForm.fields));
+        concatMap(data => FormsUtil.assignValuesOnFields(data, this.actualForm.fields))
+      ).subscribe(() => {
+        this.fieldsService.updateFields(this.actualForm.fields)
+      });
     }
   }
   protected goBack() {
