@@ -117,11 +117,6 @@
     cursor: pointer;
 }
 
-.account-info-more ion-icon {
-    font-size: 2em;
-    cursor: pointer;
-}
-
 .info-container {
     display: flex;
     align-items: center;

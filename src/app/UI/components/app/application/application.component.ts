@@ -68,6 +68,7 @@ export class ApplicationComponent implements OnInit, OnDestroy, DestroySubsPort 
     ).subscribe();
   }
   protected navigate(url: string) {
+    this.notificationService.showNotification(InfoConfig('hola', 'holaaaaaa aaaaaaaaaa aaaaaaaaa a a a a a aa aaaaaaa'))
     this.router.navigate([`/app/${url}`]);
   }
   protected logOut() {
