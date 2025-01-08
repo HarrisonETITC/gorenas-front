@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { URL_ALL, URL_AVAILABLE, URL_CAN_SEE, URL_CREATE, URL_DELETE, URL_ID, URL_MODIFY } from "@Application/config/endpoints/general.endpoints";
+import { URL_ALL, URL_AVAILABLE, URL_CAN_SEE, URL_CREATE, URL_DELETE, URL_ID, URL_ID_VALUE, URL_MODIFY } from "@Application/config/endpoints/general.endpoints";
 import { ApiServicePort } from "@Application/ports/api-service.port";
 import { GeneralModel } from "@Domain/models/general/general.model";
 import { IdValue } from "@Domain/models/general/id-value.interface";
@@ -43,5 +43,9 @@ export abstract class GeneralApiService<T extends GeneralModel, U = T> implement
         return this.http.get<Array<U>>(url).pipe(
             defaultIfEmpty([])
         );
+    }
+    getIdValueMany(values: Array<any>): Observable<Array<IdValue>> {
+        const url = `${this.baseUrl}${URL_ID_VALUE}?values=${values.join(',')}`;
+        return this.http.get<Array<IdValue>>(url);
     }
 }

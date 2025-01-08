@@ -7,6 +7,7 @@ import { SelectFieldAdapter } from "@Application/adapters/field-handlers/select-
 import { FormItemModel } from "@Domain/models/forms/items/form-item.model";
 import { FormItem } from "@models/formulario/form-item.model";
 import { NumberFieldAdapter } from "@Application/adapters/field-handlers/number-field.adapter";
+import { catchError, from, mergeMap, Observable, of } from "rxjs";
 
 export class FormsUtil {
     static readonly FORMS_HANDLER = new Map<string, FieldInitializerPort>();
@@ -52,22 +53,32 @@ export class FormsUtil {
     static hasError(group: FormGroup, formControl: string): boolean {
         return group.get(formControl).invalid && group.get(formControl).touched;
     }
-    static assignValuesOnFields(val: any, fields: Array<FormItemModel>) {
+    static assignValuesOnFields(val: any, fields: Array<FormItemModel>): Observable<void> {
+        const observables = new Array<Observable<void>>();
+
         Object.keys(val).forEach((key) => {
             const value = val[key];
             const field = fields.find(field => field.name === key);
             if (!AppUtil.verifyEmpty(value) && !AppUtil.verifyEmpty(field))
-                this.assignValue(value, field);
+                observables.push(this.assignValue(value, field));
+        });
 
-        })
+        return from(observables).pipe(
+            mergeMap(obs => obs),
+            catchError(err => {
+                console.log(err);
+                return of();
+            })
+        )
     }
-    static assignValue(val: any, field: FormItemModel) {
-        if (field.type === FormItemModel.TYPE_SELECT) {
-            field.defaultValue = field.selectOptions?.options.find((opt) => opt.value == val).viewValue ?? '';
-            return;
+    static assignValue(val: any, field: FormItemModel): Observable<void> {
+
+        if (this.FORMS_HANDLER.has(field.type)) {
+            return this.FORMS_HANDLER.get(field.type).setValue(val, field);
         }
 
         field.defaultValue = val;
+        return of();
     }
 
     static convertirFormObjeto<T>(form: FormGroup, campos: Array<FormItem>, id?: number): T {

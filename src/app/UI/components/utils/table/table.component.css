@@ -1,121 +1,11 @@
-.products-area-wrapper {
-    width: 100%;
-    overflow-y: scroll;
-    padding: 0 4px;
-}
-
-.tableView .products-header {
-    display: flex;
-    align-items: center;
-    border-radius: 4px;
-    background-color: var(--app-content-secondary-color);
-    position: sticky;
-    top: 0;
-}
-
-.tableView .products-row {
-    display: flex;
-    align-items: center;
-    border-radius: 4px;
-}
-
-.tableView .products-row:hover {
-    box-shadow: var(--filter-shadow);
-    background-color: var(--app-content-secondary-color);
-}
-
-.tableView .products-row .cell-more-button {
-    display: none;
-}
-
-.tableView .product-cell {
-    flex: 1;
-    padding: 8px 0px;
-    color: var(--app-content-main-color);
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.tableView .product-cell img {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    margin-right: 6px;
-}
-
-@media screen and (max-width: 780px) {
-    .tableView .product-cell {
-        font-size: 12px;
-    }
-
-    .tableView .product-cell.image span {
-        display: none;
-    }
-
-    .tableView .product-cell.image {
-        flex: 0.2;
-    }
-}
-
-@media screen and (max-width: 520px) {
-
-    .tableView .product-cell.category,
-    .tableView .product-cell.sales {
-        display: none;
-    }
-
-    .tableView .product-cell.status-cell {
-        flex: 0.4;
-    }
-
-    .tableView .product-cell.stock,
-    .tableView .product-cell.price {
-        flex: 0.2;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .tableView .product-cell.stock {
-        display: none;
-    }
-
-    .tableView .product-cell.price {
-        flex: 0.4;
-    }
-}
-
-.tableView .sort-button {
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--app-content-main-color);
-    margin-left: 4px;
-    display: flex;
-    align-items: center;
-}
-
-.tableView .sort-button:hover {
-    color: var(--action-color);
-}
-
-.tableView .sort-button svg {
-    width: 12px;
-}
-
-.tableView .cell-label {
-    display: none;
-}
-
-
+/* Estilos generales */
 .status {
     border-radius: 4px;
     display: flex;
     align-items: center;
     padding: 4px 8px;
-    font-size: 12px;
+    font-size: .75rem;
+    width: 60px;
 }
 
 .status:before {
@@ -144,21 +34,13 @@
     background-color: #59719d;
 }
 
-.header-button {
-    color: #fff;
-    font-size: 14px;
-    line-height: 24px;
-    border: none;
-    border-radius: 4px;
-    height: 32px;
-    padding: 0 16px;
-    transition: 0.2s;
-    cursor: pointer;
+.status.default {
+    color: lightgray;
+    background-color: rgba(128, 128, 128, 0.2);
 }
 
-.header-button ion-icon {
-    font-size: 1.5em;
-    padding: 8px;
+.status.default:before {
+    background-color: lightgray;
 }
 
 .btn-editar {
@@ -169,9 +51,61 @@
     background-color: var(--error-color);
 }
 
-.btn-container {
-    display: flex;
-    flex-direction: column;
-    gap: .4em;
-    padding: .2em!important;
+/* Estilos para el scroll del div contenedor de la tabla */
+.table-container::-webkit-scrollbar {
+    width: var(--scroll-size, 10px);
+    height: var(--scroll-size, 10px);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-thumb-color, grey);
+    background-image: var(--scroll-thumb, none);
+    border-radius: var(--scroll-thumb-radius, var(--scroll-radius));
+}
+
+.table-container::-webkit-scrollbar-track {
+    background-color: var(--scroll-track, transparent);
+    border-radius: var(--scroll-track-radius, var(--scroll-radius));
+}
+
+/* Estilos de mat-table */
+::ng-deep .mat-mdc-table {
+    background-color: transparent!important;
+}
+
+::ng-deep .mat-mdc-table thead {
+    background-color: var(--app-content-secondary-color)!important;
+}
+
+::ng-deep .mat-mdc-table thead tr {
+    color: white!important;
+}
+
+::ng-deep .mat-mdc-table tbody tr {
+    color: white!important;
+    border-radius: 1rem!important;
+}
+
+::ng-deep .mat-mdc-table thead tr th {
+    text-align: center;
+}
+
+::ng-deep .mat-mdc-table thead tr th:first-child {
+    border-radius: 0.5rem 0 0 0.5rem!important;
+}
+
+::ng-deep .mat-mdc-table thead tr th:last-child {
+    border-radius: 0 0.5rem 0.5rem 0!important;
+}
+
+::ng-deep .mat-mdc-table tbody tr:hover {
+    background-color: var(--app-content-secondary-color)!important;
+}
+
+::ng-deep .mat-mdc-table tbody tr td:first-child {
+    border-radius: 0.5rem 0 0 0.5rem!important;
+}
+
+::ng-deep .mat-mdc-table tbody tr td:last-child {
+    border-radius: 0 0.5rem 0.5rem 0!important;
 }

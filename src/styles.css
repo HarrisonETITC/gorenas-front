@@ -16,6 +16,8 @@
   --sidebar-hover-link: #1a2539;
   --action-color: #2869ff;
   --action-color-hover: #6291fd;
+  --app-secondary: #6731EB;
+  --app-secondary-hover: #8b67e3;
   --app-warning: #faca15;
   --app-warning-bold: #e4ab58;
   --app-warning-bold-hover: #c19657;
@@ -29,6 +31,10 @@
   --mdc-switch-state-layer-size: 1.5rem;
   --mdc-switch-track-width: 2.75rem;
   --mdc-filled-text-field-focus-label-text-color: var(--action-color);
+  --scroll-size: .5rem;
+  --scroll-radius: 20px;
+  --scroll-track: rgb(255 255 255 / 10%);
+  --scroll-thumb: linear-gradient(45deg, #00aeff, #a68eff);
 }
 
 .light:root {

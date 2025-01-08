@@ -1,5 +1,6 @@
 import { FormItemModel } from "@Domain/models/forms/items/form-item.model";
 import { AppUtil } from "@utils/app.util";
+import { of } from "rxjs";
 import { FieldInitializerPort } from "src/app/core/interfaces/field-handler.port";
 
 export class SelectFieldAdapter implements FieldInitializerPort {
@@ -18,5 +19,9 @@ export class SelectFieldAdapter implements FieldInitializerPort {
     }
     processExtraFields(extraFields: Array<FormItemModel>, fields: Array<FormItemModel>) {
         return fields;
+    }
+    setValue(val: any, field: FormItemModel) {
+        field.defaultValue = field.selectOptions?.options.find((opt) => opt.value == val).viewValue ?? '';
+        return of();
     }
 }

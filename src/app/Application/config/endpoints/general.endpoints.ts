@@ -4,6 +4,7 @@ export const URL_ALL = 'all';
 export const URL_ID = 'id';
 export const URL_DELETE = 'delete';
 export const URL_AVAILABLE = 'available';
+export const URL_ID_VALUE = 'id-value';
 export const URL_CAN_SEE = 'can-see';
 export const URL_AUTHENTICATE = 'authenticate';
 export const URL_AUTH = 'auth';

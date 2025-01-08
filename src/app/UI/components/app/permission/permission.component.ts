@@ -18,6 +18,8 @@ import { BaseDataComponent } from '@components/base/base-data/base-data.componen
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
 import { UseBaseDataComponent } from 'src/app/core/interfaces/use-base-data.interface';
 import { FormsProviders } from '@Application/config/providers/form.providers';
+import { TableConfig } from '@Domain/models/general/table-config.model';
+import { BtnConfig } from '@Domain/models/general/btn.config';
 
 @Component({
   selector: 'app-permission',
@@ -62,12 +64,19 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
 
     if (AppUtil.verifyEmpty(roleAutocompleteField.autocompleteOptions))
       roleAutocompleteField.autocompleteOptions = {
-        filter: this.roleService
+        endpoint: this.roleService
       };
 
     return [createForm];
   }
   initFilters(data: string): void {
     PermissionFilter.FIELDS.find(f => f.name === 'roleName').defaultValue = data;
+  }
+  getTableConfig(): TableConfig {
+    return {
+      buttons: [
+        BtnConfig.BASIC_EDIT_CONFIG
+      ]
+    }
   }
 }

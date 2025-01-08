@@ -48,7 +48,10 @@
                 }
                 <app-table
                     class="w-full h-full"
+                    [dataNotifier$]="data$"
                     [headersMap]="headers"
+                    [generalConfig]="tableConfig"
+                    (onBtnClick)="handleBtnAction($event)"
                 ></app-table>
             </div>
         </div>

@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable()
 export class FormDataServiceAdapter implements FormDataServicePort {
-    private readonly stateHandler: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private readonly stateHandler: BehaviorSubject<boolean> = new BehaviorSubject(null);
     private readonly totalForms: BehaviorSubject<Array<FormDataConfig>> = new BehaviorSubject([]);
     private readonly formEventHandler: BehaviorSubject<EventMessage> = new BehaviorSubject({ event: '' });
     private readonly componentEventHandler: BehaviorSubject<EventMessage> = new BehaviorSubject({ event: '' });

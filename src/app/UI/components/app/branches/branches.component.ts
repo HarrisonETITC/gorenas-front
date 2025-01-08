@@ -6,6 +6,8 @@ import { AppModel } from '@Domain/models/base/application.model';
 import { BranchModel } from '@Domain/models/base/branch.model';
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
 import { FormItemModel } from '@Domain/models/forms/items/form-item.model';
+import { BtnConfig } from '@Domain/models/general/btn.config';
+import { TableConfig } from '@Domain/models/general/table-config.model';
 import { BranchModelView } from '@Domain/models/model-view/branch.mv';
 import { BranchFilter } from '@models/filter/branch.filter';
 import { RestauranteService } from '@services/restaurante.service';
@@ -41,5 +43,13 @@ export class BranchesComponent implements OnInit, UseBaseDataComponent {
   }
   initFilters(data: any): void {
     throw new Error('Method not implemented.');
+  }
+  getTableConfig(): TableConfig {
+    return {
+      buttons: [
+        BtnConfig.BASIC_EDIT_CONFIG,
+        BtnConfig.BASIC_DISABLE_CONFIG,
+      ]
+    }
   }
 }

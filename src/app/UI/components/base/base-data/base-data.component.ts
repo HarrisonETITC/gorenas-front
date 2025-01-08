@@ -19,11 +19,13 @@ import { FiltersExtendedComponent } from '@components/utils/filters/filters-exte
 import { TableComponent } from '@components/utils/table/table.component';
 import { FormDataConfig } from '@Domain/models/forms/form-data-config.model';
 import { FormItemModel } from '@Domain/models/forms/items/form-item.model';
+import { GeneralModel } from '@Domain/models/general/general.model';
+import { TableConfig } from '@Domain/models/general/table-config.model';
 import { ViewValue } from '@Domain/types/view-value.type';
 import { GeneralFilter } from '@models/base/general.filter';
 import { PermissionFilter } from '@models/filter/permission.filter';
 import { AppUtil } from '@utils/app.util';
-import { defaultIfEmpty, distinctUntilChanged, filter, ignoreElements, Observable, skip, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
+import { BehaviorSubject, defaultIfEmpty, distinctUntilChanged, filter, ignoreElements, Observable, skip, Subject, take, takeUntil, tap, throttleTime } from 'rxjs';
 import { UseTable } from 'src/app/core/interfaces/use-table.interface';
 
 @Component({
@@ -36,15 +38,17 @@ import { UseTable } from 'src/app/core/interfaces/use-table.interface';
     ...FormsProviders
   ]
 })
-export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort {
+export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort {
   @Input({ required: true }) module: string;
   @Input({ required: true }) service: ApiServicePort<T, U>;
   @Input({ required: true }) headers: Map<string, string>;
   @Input({ required: true }) initFilter$: Observable<GeneralFilter>;
+  @Input({ required: true }) tableConfig: TableConfig;
   @Input({ required: false }) infoMaps?: Map<string, Array<ViewValue>>;
   @Input({ required: false }) filters?: Array<FormItemModel>;
   @Input({ required: false }) dataForms?: Array<FormDataConfig>;
 
+  protected readonly dataManager: BehaviorSubject<Array<T>> = new BehaviorSubject(null);
   protected filterExtended: boolean = false;
   protected isFormView$: Observable<boolean>;
   protected initFilterRaw: GeneralFilter;
@@ -80,6 +84,10 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     this.finishSubs$.complete();
   }
 
+  get data$(): Observable<Array<T>> {
+    return this.dataManager.asObservable();
+  }
+
   protected initData() {
     this.initFilter$.pipe(
       take(1),
@@ -93,16 +101,17 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     this.fieldsService.getFields().pipe(
       filter(fields => !AppUtil.verifyEmpty(fields)),
       take(1),
-      takeUntil(this.finishSubs$),
       tap(_ => this.showFilters = true),
       ignoreElements()
     ).subscribe();
+
     this.isFormView$ = this.formDataService.isFormActive().pipe(
+      filter(active => !AppUtil.verifyEmptySimple(active)),
       distinctUntilChanged(),
-      skip(1),
+      takeUntil(this.finishSubs$),
       tap(value => {
         if (!value) {
-          this.paginatorService.originalData = [];
+          this.dataManager.next([]);
           this.fieldsService.sendFiltersEvent();
         }
       })
@@ -138,8 +147,8 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
     this.service.getCanSee(dataFilter).pipe(
       defaultIfEmpty([]),
       distinctUntilChanged(),
-      tap(data => {
-        this.paginatorService.originalData = (data as T[]);
+      tap((data: Array<T>) => {
+        this.dataManager.next(data)
       })
     ).subscribe();
   }
@@ -163,6 +172,10 @@ export class BaseDataComponent<T, U = T> implements OnInit, OnDestroy, UseTable<
       if (ev.event === 'close')
         formSub.unsubscribe();
     });
+  }
+  protected handleBtnAction(ev: { event: string, element: T }): void {
+    if (ev.event === 'edit')
+      this.goUpdate(ev.element.id);
   }
   protected verifyEmpty(data: any): boolean {
     return AppUtil.verifyEmpty(data);
