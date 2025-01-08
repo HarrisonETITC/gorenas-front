@@ -15,7 +15,8 @@ module.exports = {
         actionHover: "var(--action-color-hover)",
         warning: "var(--app-warning)",
         warningBold: "var(--app-warning-bold)",
-        warningBoldHover: "var(--app-warning-bold-hover)"
+        warningBoldHover: "var(--app-warning-bold-hover)",
+        "side-var": "var(--sidebar)"
       },
       borderRadius: {
         general: "0.25rem",
@@ -31,7 +32,8 @@ module.exports = {
         contentMain: "var(--app-content-main-color)",
         warning: "var(--app-warning)",
         warningBold: "var(--app-warning-bold)",
-        sidebarActive: "var(--sidebar-active-link)"
+        sidebarActive: "var(--sidebar-active-link)",
+        "side-main-color": "var(--sidebar-main-color)"
       },
       content: {
         dot: "'•'"

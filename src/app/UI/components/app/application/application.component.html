@@ -1,20 +1,20 @@
 
-<div class="app-container">
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="app-icon">
-        <ion-icon name="restaurant-outline" class="menu-icono"></ion-icon>
+<div class="h-full w-full max-h-full flex mx-auto my-0">
+  <div class="max-w-48 bg-side-var flex flex-col">
+    <div class="flex items-center justify-between p-4">
+      <div class="text-side-main-color">
+        <mat-icon class="material-symbols-outlined">fork_spoon</mat-icon>
       </div>
     </div>
-    <ul class="sidebar-list">
+    <ul class="list-none p-0">
       @for (item of items; track $index) {
         @if ((canSeeSection(item.roles) | async)) {
           <li
-            class="sidebar-list-item "
-            [class.active]="(activeComponent$ | async) == item.direccion">
-            <button (click)="navigate(item.direccion);" type="button" class="menu-item">
-              <ion-icon name="{{item.icono}}" class="menu-icono"></ion-icon>
-              <span>{{ item.nombre }}</span>
+            class="sidebar-list-item"
+            [ngClass]="activeModule === item.pathTo ? 'active' : ''">
+            <button (click)="navigate(item.pathTo);" type="button" class="menu-item">
+              <mat-icon class="material-symbols-outlined">{{ item.icon }}</mat-icon>
+              <span>{{ item.name }}</span>
             </button>
           </li>
         }
@@ -22,17 +22,12 @@
     </ul>
     <div class="account-info">
       <div class="info-container">
-        <div class="account-info-picture">
-          <svg width="30px" height="30px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-            <path d="m 8 1 c -1.65625 0 -3 1.34375 -3 3 s 1.34375 3 3 3 s 3 -1.34375 3 -3 s -1.34375 -3 -3 -3 z m -1.5 7 c -2.492188 0 -4.5 2.007812 -4.5 4.5 v 0.5 c 0 1.109375 0.890625 2 2 2 h 8 c 1.109375 0 2 -0.890625 2 -2 v -0.5 c 0 -2.492188 -2.007812 -4.5 -4.5 -4.5 z m 0 0" fill="#2e3436"/>
-          </svg>
-        </div>
         <div class="profile-info">
-          <div class="account-info-name">{{ (usuario$ | async)?.names?? '' }}</div>
-          <p class="account-range">{{ (usuario$ | async)?.role?? '' }}</p>
+          <div class="account-info-name">{{ (personInfo$ | async)?.names?? '' }}</div>
+          <p class="account-range">{{ (personInfo$ | async)?.role?? '' }}</p>
         </div>
-        <button class="account-info-more" (click)="salir()">
-          <ion-icon name="log-out-outline"></ion-icon>
+        <button class="account-info-more" (click)="logOut()">
+          <mat-icon>logout</mat-icon>
         </button>
       </div>
     </div>

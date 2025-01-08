@@ -7,12 +7,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
 import { FIELDS_SERVICE, FORM_DATA_SERVICE, FormsProviders } from '@Application/config/providers/form.providers';
-import { PAGINATOR_SERVICE, UtilsProviders } from '@Application/config/providers/utils/utils.providers';
+import { UtilsProviders } from '@Application/config/providers/utils/utils.providers';
 import { ApiServicePort } from '@Application/ports/api-service.port';
 import { AuthServicePort } from '@Application/ports/auth-service.port';
 import { FieldsServicePort } from '@Application/ports/forms/fields-service.port';
 import { FormDataServicePort } from '@Application/ports/forms/form-data-service.port';
-import { PaginatorServicePort } from '@Application/ports/forms/paginator-service.port';
 import { DestroySubsPort } from '@Application/ports/utils/destroy-subs.port';
 import { FiltersCompactComponent } from '@components/utils/filters/filters-compact/filters-compact.component';
 import { FiltersExtendedComponent } from '@components/utils/filters/filters-extended/filters-extended.component';
@@ -63,8 +62,6 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     private readonly fieldsService: FieldsServicePort,
     @Inject(FORM_DATA_SERVICE)
     private readonly formDataService: FormDataServicePort,
-    @Inject(PAGINATOR_SERVICE)
-    private readonly paginatorService: PaginatorServicePort<T>,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     readonly cdr: ChangeDetectorRef

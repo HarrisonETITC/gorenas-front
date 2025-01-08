@@ -11,13 +11,13 @@ export class Menu {
         this.items = new Array();
         this.items.push(
             new MenuItem('Dashboard', AppModel.MODULE_DASHBOARD, 'home-outline'),
-            new MenuItem('Sucursales', AppModel.MODULE_BRANCHES, 'business-outline'),
-            new MenuItem('Empleados', AppModel.MODULE_EMPLOYEES, 'people-outline'),
-            new MenuItem('Ventas', AppModel.MODULE_SALES, 'cash-outline'),
-            new MenuItem('Usuarios', AppModel.MODULE_USERS, 'person-circle-outline', false, [RoleModel.ROLE_ADMINISTRATOR]),
-            new MenuItem('Personas', AppModel.MODULE_PERSONS, 'person-add-outline'),
-            new MenuItem('Roles', AppModel.MODULE_ROLES, 'document-lock-outline', false, [RoleModel.ROLE_ADMINISTRATOR]),
-            new MenuItem('Permisos', AppModel.MODULE_PERMISSIONS, 'lock-open-outline', false, [RoleModel.ROLE_ADMINISTRATOR])
+            new MenuItem('Sucursales', AppModel.MODULE_BRANCHES, 'domain-outline'),
+            new MenuItem('Empleados', AppModel.MODULE_EMPLOYEES, 'groups-outline'),
+            new MenuItem('Ventas', AppModel.MODULE_SALES, 'payments-outline'),
+            new MenuItem('Usuarios', AppModel.MODULE_USERS, 'account_circle', false, [RoleModel.ROLE_ADMINISTRATOR]),
+            new MenuItem('Personas', AppModel.MODULE_PERSONS, 'person_add'),
+            new MenuItem('Roles', AppModel.MODULE_ROLES, 'security-outline', false, [RoleModel.ROLE_ADMINISTRATOR]),
+            new MenuItem('Permisos', AppModel.MODULE_PERMISSIONS, 'policy-outline', false, [RoleModel.ROLE_ADMINISTRATOR])
         );
     }
 

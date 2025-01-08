@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { Menu } from '@models/menu/menu.model';
 import { LoginService } from './login.service';
 import { HttpClient } from '@angular/common/http';
-import { Usuario } from '@models/usuario.model';
 import { apiUrl, basicHeaders } from '../environment';
 import { Persona } from '@models/persona.model';
 

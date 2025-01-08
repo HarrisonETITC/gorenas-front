@@ -7,6 +7,7 @@ import { AuthServicePort } from "@Application/ports/auth-service.port";
 import { StoragePort } from "@Application/ports/storage.port";
 import { AppModel } from "@Domain/models/base/application.model";
 import { UserModelView } from "@Domain/models/model-view/user.mv";
+import { Menu } from "@models/menu/menu.model";
 import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable({
@@ -39,5 +40,8 @@ export class ApplicationServiceAdapter implements ApplicationServicePort {
     updateActiveComponent(): void {
         const active = AppModel.MODULES.find(module => this.router.url.includes(module));
         this.componentHandler.next(active);
+    }
+    getMenu(): Menu {
+        return Menu.getInstance();
     }
 }
