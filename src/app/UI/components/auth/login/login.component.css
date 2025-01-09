@@ -2,6 +2,10 @@
     font-family: "Poppins";
 }
 
+mat-icon {
+    font-family: 'Material Symbols Outlined';
+}
+
 .main-container {
     height: 100vh;
     display: flex;
@@ -14,7 +18,6 @@
 
 .screen-1 {
     background: #101827;
-    padding: 2em;
     display: flex;
     flex-direction: column;
     border-radius: 30px;
@@ -113,7 +116,7 @@
 }
 
 .screen-1 .btn-login {
-    padding: 1em;
+    padding: .5em;
     background-color: #2869ff;
     color: white;
     border: none;
@@ -121,6 +124,11 @@
     font-weight: 600;
     width: 100%;
     cursor: pointer;
+    transition: background-color .2s ease-in-out;
+}
+
+.screen-1 .btn-login:hover {
+    background-color: var(--action-color-hover);
 }
 
 .screen-1 .btn-login:disabled {
@@ -147,32 +155,11 @@
 .form-container {
     display: flex;
     flex-direction: column;
-    width: 100%;
     justify-content: center;
     align-items: center;
     gap: .7em;
 }
 
-.form-container .field label {
-    color: white;
-    font-size: 1.2em;
-    font-weight: 700;
-}
-
-.eye-pass {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-.eye-pass ion-icon {
-    transition: color 300ms;
-}
-
-.form-container .field .eye-pass:hover ion-icon {
-    color: white;
-}
-
-.eye-pass:hover {
-    color: white;
+::ng-deep .mat-mdc-form-field-required-marker {
+    display: none;
 }

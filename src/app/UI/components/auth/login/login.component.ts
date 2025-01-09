@@ -10,11 +10,13 @@ import { AUTH_SERVICE } from '@Application/config/providers/auth.providers';
 import { AuthServicePort } from '@Application/ports/auth-service.port';
 import { NOTIFICATION_SERVICE } from '@Application/config/providers/notification.providers';
 import { NotificationServicePort } from '@Application/ports/notification-service.port';
-import { InfoConfig, WarningConfig } from '@Application/adapters/services/notification/notification.configs';
+import { ErrorConfig, InfoConfig, WarningConfig } from '@Application/adapters/services/notification/notification.configs';
+import { TextComponent } from '@components/utils/forms/text/text.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, CommonModule, RouterModule, MatDialogModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, MatDialogModule, TextComponent, MatIconModule],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -61,11 +63,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       this.authService.login({ username, password }).subscribe({
         error: (err) => {
-          this.notificationService.showNotification(WarningConfig('Alerta', err.message))
+          this.notificationService.showNotification(WarningConfig('Alerta', err.message));
         },
       });
     } else {
-      alert('Hay errores en el formulario')
+      this.notificationService.showNotification(ErrorConfig('Alerta', 'Hay errores en el formulario'))
     }
   }
 
