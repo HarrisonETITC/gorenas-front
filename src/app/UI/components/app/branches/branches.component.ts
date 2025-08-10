@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { BranchForms } from '@Application/config/forms/permissions/branch.forms';
 import { BRANCH_SERVICE } from '@Application/config/providers/branch.providers';
 import { ApiServicePort } from '@Application/ports/api-service.port';
 import { BaseDataComponent } from '@components/base/base-data/base-data.component';
@@ -39,7 +40,10 @@ export class BranchesComponent implements OnInit, UseBaseDataComponent {
     return of(null);
   }
   getForms(): Array<FormDataConfig> {
-    return [];
+    const createForm = BranchForms.CREATE_FORM;
+    createForm.dataInitializer = this.service;
+
+    return [createForm];
   }
   initFilters(data: any): void {
     throw new Error('Method not implemented.');

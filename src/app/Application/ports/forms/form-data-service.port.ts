@@ -12,4 +12,5 @@ export interface FormDataServicePort {
     getFormEvent(): Observable<EventMessage>;
     sendComponentEvent(event: EventMessage): void;
     getComponentEvent(): Observable<EventMessage>;
+    resetFormsData(): void;
 }

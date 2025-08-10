@@ -35,4 +35,7 @@ export class FormDataServiceAdapter implements FormDataServicePort {
     getComponentEvent(): Observable<EventMessage> {
         return this.componentEventHandler.asObservable();
     }
+    resetFormsData(): void {
+        
+    }
 }

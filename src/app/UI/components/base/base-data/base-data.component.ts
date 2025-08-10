@@ -38,6 +38,7 @@ import { UseTable } from 'src/app/core/interfaces/use-table.interface';
   ]
 })
 export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort {
+  @Input({ required: true }) pageName: string;
   @Input({ required: true }) module: string;
   @Input({ required: true }) service: ApiServicePort<T, U>;
   @Input({ required: true }) headers: Map<string, string>;
@@ -47,6 +48,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
   @Input({ required: false }) filters?: Array<FormItemModel>;
   @Input({ required: false }) dataForms?: Array<FormDataConfig>;
 
+  private readonly formsDefsValues: Map<number, Array<any>> = new Map();
   protected readonly dataManager: BehaviorSubject<Array<T>> = new BehaviorSubject(null);
   protected filterExtended: boolean = false;
   protected isFormView$: Observable<boolean>;
@@ -68,6 +70,12 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
   ) { }
 
   ngOnInit(): void {
+    if (!AppUtil.verifyEmpty(this.dataForms) && this.formsDefsValues.size === 0) {
+      this.dataForms.forEach((config, index) => {
+        this.formsDefsValues.set(index, config.fields.map(field => field.defaultValue));
+      });
+    }
+
     this.initData();
     this.initForms();
   }
@@ -156,6 +164,13 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     this.router.navigate([formRoute], { relativeTo: this.route });
   }
   private notifyForms() {
+    this.dataForms.forEach((config, index) => {
+      const defValues = this.formsDefsValues.get(index);
+      config.fields = config.fields.map((field, fieldIndex) => ({
+        ...field,
+        defaultValue: defValues[fieldIndex]
+      }));
+    });
     this.formDataService.updateState(true);
     this.formDataService.sendComponentEvent({ event: '' });
     this.formDataService.setForms(this.dataForms);

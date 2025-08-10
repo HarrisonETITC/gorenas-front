@@ -12,6 +12,7 @@ import { IIdValor } from '@models/base/id-valor.interface';
 @Injectable({
   providedIn: 'root',
 })
+
 export class LoginService implements GenerarCampoAutoComplete {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly procesando: BehaviorSubject<boolean>;

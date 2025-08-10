@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "browser": "chromium-browser --remote-debugging-port=9222",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
