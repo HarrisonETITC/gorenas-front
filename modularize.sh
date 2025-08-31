@@ -1,14 +1,14 @@
 nx init
 
 #domain
-nx generate @nx/js:library domain --directory=libs --buildable=true --publishable=false --unitTestRunner=jest --bundler=tsc --importPath=@gorenas/domain
+nx generate @nx/js:library --name=domain --directory=libs --buildable=true --publishable=false --unitTestRunner=jest --bundler=tsc --importPath=@gorenas/domain
 
 #application
-nx generate @nx/js:library application-core --directory=libs/application --buildable=true --publishable=false --unitTestRunner=jest --bundler=tsc --importPath=@gorenas/application-core
-nx generate @nx/angular:library name=application-angular --directory=libs/application --buildable=true --publishable=false --unitTestRunner=jest --routing=false --standalone=true --importPath=@gorenas/application-angular
+nx generate @nx/js:library --name=application-core --directory=libs/application --buildable=true --publishable=false --unitTestRunner=jest --bundler=tsc --importPath=@gorenas/application-core
+nx generate @nx/angular:library --name=application-angular --directory=libs/application --buildable=true --publishable=false --unitTestRunner=jest --routing=false --standalone=true --importPath=@gorenas/application-angular
 
 # Shared
-nx generate @nx/js:library shared-util-core --directory=libs/shared/util --buildable=true --publishable=false --unitTestRunner=jest --bundler=tsc --importPath=@gorenas/shared-util-core
+nx generate @nx/js:library --name=shared-util-core --directory=libs/shared/util --buildable=true --publishable=false --unitTestRunner=jest --bundler=tsc --importPath=@gorenas/shared-util-core
 nx generate @nx/angular:library --name=shared-util-forms --directory=libs/shared/util --buildable=true --publishable=false --unitTestRunner=jest --routing=false --standalone=true --importPath=@gorenas/shared-util-forms
 
 # Data Access
