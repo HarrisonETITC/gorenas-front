@@ -5,16 +5,21 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsUtil } from '@gorenas/shared-util-forms';
 import { Observable, Subscription } from 'rxjs';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AUTH_SERVICE } from '@gorenas/data-access-core';
-import { AuthServicePort } from '@gorenas/application-core';
-import { NOTIFICATION_SERVICE } from '@gorenas/application-core';
-import { NotificationServicePort } from '@gorenas/application-core';
-import { ErrorConfig, InfoConfig, WarningConfig } from '@gorenas/application-core';
 import { MatIconModule } from '@angular/material/icon';
+import { AUTH_SERVICE } from '@gorenas/application-core';
+import { 
+  AuthServicePort, 
+  NOTIFICATION_SERVICE, 
+  NotificationServicePort, 
+  ErrorConfig, 
+  InfoConfig, 
+  WarningConfig 
+} from '@gorenas/application-core';
+import { TextComponent } from '@gorenas/ui-controls';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, CommonModule, RouterModule, MatDialogModule, MatIconModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, MatDialogModule, MatIconModule, TextComponent],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',

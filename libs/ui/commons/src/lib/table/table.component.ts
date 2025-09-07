@@ -1,18 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { AppUtil } from '@gorenas/application-core';
+import { 
+  AppUtil, 
+  PAGINATOR_SERVICE, 
+  PaginatorServicePort, 
+  DestroySubsPort 
+} from '@gorenas/application-core';
 import { distinctUntilChanged, filter, ignoreElements, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { PaginatorComponent } from '../paginator/paginator.component';
 import { RouterModule } from '@angular/router';
-import { PAGINATOR_SERVICE } from '@gorenas/application-core';
-import { PaginatorServicePort } from '@gorenas/application-core';
-import { DestroySubsPort } from '@gorenas/application-core';
-import { IdValue } from '@gorenas/domain';
+import { IdValue, GeneralModel, StateModel, StateStyle, TableConfig } from '@gorenas/domain';
 import { MatTableModule } from '@angular/material/table';
-import { GeneralModel } from '@gorenas/domain';
-import { StateModel } from '@gorenas/domain';
-import { StateStyle } from '@gorenas/domain';
-import { TableConfig } from '@gorenas/domain';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BtnConfig } from '@gorenas/domain';

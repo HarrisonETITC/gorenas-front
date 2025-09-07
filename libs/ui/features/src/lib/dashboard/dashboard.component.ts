@@ -1,8 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { APPLICATION_SERVICE } from '@gorenas/data-access-core';
-import { ApplicationServicePort } from '@gorenas/application-core';
+import { ApplicationServicePort, APPLICATION_SERVICE } from '@gorenas/application-core';
 
 @Component({
   selector: 'app-dashboard',

@@ -1,24 +1,26 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { AUTH_SERVICE } from '@gorenas/data-access-core';
-import { ApiServicePort } from '@gorenas/application-core';
-import { AuthServicePort } from '@gorenas/application-core';
-import { PermissionModel } from '@gorenas/domain';
-import { FormItemModel } from '@gorenas/shared-util-forms';
-import { PermissionModelView } from '@gorenas/domain';
-import { PermissionFilter } from '@gorenas/shared-util-forms';
-import { AppUtil } from '@gorenas/application-core';
 import { filter, map, Observable, take, tap } from 'rxjs';
-import { PermissionForms } from '@gorenas/shared-util-forms';
-import { PERMISSION_SERVICE, ROLE_SERVICE } from '@gorenas/data-access-features';
+import { Component, Inject, OnInit } from '@angular/core';
+import {
+  PermissionModel,
+  RoleModel,
+  RoleModelView,
+  AppModel,
+  TableConfig,
+  BtnConfig,
+  PermissionModelView
+} from '@gorenas/domain';
+import {
+  ApiServicePort,
+  AUTH_SERVICE,
+  PERMISSION_SERVICE,
+  ROLE_SERVICE,
+  AuthServicePort,
+  AppUtil,
+  UseBaseDataComponent
+} from '@gorenas/application-core';
+import { FormItemModel, PermissionFilter, PermissionForms, FormDataConfig } from '@gorenas/shared-util-forms';
 import { FormsProviders } from '@gorenas/data-access-forms';
-import { RoleModel } from '@gorenas/domain';
-import { RoleModelView } from '@gorenas/domain';
-import { AppModel } from '@gorenas/domain';
 import { BaseDataComponent } from '@gorenas/ui-commons';
-import { FormDataConfig } from '@gorenas/shared-util-forms';
-import { UseBaseDataComponent } from '@gorenas/application-core';
-import { TableConfig } from '@gorenas/domain';
-import { BtnConfig } from '@gorenas/domain';
 
 @Component({
   selector: 'app-permission',

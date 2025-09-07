@@ -1,18 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { BranchForms } from '@gorenas/shared-util-forms';
-import { BRANCH_SERVICE } from '@gorenas/data-access-features';
-import { ApiServicePort } from '@gorenas/application-core';
+import { ApiServicePort, BRANCH_SERVICE, UseBaseDataComponent } from '@gorenas/application-core';
 import { BaseDataComponent } from '@gorenas/ui-commons';
-import { AppModel } from '@gorenas/domain';
-import { BranchModel } from '@gorenas/domain';
-import { FormDataConfig } from '@gorenas/shared-util-forms';
-import { FormItemModel } from '@gorenas/shared-util-forms';
-import { BtnConfig } from '@gorenas/domain';
-import { TableConfig } from '@gorenas/domain';
-import { BranchModelView } from '@gorenas/domain';
-import { BranchFilter } from '@gorenas/shared-util-forms';
+import { AppModel, BranchModel, BtnConfig, TableConfig, BranchModelView } from '@gorenas/domain';
+import { FormDataConfig, FormItemModel, BranchFilter, BranchForms } from '@gorenas/shared-util-forms';
 import { Observable, of } from 'rxjs';
-import { UseBaseDataComponent } from '@gorenas/application-core';
 
 @Component({
   selector: 'app-branches',

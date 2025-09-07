@@ -7,11 +7,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IdValue } from '@gorenas/domain';
 import { ViewValue } from '@gorenas/domain';
-import { AppUtil } from '@gorenas/application-core';
+import {  } from '@gorenas/application-core';
 import { AsyncPipe } from '@angular/common';
-import { ChildUpdatePort } from '@gorenas/application-core';
-import { FIELDS_SERVICE } from '@gorenas/data-access-forms';
-import { FieldsServicePort } from '@gorenas/application-core';
+import { ChildUpdatePort, FIELDS_SERVICE, FieldsServicePort, AppUtil } from '@gorenas/application-core';
 
 @Component({
   selector: 'app-filters-compact',

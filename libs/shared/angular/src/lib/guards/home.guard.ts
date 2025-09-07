@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AUTH_SERVICE } from '@gorenas/data-access-core';
+import { AUTH_SERVICE } from '@gorenas/application-core';
 import { map } from 'rxjs';
 
 export const homeGuard: CanActivateFn = (route, state) => {

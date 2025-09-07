@@ -1,9 +1,6 @@
-import { InjectionToken, Provider } from "@angular/core";
+import { Provider } from "@angular/core";
 import { BranchServiceAdapter } from "../adapters/branch-adapter.service";
-import { ApiServicePort } from "@gorenas/application-core";
-import { BranchModel, BranchModelView } from "@gorenas/domain";
-
-export const BRANCH_SERVICE = new InjectionToken<ApiServicePort<BranchModel, BranchModelView>>('BranchService');
+import { BRANCH_SERVICE } from "@gorenas/application-core";
 
 export const BranchProviders: Array<Provider> = [
     {

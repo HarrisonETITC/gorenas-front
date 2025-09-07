@@ -3,11 +3,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FIELDS_SERVICE } from '@gorenas/data-access-forms';
-import { FieldsServicePort } from '@gorenas/application-core';
+import {
+  FieldsServicePort,
+  FIELDS_SERVICE
+} from '@gorenas/application-core';
 import { FormBaseComponent } from '@gorenas/ui-controls';
 import { FormItemModel } from '@gorenas/shared-util-forms';
-import { BehaviorSubject, Observable } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable
+} from 'rxjs';
 
 @Component({
   selector: 'app-filters-extended',

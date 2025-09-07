@@ -1,6 +1,23 @@
 import { InjectionToken } from '@angular/core';
 import { NotificationServicePort } from '../ports/notification-service.port';
 import { PaginatorServicePort } from '../ports/forms/paginator-service.port';
+import { ApplicationServicePort } from '../ports/application-service.port';
+import { AuthServicePort } from '../ports/auth-service.port';
+import { StoragePort } from '../ports/storage.port';
+import { ApiServicePort } from '../ports/api-service.port';
+import { PersonPort } from '../ports/person.port';
+import {
+  BranchModel,
+  BranchModelView,
+  PermissionModel,
+  PermissionModelView,
+  PersonModel,
+  PersonModelView,
+  RoleModel,
+  RoleModelView
+} from '@gorenas/domain';
+import { FieldsServicePort } from '../ports/forms/fields-service.port';
+import { FormDataServicePort } from '../ports/forms/form-data-service.port';
 
 // Configuration tokens
 export const API_URL_TOKEN = new InjectionToken<string>('API_URL');
@@ -9,6 +26,17 @@ export const STORAGE_TYPE_TOKEN = new InjectionToken<string>('STORAGE_TYPE');
 // Service tokens
 export const NOTIFICATION_SERVICE = new InjectionToken<NotificationServicePort>('NotificationService');
 export const PAGINATOR_SERVICE = new InjectionToken<PaginatorServicePort>('PaginatorService');
+export const APPLICATION_SERVICE = new InjectionToken<ApplicationServicePort>('ApplicationService');
+export const AUTH_SERVICE = new InjectionToken<AuthServicePort>('AuthService');
+export const STORAGE_PROVIDER = new InjectionToken<StoragePort>('StorageProvider');
+export const FIELDS_SERVICE = new InjectionToken<FieldsServicePort>('FieldsService');
+export const FORM_DATA_SERVICE = new InjectionToken<FormDataServicePort>('FormDataService');
+
+// Features
+export const BRANCH_SERVICE = new InjectionToken<ApiServicePort<BranchModel, BranchModelView>>('BranchService');
+export const PERMISSION_SERVICE = new InjectionToken<ApiServicePort<PermissionModel, PermissionModelView>>('PermissionService');
+export const PERSON_SERVICE = new InjectionToken<ApiServicePort<PersonModel, PersonModelView> & PersonPort>('PersonService');
+export const ROLE_SERVICE = new InjectionToken<ApiServicePort<RoleModel, RoleModelView>>('RoleService');
 
 // Configuration interfaces
 export interface AppConfig {

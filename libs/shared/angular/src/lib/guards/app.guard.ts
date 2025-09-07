@@ -1,11 +1,7 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
-
-import { ErrorConfig } from '@gorenas/application-core';
-import { NOTIFICATION_SERVICE } from '@gorenas/application-core';
-import { APPLICATION_SERVICE, AUTH_SERVICE } from '@gorenas/data-access-core';
+import { NOTIFICATION_SERVICE, APPLICATION_SERVICE, AUTH_SERVICE, ErrorConfig, AppUtil } from '@gorenas/application-core';
 import { AppModel } from '@gorenas/domain';
-import { AppUtil } from '@gorenas/application-core';
 import { concatMap, map, of } from 'rxjs';
 
 export const appGuard: CanActivateFn = (
@@ -44,7 +40,7 @@ export const appGuard: CanActivateFn = (
 
       if (notifyChange)
         appService.setActiveComponent(target);
-      
+
       return true
     })
   )

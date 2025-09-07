@@ -1,9 +1,6 @@
-import { InjectionToken, Provider } from "@angular/core";
+import { Provider } from "@angular/core";
 import { PersonServiceAdapter } from "../adapters/person-adapter.service";
-import { ApiServicePort, PersonPort } from "@gorenas/application-core";
-import { PersonModel, PersonModelView } from "@gorenas/domain";
-
-export const PERSON_SERVICE = new InjectionToken<ApiServicePort<PersonModel, PersonModelView> & PersonPort>('PersonService');
+import { PERSON_SERVICE } from "@gorenas/application-core";
 
 export const PersonProviders: Array<Provider> = [
     {

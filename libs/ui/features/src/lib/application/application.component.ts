@@ -1,21 +1,22 @@
+import { distinctUntilChanged, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import { InfoConfig } from '@gorenas/application-core';
-import { APPLICATION_SERVICE, AUTH_SERVICE } from '@gorenas/data-access-core';
-import { NOTIFICATION_SERVICE } from '@gorenas/application-core';
-import { PERSON_SERVICE } from '@gorenas/data-access-features';
-import { ApiServicePort } from '@gorenas/application-core';
-import { ApplicationServicePort } from '@gorenas/application-core';
-import { AuthServicePort } from '@gorenas/application-core';
-import { NotificationServicePort } from '@gorenas/application-core';
-import { PersonPort } from '@gorenas/application-core';
-import { DestroySubsPort } from '@gorenas/application-core';
-import { PersonModel } from '@gorenas/domain';
-import { PersonModelView } from '@gorenas/domain';
-import { MenuItem } from '@gorenas/domain';
-import { distinctUntilChanged, Observable, Subject, takeUntil, tap } from 'rxjs';
+import {
+  InfoConfig,
+  NOTIFICATION_SERVICE,
+  APPLICATION_SERVICE,
+  AUTH_SERVICE,
+  PERSON_SERVICE,
+  ApiServicePort,
+  ApplicationServicePort,
+  AuthServicePort,
+  NotificationServicePort,
+  PersonPort,
+  DestroySubsPort
+} from '@gorenas/application-core';
+import { PersonModel, PersonModelView, MenuItem } from '@gorenas/domain';
 
 @Component({
   selector: 'app-application',

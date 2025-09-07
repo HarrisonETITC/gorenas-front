@@ -1,8 +1,6 @@
-import { InjectionToken, Provider } from "@angular/core";
+import { Provider } from "@angular/core";
 import { AuthServiceAdapter } from "../adapters/auth-adapter.service";
-import { AuthServicePort } from "@gorenas/application-core";
-
-export const AUTH_SERVICE = new InjectionToken<AuthServicePort>('AuthService');
+import { AUTH_SERVICE } from "@gorenas/application-core";
 
 export const AuthProviders: Array<Provider> = [
     {

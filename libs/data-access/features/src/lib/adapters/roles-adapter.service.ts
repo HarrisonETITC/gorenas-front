@@ -1,10 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { URL_ROLE } from "@gorenas/application-core";
-import { STORAGE_PROVIDER } from "@gorenas/data-access-core";
-import { RoleModel } from "@gorenas/domain";
-import { RoleModelView } from "@gorenas/domain";
-import { UserModelView } from "@gorenas/domain";
+import { URL_ROLE, STORAGE_PROVIDER } from "@gorenas/application-core";
+import { RoleModel, RoleModelView, UserModelView } from "@gorenas/domain";
 import { GeneralApiService } from "@gorenas/data-access-core";
 
 @Injectable()

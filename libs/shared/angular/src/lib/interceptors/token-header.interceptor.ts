@@ -1,9 +1,8 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Observable } from "rxjs";
-import { AUTH_SERVICE } from "@gorenas/data-access-core";
 import { Router } from "@angular/router";
-import { AppUtil } from "@gorenas/application-core";
+import { AppUtil, AUTH_SERVICE } from "@gorenas/application-core";
 
 export const TokenHeaderInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
     const authService = inject(AUTH_SERVICE);
