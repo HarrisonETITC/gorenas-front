@@ -1,0 +1,71 @@
+/* Tailwind CSS utilities for shared component styles */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom component classes using Tailwind */
+@layer components {
+  .btn-primary {
+    @apply bg-action hover:bg-actionHover text-white text-sm leading-6 border-none rounded h-8 px-4 transition-all duration-200 cursor-pointer;
+  }
+  
+  .btn-secondary {
+    @apply bg-btnSecondary hover:bg-btnSecondaryHover text-white text-sm leading-6 border-none rounded h-8 px-4 transition-all duration-200 cursor-pointer;
+  }
+  
+  .btn-warning {
+    @apply bg-warning hover:bg-warningBold text-white text-sm leading-6 border-none rounded h-8 px-4 transition-all duration-200 cursor-pointer;
+  }
+  
+  .app-container {
+    @apply rounded w-full h-full flex overflow-hidden shadow-lg max-w-full mx-auto;
+  }
+  
+  .sidebar-base {
+    @apply w-50 max-w-[200px] flex-shrink-0 bg-side-var flex flex-col;
+  }
+  
+  .sidebar-hidden {
+    @apply lg:hidden;
+  }
+  
+  .content-area {
+    @apply p-4 bg-primary h-screen flex flex-col;
+  }
+  
+  .content-header {
+    @apply flex items-center justify-between p-1;
+  }
+  
+  .content-title {
+    @apply text-contentMain text-2xl leading-8 m-0;
+  }
+  
+  .content-actions {
+    @apply flex justify-between items-center py-4 px-1;
+  }
+  
+  .search-input {
+    @apply bg-secondary border border-secondary text-contentMain text-sm leading-6 rounded px-2 py-1 h-8 w-full max-w-80 transition-all duration-200;
+  }
+  
+  .search-input:hover {
+    @apply border-actionHover;
+  }
+  
+  .search-input:focus {
+    @apply outline-none border-action;
+  }
+  
+  .action-button {
+    @apply rounded h-8 bg-secondary border border-secondary flex items-center text-contentMain text-sm ml-2 cursor-pointer px-2;
+  }
+  
+  .action-button:hover {
+    @apply border-actionHover;
+  }
+  
+  .action-button:focus, .action-button.active {
+    @apply outline-none text-action border-action;
+  }
+}

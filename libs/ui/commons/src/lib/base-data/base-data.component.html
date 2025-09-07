@@ -1,17 +1,17 @@
-<div class="app-content">
-    <div class="app-content-header">
-        <h1 class="app-content-headerText">{{ pageName }}</h1>
+<div class="p-4 bg-primary h-screen flex flex-col">
+    <div class="flex items-center justify-between p-1">
+        <h1 class="text-contentMain text-2xl leading-8 m-0">{{ pageName }}</h1>
     </div>
     @if(!(isFormView$ | async)) {
         <div class="flex flex-col h-full">
-            <div class="app-content-actions">
+            <div class="flex justify-between items-center py-4 px-1">
                 @if (!filterExtended) {
                     <app-filters-compact class="compact"
                         [fields]="filters"
                         (searchHandler)="handleSearch($event)"
                     ></app-filters-compact>
                 }
-                <div class="app-content-actions-wrapper flex-col items-end justify-center">
+                <div class="flex flex-col items-end justify-center">
                     <div>
                         <button
                             [matMenuTriggerFor]="settings"
@@ -30,10 +30,10 @@
                         </mat-menu>
                     </div>
                     @if(!verifyEmpty(dataForms)) {
-                        <button class="header-button button-icon-right-fix" (click)="goCreate()">
+                        <button class="bg-action hover:bg-actionHover text-white text-sm leading-6 border-none rounded h-8 px-4 transition-all duration-200 cursor-pointer flex items-center" (click)="goCreate()">
                             Agregar permiso
                             <mat-icon
-                                class="text-white p-0"
+                                class="text-white p-0 ml-2"
                             >add_outline</mat-icon>
                         </button>
                     }

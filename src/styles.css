@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import shared Tailwind components */
+@import '../libs/ui/shared/styles/tailwind-components.css';
+
 /* You can add global styles to this file, and also import other style files */
 :root {
   --error-color: #ba1a1a;

@@ -3,6 +3,7 @@ module.exports = {
   important: true,
   content: [
     "./src/**/*.{html,ts,css}",
+    "./libs/**/*.{html,ts,css}",
   ],
   theme: {
     extend: {
