@@ -1,4 +1,4 @@
-import { FormItemModel } from "@gorenas/shared-util-forms";
+import { FormItemModel } from "../items/form-item.model";
 import { GetByIdPort } from "@gorenas/application-core";
 
 export class FormDataConfig<T = any> {

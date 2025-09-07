@@ -3,11 +3,12 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { AuthProviders } from '@gorenas/data-access-core';
+import { AuthProviders, StorageStrategyProviders } from '@gorenas/data-access-core';
 import { ApplicationProviders } from '@gorenas/data-access-core';
+import { UtilsProviders } from '@gorenas/data-access-commons';
 import { TokenHeaderInterceptor } from '@gorenas/shared-angular';
 import { ParseDataInterceptor } from '@gorenas/shared-angular';
-import { NotificationProviders } from '@gorenas/data-access-commons';
+import { NotificationProviders } from '@gorenas/ui-commons';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ValidationErrorInterceptor } from '@gorenas/shared-angular';
 import {
@@ -27,6 +28,8 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([TokenHeaderInterceptor, ParseDataInterceptor, ValidationErrorInterceptor])
     ),
     ...APP_CONFIG_PROVIDERS,
+    ...StorageStrategyProviders,
+    ...UtilsProviders,
     ...AuthProviders,
     ...ApplicationProviders,
     ...PersonProviders,

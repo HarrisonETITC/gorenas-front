@@ -1,5 +1,5 @@
 import { InjectionToken, Provider } from "@angular/core";
-import { RoleServiceAdapter } from "@gorenas/data-access-features";
+import { RoleServiceAdapter } from "../adapters/roles-adapter.service";
 import { ApiServicePort } from "@gorenas/application-core";
 import { RoleModel, RoleModelView } from "@gorenas/domain";
 

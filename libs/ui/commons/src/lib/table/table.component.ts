@@ -4,7 +4,7 @@ import { AppUtil } from '@gorenas/application-core';
 import { distinctUntilChanged, filter, ignoreElements, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { PaginatorComponent } from '../paginator/paginator.component';
 import { RouterModule } from '@angular/router';
-import { PAGINATOR_SERVICE } from '@gorenas/data-access-commons';
+import { PAGINATOR_SERVICE } from '@gorenas/application-core';
 import { PaginatorServicePort } from '@gorenas/application-core';
 import { DestroySubsPort } from '@gorenas/application-core';
 import { IdValue } from '@gorenas/domain';

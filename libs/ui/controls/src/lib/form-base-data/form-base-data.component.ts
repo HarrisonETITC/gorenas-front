@@ -11,7 +11,7 @@ import { concatMap, filter, first, Observable, of, Subject, takeUntil, tap } fro
 import { FormDataConfig } from '@gorenas/shared-util-forms';
 import { FormsUtil } from '@gorenas/shared-util-forms';
 import { FieldsServicePort } from '@gorenas/application-core';
-import { NOTIFICATION_SERVICE } from '@gorenas/data-access-commons';
+import { NOTIFICATION_SERVICE } from '@gorenas/application-core';
 import { NotificationServicePort } from '@gorenas/application-core';
 import { ErrorConfig, WarningConfig } from '@gorenas/application-core';
 import { FormCloseComponentPort } from '@gorenas/application-core';

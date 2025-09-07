@@ -1,5 +1,5 @@
 import { InjectionToken, Provider } from "@angular/core";
-import { PermissionServiceAdapter } from "@gorenas/data-access-features";
+import { PermissionServiceAdapter } from "../adapters/permission-adapter.service";
 import { ApiServicePort } from "@gorenas/application-core";
 import { PermissionModel, PermissionModelView } from "@gorenas/domain";
 

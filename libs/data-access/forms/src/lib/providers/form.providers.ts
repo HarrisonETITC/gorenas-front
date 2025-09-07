@@ -1,5 +1,6 @@
 import { InjectionToken, Provider } from "@angular/core";
-import { FieldsServiceAdapter, FormDataServiceAdapter } from "@gorenas/data-access-forms";
+import { FieldsServiceAdapter} from "../adapters/fields-adapter.service";
+import { FormDataServiceAdapter } from "../adapters/form-data-adapter.service";
 import { FieldsServicePort, FormDataServicePort } from "@gorenas/application-core";
 
 export const FIELDS_SERVICE = new InjectionToken<FieldsServicePort>('FieldsService');

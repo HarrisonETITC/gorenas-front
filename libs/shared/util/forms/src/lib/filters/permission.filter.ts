@@ -1,6 +1,6 @@
 import { PermissionModel } from "@gorenas/domain";
 import { RoleModel } from "@gorenas/domain";
-import { FormItemModel } from "@gorenas/shared-util-forms";
+import { FormItemModel } from "../items/form-item.model";
 import { GeneralFilter } from "@gorenas/domain";
 
 export class PermissionFilter extends GeneralFilter {

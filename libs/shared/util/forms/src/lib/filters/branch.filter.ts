@@ -1,4 +1,4 @@
-import { FormItemModel } from "@gorenas/shared-util-forms";
+import { FormItemModel } from "../items/form-item.model";
 import { GeneralFilter } from "@gorenas/domain";
 
 export class BranchFilter extends GeneralFilter {

@@ -1,7 +1,7 @@
 import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { catchError, Observable, throwError } from "rxjs";
-import { NOTIFICATION_SERVICE } from "@gorenas/data-access-commons";
+import { NOTIFICATION_SERVICE } from "@gorenas/application-core";
 import { HttpErrors } from "@gorenas/domain";
 import { AppUtil } from "@gorenas/application-core";
 import { ErrorConfig } from "@gorenas/application-core";

@@ -1,8 +1,6 @@
-import { InjectionToken, Provider } from "@angular/core";
+import { Provider } from "@angular/core";
 import { NotificationServiceAdapter } from "../notification-adapter.service";
-import { NotificationServicePort } from "@gorenas/application-core";
-
-export const NOTIFICATION_SERVICE = new InjectionToken<NotificationServicePort>('NotificationService');
+import { NOTIFICATION_SERVICE } from "@gorenas/application-core";
 
 export const NotificationProviders: Array<Provider> = [
     {

@@ -1,5 +1,5 @@
 import { InjectionToken, Provider } from "@angular/core";
-import { PersonServiceAdapter } from "@gorenas/data-access-features";
+import { PersonServiceAdapter } from "../adapters/person-adapter.service";
 import { ApiServicePort, PersonPort } from "@gorenas/application-core";
 import { PersonModel, PersonModelView } from "@gorenas/domain";
 

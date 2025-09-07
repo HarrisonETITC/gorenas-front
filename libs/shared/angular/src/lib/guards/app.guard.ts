@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
 
 import { ErrorConfig } from '@gorenas/application-core';
-import { NOTIFICATION_SERVICE } from '@gorenas/data-access-commons';
+import { NOTIFICATION_SERVICE } from '@gorenas/application-core';
 import { APPLICATION_SERVICE, AUTH_SERVICE } from '@gorenas/data-access-core';
 import { AppModel } from '@gorenas/domain';
 import { AppUtil } from '@gorenas/application-core';

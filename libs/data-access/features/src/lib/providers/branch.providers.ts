@@ -1,5 +1,5 @@
 import { InjectionToken, Provider } from "@angular/core";
-import { BranchServiceAdapter } from "@gorenas/data-access-features";
+import { BranchServiceAdapter } from "../adapters/branch-adapter.service";
 import { ApiServicePort } from "@gorenas/application-core";
 import { BranchModel, BranchModelView } from "@gorenas/domain";
 

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanDeactivateFn } from '@angular/router';
 
-import { NOTIFICATION_SERVICE } from '@gorenas/data-access-commons';
+import { NOTIFICATION_SERVICE } from '@gorenas/application-core';
 import { NotificationButton } from '@gorenas/domain';
 import { WarningConfig, NotificationServicePort } from '@gorenas/application-core';
 import { FormCloseComponentPort } from '@gorenas/application-core';

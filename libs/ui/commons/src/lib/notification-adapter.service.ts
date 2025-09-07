@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { NotificationServicePort } from "@gorenas/application-core";
 import { NotificationConfig } from "@gorenas/domain";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NotificationComponent } from "@gorenas/ui-commons";
+import { NotificationComponent } from "./notification/notification.component";
 import { AppUtil } from "@gorenas/application-core";
 import { NotificationData } from "@gorenas/domain";
 import { BehaviorSubject, Observable, of } from "rxjs";

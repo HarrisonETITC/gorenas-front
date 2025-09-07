@@ -4,3 +4,6 @@ export * from './lib/base-data/base-data.component'
 export * from './lib/paginator/paginator.component'
 export * from './lib/notification/notification.component'
 export * from './lib/table/table.component'
+
+export * from './lib/notification-adapter.service'
+export * from './lib/providers/notification.providers'

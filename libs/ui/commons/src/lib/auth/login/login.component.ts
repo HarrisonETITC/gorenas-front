@@ -7,7 +7,7 @@ import { Observable, Subscription } from 'rxjs';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AUTH_SERVICE } from '@gorenas/data-access-core';
 import { AuthServicePort } from '@gorenas/application-core';
-import { NOTIFICATION_SERVICE } from '@gorenas/data-access-commons';
+import { NOTIFICATION_SERVICE } from '@gorenas/application-core';
 import { NotificationServicePort } from '@gorenas/application-core';
 import { ErrorConfig, InfoConfig, WarningConfig } from '@gorenas/application-core';
 import { MatIconModule } from '@angular/material/icon';

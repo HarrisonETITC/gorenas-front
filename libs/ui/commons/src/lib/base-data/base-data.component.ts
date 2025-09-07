@@ -15,7 +15,7 @@ import { FormDataServicePort } from '@gorenas/application-core';
 import { DestroySubsPort } from '@gorenas/application-core';
 import { FiltersCompactComponent } from '@gorenas/ui-forms';
 import { FiltersExtendedComponent } from '@gorenas/ui-forms';
-import { TableComponent } from '@gorenas/ui-commons';
+import { TableComponent } from '../table/table.component';
 import { FormDataConfig } from '@gorenas/shared-util-forms';
 import { FormItemModel } from '@gorenas/shared-util-forms';
 import { GeneralModel } from '@gorenas/domain';

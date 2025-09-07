@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { PAGINATOR_SERVICE } from '@gorenas/data-access-commons';
+import { PAGINATOR_SERVICE } from '@gorenas/application-core';
 import { PaginatorServicePort } from '@gorenas/application-core';
 import { DestroySubsPort } from '@gorenas/application-core';
 import { AppUtil } from '@gorenas/application-core';

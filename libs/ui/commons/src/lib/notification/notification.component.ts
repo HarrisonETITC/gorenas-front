@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { NOTIFICATION_SERVICE } from '@gorenas/data-access-commons';
+import { NOTIFICATION_SERVICE } from '@gorenas/application-core';
 import { NotificationServicePort } from '@gorenas/application-core';
 import { NotificationConfig } from '@gorenas/domain';
 import { NotificationButton } from '@gorenas/domain';
