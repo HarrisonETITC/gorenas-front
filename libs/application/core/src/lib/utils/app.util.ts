@@ -61,9 +61,11 @@ export class AppUtil {
             return '';
 
         const filters: Map<string, string> = new Map();
-        Object.keys(filter).forEach(key => {
-            if (!AppUtil.verifyEmpty(filter[key]))
-                filters.set(key, filter[key]);
+        Object.keys(filter).forEach((key) => {
+            const typedKey = key as keyof T;
+            const value = filter[typedKey];
+            if (!AppUtil.verifyEmpty(value))
+                filters.set(key, value as string);
         });
 
         if (AppUtil.verifyEmpty(filters))

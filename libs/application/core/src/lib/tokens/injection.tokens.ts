@@ -1,11 +1,11 @@
 import { InjectionToken } from '@angular/core';
-import { NotificationServicePort } from '../ports/notification-service.port';
+import { NotificationServicePort } from '../ports/utils/notification-service.port';
 import { PaginatorServicePort } from '../ports/forms/paginator-service.port';
-import { ApplicationServicePort } from '../ports/application-service.port';
-import { AuthServicePort } from '../ports/auth-service.port';
-import { StoragePort } from '../ports/storage.port';
-import { ApiServicePort } from '../ports/api-service.port';
-import { PersonPort } from '../ports/person.port';
+import { ApplicationServicePort } from '../ports/general/application-service.port';
+import { AuthServicePort } from '../ports/general/auth-service.port';
+import { StoragePort } from '../ports/utils/storage.port';
+import { ApiServicePort } from '../ports/general/api-service.port';
+import { PersonPort } from '../ports/features/person.port';
 import {
   BranchModel,
   BranchModelView,
