@@ -11,6 +11,7 @@ export class MenuItem {
         this.pathTo = pathTo;
         this.icon = icon;
         this.active = active ?? false;
+        this.useOutlineClass = false;
         this.roles = roles;
     }
 }

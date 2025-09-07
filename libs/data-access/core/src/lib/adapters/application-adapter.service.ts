@@ -32,8 +32,8 @@ export class ApplicationServiceAdapter implements ApplicationServicePort {
         @Inject(AUTH_SERVICE)
         private readonly authService: AuthServicePort
     ) {
-        const initial = AppModel.MODULES.find(module => this.router.url.includes(module));
-        this.componentHandler = new BehaviorSubject(initial);
+        const initial = AppModel.MODULES.find(module => this.router.url.includes(module)) || '';
+        this.componentHandler = new BehaviorSubject<string>(initial);
     }
     
     getUser(): Observable<UserModelView> {
@@ -46,7 +46,7 @@ export class ApplicationServiceAdapter implements ApplicationServicePort {
         this.componentHandler.next(component);
     }
     updateActiveComponent(): void {
-        const active = AppModel.MODULES.find(module => this.router.url.includes(module));
+        const active = AppModel.MODULES.find(module => this.router.url.includes(module)) || '';
         this.componentHandler.next(active);
     }
     getMenu(): Menu {

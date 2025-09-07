@@ -3,8 +3,7 @@ import { MenuItem } from "./menu-item.model";
 import { AppModel } from "../../models/base/application.model";
 
 export class Menu {
-    private static instance: Menu = null;
-
+    private static instance: Menu;
     private readonly items: Array<MenuItem>;
 
     private constructor() {

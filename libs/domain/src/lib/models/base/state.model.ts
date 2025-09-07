@@ -1,4 +1,4 @@
-import { StateStyle } from "../../types/state-style.type";
+import { StateStyle } from "../ui/state-style.model";
 
 export abstract class StateModel {
     public static readonly STATE_ACTIVE = 'A';

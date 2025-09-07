@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanDeactivateFn } from '@angular/router';
 
 import { NOTIFICATION_SERVICE } from '@gorenas/application-core';
-import { NotificationButton } from '@gorenas/domain';
+import { NotificationButton, ViewValue } from '@gorenas/domain';
 import { WarningConfig, NotificationServicePort } from '@gorenas/application-core';
 import { FormCloseComponentPort } from '@gorenas/application-core';
 import { AppUtil } from '@gorenas/application-core';
@@ -39,12 +39,12 @@ const showNotification = (service: NotificationServicePort) => {
   service.showNotification({
     ...WarningConfig('Pérdida de información', 'Si cierra el formulario va a perder los datos que no haya guardado ¿Desea continuar?'), buttons: [
       {
-        option: { value: NotificationButton.ACCEPT_RESPONSE, viewValue: 'Aceptar' },
+        option: new ViewValue(NotificationButton.ACCEPT_RESPONSE, 'Aceptar'),
         icon: 'error_outline',
         filled: true
       },
       {
-        option: { value: NotificationButton.CANCEL_RESPONSE, viewValue: 'Cancelar' },
+        option: new ViewValue(NotificationButton.CANCEL_RESPONSE, 'Cancelar'),
         outlined: true
       }
     ],

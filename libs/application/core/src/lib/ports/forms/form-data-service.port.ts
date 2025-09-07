@@ -1,9 +1,8 @@
-
 import { FormDataConfig, EventMessage } from "@gorenas/domain";
 import { Observable } from "rxjs";
 
 export interface FormDataServicePort {
-    isFormActive(): Observable<boolean>;
+    isFormActive(): Observable<boolean | null>;
     updateState(state: boolean): void;
     setForms(forms: Array<FormDataConfig>): void;
     getForms(): Observable<Array<FormDataConfig>>;

@@ -1,6 +1,6 @@
 export class NumberFieldOptions {
-    enableGreatherThan: boolean;
+    enableGreatherThan!: boolean;
     greatherThanLabel?: string;
-    enableLessThan: boolean;
+    enableLessThan!: boolean;
     lessThanLabel?: string;
 }

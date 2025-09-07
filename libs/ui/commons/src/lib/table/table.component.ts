@@ -111,7 +111,7 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
     }
 
     if (!AppUtil.verifyEmpty(this.valuesMap) && !AppUtil.verifyEmpty(this.valuesMap.get(key))) {
-      const obj = this.valuesMap.get(key).find((r) => r.id = value);
+      const obj = this.valuesMap.get(key).find((r) => r.id == value);
       return obj.value;
     }
 

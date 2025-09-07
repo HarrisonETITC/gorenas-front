@@ -69,11 +69,11 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
         const control = this.formBase.controlsMap.get(key);
         const field = this.procesedFields.find(f => f.name === key);
         if (field.type === FormItemModel.TYPE_SELECT) {
-          return { value: field.label, viewValue: field.selectOptions.options.find(o => o.value === control.value).viewValue };
+          return new ViewValue(field.label, field.selectOptions.options.find(o => o.value === control.value).viewValue);
         } else if (field.type === FormItemModel.TYPE_AUTO_COMPLETE) {
-          return { value: field.label, viewValue: (control.value as IdValue).value };
+          return new ViewValue(field.label, (control.value as IdValue).value);
         } else {
-          return { value: field.label, viewValue: control.value };
+          return new ViewValue(field.label, control.value);
         }
       })
     );

@@ -30,13 +30,13 @@ export class FieldsServiceAdapter implements FieldsServicePort {
             const extraFields: Array<FormItemModel> = [];
             for (const field of fields) {
                 if (FormsUtil.FORMS_HANDLER.has(field.type)) {
-                    FormsUtil.FORMS_HANDLER.get(field.type).validateField(field);
-                    FormsUtil.FORMS_HANDLER.get(field.type).initField(field);
-                    extraFields.push(...FormsUtil.FORMS_HANDLER.get(field.type).getExtraFields(field));
+                    FormsUtil.FORMS_HANDLER.get(field.type)?.validateField(field);
+                    FormsUtil.FORMS_HANDLER.get(field.type)?.initField(field);
+                    extraFields.push(...FormsUtil.FORMS_HANDLER.get(field.type)?.getExtraFields(field) ?? []);
                 }
             }
             for (const key of Array.from(FormsUtil.FORMS_HANDLER.keys()))
-                fields = FormsUtil.FORMS_HANDLER.get(key).processExtraFields(extraFields, fields);
+                fields = FormsUtil.FORMS_HANDLER.get(key)?.processExtraFields(extraFields, fields)?? [];
 
             this.actualFields = fields;
         } else {
@@ -44,7 +44,7 @@ export class FieldsServiceAdapter implements FieldsServicePort {
         }
 
         if (!AppUtil.verifyEmpty(form)) {
-            this.initForm(fields, form);
+            this.initForm(fields, form!);
         } else {
             this.initFields(fields);
         }
@@ -54,8 +54,8 @@ export class FieldsServiceAdapter implements FieldsServicePort {
     setControlValue(name: string, value: any, form?: FormGroup) {
         if (!this.existsControl(name))
             return;
-        if (!AppUtil.verifyEmpty(form) && !AppUtil.verifyEmpty(form.get(name)))
-            form.get(name).setValue(value)
+        if (!AppUtil.verifyEmpty(form) && !AppUtil.verifyEmpty(form!.get(name)))
+            form!.get(name)?.setValue(value)
 
         this.getControl(name).setValue(value, { emitEvent: false });
     }
@@ -75,7 +75,10 @@ export class FieldsServiceAdapter implements FieldsServicePort {
         this.controls.set(name, control);
     }
     getControl(name: string): FormControl {
-        return this.controls.get(name);
+        if (!this.existsControl(name))
+            throw new Error(`El control con nombre ${name} no existe`);
+
+        return this.controls.get(name)!;
     }
     updateFields(fields: Array<FormItemModel>): void {
         this.fieldsHandler.next(fields);
@@ -99,7 +102,7 @@ export class FieldsServiceAdapter implements FieldsServicePort {
         this.cleanFiltersHandler.next(ev);
     }
     getObject() {
-        const obj = {};
+        const obj: { [key: string]: any } = {};
 
         for (const controlKey of Array.from(this.controls.keys())) {
             const control = this.getControl(controlKey);
@@ -126,7 +129,7 @@ export class FieldsServiceAdapter implements FieldsServicePort {
             */
             if (!AppUtil.verifyEmpty(form)) {
                 for (const controlKey of Array.from(this.controls.keys())) {
-                    form.setControl(controlKey, this.controls.get(controlKey));
+                    form!.setControl(controlKey, this.controls.get(controlKey));
                 }
 
                 return true;

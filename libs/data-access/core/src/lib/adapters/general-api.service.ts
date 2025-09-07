@@ -48,7 +48,7 @@ export abstract class GeneralApiService<T extends GeneralModel, U = T> implement
         return AppUtil.verifyEmpty(query) ? of([]) : this.http.get<Array<IdValue>>(`${this.baseUrl}${URL_AVAILABLE}?query=${query}`)
     }
     getCanSee(params?: GeneralFilter): Observable<U[]> {
-        const url = `${this.baseUrl}${URL_CAN_SEE}` + AppUtil.processFilters(params);
+        const url = `${this.baseUrl}${URL_CAN_SEE}` + AppUtil.processFilters(params || {});
         return this.http.get<Array<U>>(url).pipe(
             defaultIfEmpty([])
         );

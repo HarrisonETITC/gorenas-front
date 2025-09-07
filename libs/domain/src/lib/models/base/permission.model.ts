@@ -21,6 +21,11 @@ export class PermissionModel extends GeneralModel {
         this.MODULES_MAP.set(AppModel.MODULE_PERMISSIONS ,this.MODULE_PERMISSIONS);
     }
 
-    name: string;
-    role: number;
+    name!: string;
+    role!: number;
+
+    public PermissionModel() {
+        this.name = '';
+        this.role = 0;
+    }
 }

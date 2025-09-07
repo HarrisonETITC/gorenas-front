@@ -1,4 +1,4 @@
-import { PermissionModel } from "@gorenas/domain";
+import { PermissionModel, ViewValue } from "@gorenas/domain";
 import { RoleModel } from "@gorenas/domain";
 import { FormItemModel } from "../items/form-item.model";
 import { GeneralFilter } from "@gorenas/domain";
@@ -15,7 +15,7 @@ export class PermissionFilter extends GeneralFilter {
                 type: FormItemModel.TYPE_SELECT,
                 defaultValue: '',
                 selectOptions: {
-                    options: Array.from(RoleModel.ROLES_NAMES.keys()).map(key => { return { value: key, viewValue: RoleModel.ROLES_NAMES.get(key) } })
+                    options: Array.from(RoleModel.ROLES_NAMES.keys()).map(key =>  new ViewValue(key, RoleModel.ROLES_NAMES.get(key)))
                 },
                 active: true,
                 transparent: true
@@ -27,8 +27,8 @@ export class PermissionFilter extends GeneralFilter {
                 type: FormItemModel.TYPE_SELECT,
                 defaultValue: '',
                 selectOptions: {
-                    options: [{ value: '', viewValue: 'Todos' }].concat(Array.from(PermissionModel.MODULES_MAP.keys()).map(
-                        key => { return { value: key, viewValue: PermissionModel.MODULES_MAP.get(key) } }
+                    options: [new ViewValue('', 'Todos')].concat(Array.from(PermissionModel.MODULES_MAP.keys()).map(
+                        key => new ViewValue(key, PermissionModel.MODULES_MAP.get(key))
                     ))
                 },
                 transparent: true

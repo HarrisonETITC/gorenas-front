@@ -6,5 +6,5 @@ export const StorageContext = (type: string): StoragePort => {
     if ([StorageTypes.LOCAL, StorageTypes.SESSION].includes(type))
         return LocalSessionStorageAdapter.getInstance(type);
 
-    return null;
+    return LocalSessionStorageAdapter.getInstance(StorageTypes.LOCAL);
 }

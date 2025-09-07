@@ -5,7 +5,7 @@ import { AppUtil } from "@gorenas/application-core";
 
 @Injectable()
 export class LocalSessionStorageAdapter implements StoragePort {
-    private manager: Storage;
+    private manager!: Storage;
 
     private static instace: LocalSessionStorageAdapter;
 
@@ -15,14 +15,14 @@ export class LocalSessionStorageAdapter implements StoragePort {
                 throw new Error(`Se requiere del tipo de almacenamiento para inicializar esta clase.`)
 
             this.instace = new LocalSessionStorageAdapter();
-            this.instace.setStorage(type);
+            this.instace.setStorage(type || '');
         }
 
         return this.instace;
     }
 
     getItem<T>(key: string): T {
-        return JSON.parse(this.manager.getItem(key));
+        return JSON.parse(this.manager.getItem(key) || '');
     }
     setItem<T>(key: string, value: T): void {
         this.manager.setItem(key, JSON.stringify(value));

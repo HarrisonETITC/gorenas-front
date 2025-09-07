@@ -1,6 +1,6 @@
-import { BasicNotificationConfig } from "../models/basic-notification-config.interface";
-import { NotificationData } from "./notification-data.type";
-import { NotificationButton } from "../models/general/notification-button.model";
+import { BasicNotificationConfig } from "./basic-notification-config.interface";
+import { NotificationData } from "../types/notification-data.type";
+import { NotificationButton } from "../models/ui/notification-button.model";
 
 export interface NotificationConfig extends BasicNotificationConfig {
     type: 'success' | 'error' | 'warning' | 'info';

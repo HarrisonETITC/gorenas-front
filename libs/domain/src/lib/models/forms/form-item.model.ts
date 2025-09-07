@@ -1,7 +1,7 @@
 import { ValidatorFn } from "@angular/forms";
-import { SelectOptions } from "./select.options";
-import { AutocompleteOptions } from "./auto-complete.options";
-import { NumberFieldOptions } from "./number.options";
+import { AutocompleteOptions } from "./options/auto-complete.options";
+import { NumberFieldOptions } from "./options/number.options";
+import { SelectOptions } from "./options/select.options";
 
 export class FormItemModel<T = any> {
     public static readonly TYPE_TEXT = 'text';
@@ -22,9 +22,9 @@ export class FormItemModel<T = any> {
         this.ITEM_TYPES.push(FormItemModel.TYPE_DATETIME);
     }
 
-    name: string;
-    type: 'text' | 'password' | 'number' | 'auto-complete' | 'select' | 'datetime';
-    label: string;
+    name!: string;
+    type!: 'text' | 'password' | 'number' | 'auto-complete' | 'select' | 'datetime';
+    label!: string;
     icon?: string;
     defaultValue?: T;
     validators?: Array<ValidatorFn>;
