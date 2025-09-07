@@ -1,46 +1,13 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
-  "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
-    "baseUrl": "./",
     "strict": false,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
     "isolatedModules": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "moduleResolution": "bundler",
-    "importHelpers": true,
-    "target": "ES2022",
-    "module": "ES2022",
-    "paths": {
-      "@components/*": [
-        "src/app/UI/components/*"
-      ],
-      "@UI/*": [
-        "src/app/UI/*"
-      ],
-      "@services/*": [
-        "src/app/services/*"
-      ],
-      "@Application/*": [
-        "src/app/Application/*"
-      ],
-      "@Domain/*": [
-        "src/app/Domain/*"
-      ],
-      "@utils/*": [
-        "src/app/core/utils/*"
-      ],
-      "@models/*": [
-        "src/app/models/*"
-      ]
-    }
+    "esModuleInterop": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -48,4 +15,5 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
+  "extends": "./tsconfig.base.json"
 }

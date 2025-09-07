@@ -3,17 +3,20 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { AuthProviders } from '@Application/config/providers/auth.providers';
-import { ApplicationProviders } from '@Application/config/providers/app.providers';
-import { TokenHeaderInterceptor } from '@Application/config/interceptors/token-header.interceptor';
-import { PersonProviders } from '@Application/config/providers/person.providers';
-import { ParseDataInterceptor } from '@Application/config/interceptors/parse-data.interceptor';
-import { NotificationProviders } from '@Application/config/providers/notification.providers';
+import { AuthProviders } from '@gorenas/data-access-core';
+import { ApplicationProviders } from '@gorenas/data-access-core';
+import { TokenHeaderInterceptor } from '@gorenas/shared-angular';
+import { ParseDataInterceptor } from '@gorenas/shared-angular';
+import { NotificationProviders } from '@gorenas/data-access-commons';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { ValidationErrorInterceptor } from '@Application/config/interceptors/validation-error.interceptor';
-import { PermissionProviders } from '@Application/config/providers/permission.providers';
-import { RoleProviders } from '@Application/config/providers/role.providers';
-import { BranchProviders } from '@Application/config/providers/branch.providers';
+import { ValidationErrorInterceptor } from '@gorenas/shared-angular';
+import {
+  PersonProviders,
+  PermissionProviders,
+  RoleProviders,
+  BranchProviders
+} from '@gorenas/data-access-features';
+import { APP_CONFIG_PROVIDERS } from './config/app.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([TokenHeaderInterceptor, ParseDataInterceptor, ValidationErrorInterceptor])
     ),
+    ...APP_CONFIG_PROVIDERS,
     ...AuthProviders,
     ...ApplicationProviders,
     ...PersonProviders,

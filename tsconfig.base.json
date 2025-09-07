@@ -1,0 +1,28 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {
+      "@gorenas/application-core": ["libs/application/core/src/index.ts"],
+      "@gorenas/data-access-commons": ["libs/data-access/commons/src/index.ts"],
+      "@gorenas/data-access-core": ["libs/data-access/core/src/index.ts"],
+      "@gorenas/data-access-features": [
+        "libs/data-access/features/src/index.ts"
+      ],
+      "@gorenas/data-access-forms": ["libs/data-access/forms/src/index.ts"],
+      "@gorenas/domain": ["libs/domain/src/index.ts"],
+      "@gorenas/shared-angular": ["libs/shared/angular/src/index.ts"],
+      "@gorenas/shared-util-forms": ["libs/shared/util/forms/src/index.ts"],
+      "@gorenas/ui-commons": ["libs/ui/commons/src/index.ts"],
+      "@gorenas/ui-controls": ["libs/ui/controls/src/index.ts"],
+      "@gorenas/ui-features": ["libs/ui/features/src/index.ts"],
+      "@gorenas/ui-forms": ["libs/ui/forms/src/index.ts"]
+    }
+  }
+}
