@@ -1,10 +1,17 @@
 import { Provider } from "@angular/core";
-import { NotificationServiceAdapter } from "../notification-adapter.service";
+import { NotificationAdapter } from "@gorenas/data-access-commons";
+import { MaterialNotificationProvider } from "./material-notification.provider";
 import { NOTIFICATION_SERVICE } from "@gorenas/application-core";
 
 export const NotificationProviders: Array<Provider> = [
+    MaterialNotificationProvider,
     {
         provide: NOTIFICATION_SERVICE,
-        useClass: NotificationServiceAdapter
+        useFactory: (uiProvider: MaterialNotificationProvider) => {
+            const adapter = new NotificationAdapter();
+            adapter.setUIProvider(uiProvider);
+            return adapter;
+        },
+        deps: [MaterialNotificationProvider]
     }
 ]

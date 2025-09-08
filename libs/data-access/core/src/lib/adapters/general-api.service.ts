@@ -45,16 +45,18 @@ export abstract class GeneralApiService<T extends GeneralModel, U = T> implement
         return this.http.delete<void>(`${this.baseUrl}${URL_DELETE}?id=${id}`);
     }
     getAvailable(query?: string): Observable<Array<IdValue>> {
-        return AppUtil.verifyEmpty(query) ? of([]) : this.http.get<Array<IdValue>>(`${this.baseUrl}${URL_AVAILABLE}?query=${query}`)
+        return AppUtil.verifyEmpty(query) ? of([]) : this.http.get<Array<IdValue>>(`${this.baseUrl}${URL_AVAILABLE}?query=${encodeURIComponent(query!)}`)
     }
     getCanSee(params?: GeneralFilter): Observable<U[]> {
-        const url = `${this.baseUrl}${URL_CAN_SEE}` + AppUtil.processFilters(params || {});
+        const filters = AppUtil.processFiltersWithEncoding(params || {});
+        const url = `${this.baseUrl}${URL_CAN_SEE}${filters}`;
         return this.http.get<Array<U>>(url).pipe(
             defaultIfEmpty([])
         );
     }
     getIdValueMany(values: Array<any>): Observable<Array<IdValue>> {
-        const url = `${this.baseUrl}${URL_ID_VALUE}?values=${values.join(',')}`;
+        const encodedValues = values.map(value => encodeURIComponent(value)).join(',');
+        const url = `${this.baseUrl}${URL_ID_VALUE}?values=${encodedValues}`;
         return this.http.get<Array<IdValue>>(url);
     }
 }

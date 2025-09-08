@@ -10,7 +10,7 @@ import {
     StoragePort,
     AppUtil,
     STORAGE_PROVIDER
-} from "@gorenas/application-core";
+} from "@gorenas/application-core"; 
 import { LoginModel, UserModelView, AuthResponse } from "@gorenas/domain";
 import { BehaviorSubject, catchError, concatMap, ignoreElements, map, Observable, tap, throwError } from "rxjs";
 
@@ -32,7 +32,8 @@ export class AuthServiceAdapter implements AuthServicePort {
     ) {
         this.baseUrl = `${this.apiUrl}/${URL_AUTH}/`;
         this.logedManager = new BehaviorSubject(!AppUtil.verifyEmpty(this.getToken()));
-        this.userManager = new BehaviorSubject(this.storage.getItem('user'));
+        const storedUser = this.storage.getItem<UserModelView>('user');
+        this.userManager = new BehaviorSubject(storedUser || null);
     }
 
     login(credentials: LoginModel): Observable<void> {
@@ -83,7 +84,8 @@ export class AuthServiceAdapter implements AuthServicePort {
         });
     }
     getToken(): string {
-        return this.storage.getItem('token');
+        const token = this.storage.getItem<string>('token');
+        return token || '';
     }
     userHasRole(acceptedRoles: Array<string>): Observable<boolean> {
         return this.getUser().pipe(

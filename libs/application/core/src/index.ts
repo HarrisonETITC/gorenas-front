@@ -22,6 +22,8 @@ export * from './lib/ports/utils/destroy-subs.port'
 
 export * from './lib/tokens/injection.tokens'
 
+export * from './lib/models/base-data.config'
+
 // Re-export from domain for backward compatibility
 export type { GetAvailablePort, GetByIdPort, GetIdValueMany } from '@gorenas/domain'
 

@@ -56,7 +56,8 @@ export class ApplicationComponent implements OnInit, OnDestroy, DestroySubsPort 
   }
 
   protected init() {
-    this.items = this.service.getMenu().getItems();
+    const menu = this.service.getMenu();
+    this.items = menu ? menu.getItems() : [];
     this.personInfo$ = this.personService.getPersonInfo();
     this.service.activeComponent().pipe(
       distinctUntilChanged(),

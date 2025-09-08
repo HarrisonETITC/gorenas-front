@@ -22,7 +22,16 @@ export class LocalSessionStorageAdapter implements StoragePort {
     }
 
     getItem<T>(key: string): T {
-        return JSON.parse(this.manager.getItem(key) || '');
+        const item = this.manager.getItem(key);
+        if (AppUtil.verifyEmpty(item)) {
+            return null as any;
+        }
+        try {
+            return JSON.parse(item!);
+        } catch (error) {
+            console.error(`Error parsing stored item with key "${key}":`, error);
+            return null as any;
+        }
     }
     setItem<T>(key: string, value: T): void {
         this.manager.setItem(key, JSON.stringify(value));

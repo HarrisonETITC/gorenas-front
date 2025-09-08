@@ -21,7 +21,8 @@ import {
   DestroySubsPort,
   AUTH_SERVICE,
   FIELDS_SERVICE,
-  UseTable
+  UseTable,
+  BaseDataConfig
 } from '@gorenas/application-core';
 import { FormsProviders } from '@gorenas/data-access-forms';
 import { UtilsProviders } from '@gorenas/data-access-commons';
@@ -61,7 +62,7 @@ import { TableComponent } from '../table/table.component';
   ]
 })
 export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort {
-  @Input({ required: true }) pageName: string;
+  @Input({ required: true }) pageConfig: BaseDataConfig;
   @Input({ required: true }) module: string;
   @Input({ required: true }) service: ApiServicePort<T, U>;
   @Input({ required: true }) headers: Map<string, string>;
@@ -158,7 +159,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
   protected goUpdate(id: string | number): void {
     this.goForm(true, +id);
   }
-  protected handleSearch(event: Observable<PermissionFilter>) {
+  protected handleSearch(event: Observable<GeneralFilter>) {
     event.pipe(
       filter(f => {
         return !AppUtil.verifyEmptySimple(f)

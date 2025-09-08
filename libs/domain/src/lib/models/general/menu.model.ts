@@ -21,7 +21,7 @@ export class Menu {
     }
 
     public static getInstance() {
-        if (this.instance === null)
+        if (!this.instance)
             this.instance = new Menu();
 
         return this.instance;

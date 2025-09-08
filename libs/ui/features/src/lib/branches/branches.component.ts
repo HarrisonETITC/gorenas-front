@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ApiServicePort, BRANCH_SERVICE, UseBaseDataComponent } from '@gorenas/application-core';
+import { ApiServicePort, BaseDataConfig, BRANCH_SERVICE, UseBaseDataComponent } from '@gorenas/application-core';
 import { BaseDataComponent } from '@gorenas/ui-commons';
 import { AppModel, BranchModel, BtnConfig, TableConfig, BranchModelView } from '@gorenas/domain';
 import { FormDataConfig, FormItemModel, BranchFilter, BranchForms } from '@gorenas/shared-util-forms';
@@ -13,6 +13,7 @@ import { Observable, of } from 'rxjs';
 })
 export class BranchesComponent implements OnInit, UseBaseDataComponent {
   protected readonly moduleName = AppModel.MODULE_BRANCHES;
+  protected pageConfig: BaseDataConfig;
   headers: Map<string, string>;
   filterFields: FormItemModel<any>[] = BranchFilter.FIELDS;
 
@@ -23,6 +24,7 @@ export class BranchesComponent implements OnInit, UseBaseDataComponent {
 
   ngOnInit(): void {
     this.headers = BranchModelView.headers;
+    this.pageConfig = new BaseDataConfig('Sucursales', 'Crear Sucursal');
   }
   getInitFilter(): Observable<BranchFilter> {
     return of(null);

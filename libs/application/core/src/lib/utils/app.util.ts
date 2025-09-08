@@ -73,4 +73,20 @@ export class AppUtil {
 
         return Array.from(filters.keys()).map((val, i) => `${(i == 0) ? '?' : '&'}${val}=${filters.get(val)}`).join('');
     }
+
+    public static processFiltersWithEncoding<T extends GeneralFilter>(filter: T): string {
+        if (this.verifyEmpty(filter)) return '';
+
+        const filters: Map<string, string> = new Map();
+        Object.keys(filter).forEach((key) => {
+            const typedKey = key as keyof T;
+            const value = filter[typedKey];
+            if (!this.verifyEmpty(value))
+                filters.set(key, encodeURIComponent(value as string));
+        });
+
+        if (this.verifyEmpty(filters)) return '';
+
+        return Array.from(filters.keys()).map((val, i) => `${(i == 0) ? '?' : '&'}${val}=${encodeURIComponent(filters.get(val)!)}`).join('');
+    }
 }
