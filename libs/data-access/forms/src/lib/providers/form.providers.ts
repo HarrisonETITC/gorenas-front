@@ -1,15 +1,15 @@
 import { Provider } from "@angular/core";
-import { FieldsServiceAdapter } from "../adapters/fields-adapter.service";
+import { FormBaseServiceAdapter } from "../adapters/form-base-adapter.service";
 import { FormDataServiceAdapter } from "../adapters/form-data-adapter.service";
 import {
     FIELDS_SERVICE,
-    FieldsServicePort,
+    FormBaseServicePort,
     FORM_DATA_SERVICE,
     FormDataServicePort
 } from "@gorenas/application-core";
 
-export const FieldsServiceProvier = (): FieldsServicePort => {
-    return new FieldsServiceAdapter();
+export const FieldsServiceProvier = (): FormBaseServicePort => {
+    return new FormBaseServiceAdapter();
 }
 export const FormDataServiceProvider = (): FormDataServicePort => {
     return new FormDataServiceAdapter();

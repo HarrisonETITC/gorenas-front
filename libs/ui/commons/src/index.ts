@@ -7,3 +7,5 @@ export * from './lib/table/table.component'
 
 export * from './lib/providers/material-notification.provider'
 export * from './lib/providers/notification.providers'
+
+export * from './lib/utils/base-data-actions.util'

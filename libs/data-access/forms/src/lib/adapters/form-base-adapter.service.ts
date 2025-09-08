@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
-import { FieldsServicePort } from "@gorenas/application-core";
+import { FormBaseServicePort } from "@gorenas/application-core";
 import { FormItemModel } from "@gorenas/domain";
 import { AppUtil } from "@gorenas/application-core";
 import { FormsUtil } from "@gorenas/shared-util-forms";
 import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable()
-export class FieldsServiceAdapter implements FieldsServicePort {
+export class FormBaseServiceAdapter implements FormBaseServicePort {
     private readonly fieldsHandler = new BehaviorSubject<Array<FormItemModel>>([]);
     private readonly cleanFiltersHandler = new BehaviorSubject<string>('');
     private controls = new Map<string, FormControl>();

@@ -8,7 +8,7 @@ import {
   FormDataServicePort,
   FORM_DATA_SERVICE,
   FIELDS_SERVICE,
-  FieldsServicePort,
+  FormBaseServicePort,
   NOTIFICATION_SERVICE,
   NotificationServicePort,
   ErrorConfig,
@@ -44,7 +44,7 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
     @Inject(FORM_DATA_SERVICE)
     private readonly formDataService: FormDataServicePort,
     @Inject(FIELDS_SERVICE)
-    private readonly fieldsService: FieldsServicePort,
+    private readonly fieldsService: FormBaseServicePort,
     @Inject(NOTIFICATION_SERVICE)
     private readonly notificationSevice: NotificationServicePort,
     private readonly router: Router,

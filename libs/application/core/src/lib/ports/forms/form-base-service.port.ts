@@ -2,7 +2,7 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { FormItemModel } from "@gorenas/domain";
 import { Observable } from "rxjs";
 
-export interface FieldsServicePort {
+export interface FormBaseServicePort {
     init(fields: Array<any>, form?: any): Map<string, FormControl>;
     setControlValue(name: string, value: any, form?: FormGroup): void;
     resetControls(): void;

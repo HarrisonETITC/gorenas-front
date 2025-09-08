@@ -8,7 +8,7 @@ import { filter, tap } from 'rxjs/operators';
 import { FormBaseComponent } from '@gorenas/ui-controls';
 import { FormItemModel } from '@gorenas/shared-util-forms';
 import { IdValue, ViewValue } from '@gorenas/domain';
-import { ChildUpdatePort, FIELDS_SERVICE, FieldsServicePort, AppUtil } from '@gorenas/application-core';
+import { ChildUpdatePort, FIELDS_SERVICE, FormBaseServicePort, AppUtil } from '@gorenas/application-core';
 
 @Component({
   selector: 'app-filters-compact',
@@ -29,7 +29,7 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
 
   constructor(
     @Inject(FIELDS_SERVICE)
-    private readonly fieldsService: FieldsServicePort,
+    private readonly fieldsService: FormBaseServicePort,
     readonly cdr: ChangeDetectorRef
   ) { }
 

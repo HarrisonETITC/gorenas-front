@@ -6,7 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   AppUtil,
   AutocompleteFieldPort,
-  FieldsServicePort,
+  FormBaseServicePort,
   FIELDS_SERVICE,
   DestroySubsPort
 } from '@gorenas/application-core';
@@ -42,7 +42,7 @@ export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySub
 
   constructor(
     @Inject(FIELDS_SERVICE)
-    private readonly service: FieldsServicePort
+    private readonly service: FormBaseServicePort
   ) { }
 
   ngOnInit(): void {

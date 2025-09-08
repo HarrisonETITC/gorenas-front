@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
-  FieldsServicePort,
+  FormBaseServicePort,
   FIELDS_SERVICE
 } from '@gorenas/application-core';
 import { FormBaseComponent } from '@gorenas/ui-controls';
@@ -29,7 +29,7 @@ export class FiltersExtendedComponent implements OnInit {
 
   constructor(
     @Inject(FIELDS_SERVICE)
-    private readonly fieldsService: FieldsServicePort
+    private readonly fieldsService: FormBaseServicePort
   ) { }
 
   ngOnInit(): void {

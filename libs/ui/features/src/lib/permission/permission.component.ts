@@ -16,7 +16,8 @@ import {
   ROLE_SERVICE,
   AuthServicePort,
   AppUtil,
-  UseBaseDataComponent
+  UseBaseDataComponent,
+  BaseDataConfig
 } from '@gorenas/application-core';
 import { FormItemModel, PermissionFilter, PermissionForms, FormDataConfig } from '@gorenas/shared-util-forms';
 import { FormsProviders } from '@gorenas/data-access-forms';
@@ -33,6 +34,7 @@ import { BaseDataComponent } from '@gorenas/ui-commons';
 })
 export class PermissionComponent implements OnInit, UseBaseDataComponent {
   protected readonly moduleName = AppModel.MODULE_PERMISSIONS;
+  pageConfig: BaseDataConfig;
   headers: Map<string, string>;
   filterFields: Array<FormItemModel> = PermissionFilter.FIELDS;
 
@@ -47,6 +49,7 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
 
   ngOnInit(): void {
     this.headers = PermissionModelView.headers;
+    this.pageConfig = new BaseDataConfig('Permisos', 'Agregar permiso');
   }
   getInitFilter(): Observable<PermissionFilter> {
     return this.authService.getUser().pipe(

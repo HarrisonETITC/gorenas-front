@@ -16,7 +16,7 @@ import {
   ApiServicePort,
   FORM_DATA_SERVICE,
   AuthServicePort,
-  FieldsServicePort,
+  FormBaseServicePort,
   FormDataServicePort,
   DestroySubsPort,
   AUTH_SERVICE,
@@ -62,6 +62,19 @@ import { TableComponent } from '../table/table.component';
   ]
 })
 export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit, OnDestroy, UseTable<U>, DestroySubsPort {
+  // Acciones base que puede manejar BaseDataComponent de forma genérica
+  public static readonly BASE_ACTIONS = {
+    EDIT: 'edit',
+    CREATE: 'create',
+    VIEW: 'view'
+  } as const;
+
+  // Acciones que requieren formularios y pueden ser manejadas genéricamente
+  private static readonly FORM_ACTIONS = new Set([
+    BaseDataComponent.BASE_ACTIONS.EDIT,
+    BaseDataComponent.BASE_ACTIONS.CREATE
+  ]);
+
   @Input({ required: true }) pageConfig: BaseDataConfig;
   @Input({ required: true }) module: string;
   @Input({ required: true }) service: ApiServicePort<T, U>;
@@ -71,6 +84,8 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
   @Input({ required: false }) infoMaps?: Map<string, Array<ViewValue>>;
   @Input({ required: false }) filters?: Array<FormItemModel>;
   @Input({ required: false }) dataForms?: Array<FormDataConfig>;
+  @Input({ required: false }) actionHandlers?: Map<string, (element: T) => void>;
+  @Input({ required: false }) enableDefaultActions: boolean = true;
 
   private readonly formsDefsValues: Map<number, Array<any>> = new Map();
   protected readonly dataManager: BehaviorSubject<Array<T>> = new BehaviorSubject(null);
@@ -85,13 +100,15 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     @Inject(AUTH_SERVICE)
     private readonly authService: AuthServicePort,
     @Inject(FIELDS_SERVICE)
-    private readonly fieldsService: FieldsServicePort,
+    private readonly fieldsService: FormBaseServicePort,
     @Inject(FORM_DATA_SERVICE)
     private readonly formDataService: FormDataServicePort,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     readonly cdr: ChangeDetectorRef
-  ) { }
+  ) { 
+    this.initDefaultActionHandlers();
+  }
 
   ngOnInit(): void {
     if (!AppUtil.verifyEmpty(this.dataForms) && this.formsDefsValues.size === 0) {
@@ -183,17 +200,26 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
   }
   private goForm(edit: boolean = false, id?: number) {
     const formRoute = (edit && !AppUtil.verifyEmpty(id)) ? `form/${id}` : `form`;
-    this.notifyForms();
+    this.notifyForms(edit);
 
     this.router.navigate([formRoute], { relativeTo: this.route });
   }
-  private notifyForms() {
+  private notifyForms(isEdit: boolean = false) {
     this.dataForms.forEach((config, index) => {
       const defValues = this.formsDefsValues.get(index);
-      config.fields = config.fields.map((field, fieldIndex) => ({
-        ...field,
-        defaultValue: defValues[fieldIndex]
-      }));
+      
+      // Solo restaurar valores por defecto si no es edición
+      if (!isEdit) {
+        config.fields = config.fields.map((field, fieldIndex) => ({
+          ...field,
+          defaultValue: defValues[fieldIndex]
+        }));
+      }
+      
+      // Asegurar que el dataInitializer esté configurado para edición
+      if (isEdit && !config.dataInitializer) {
+        config.dataInitializer = this.service;
+      }
     });
     this.formDataService.updateState(true);
     this.formDataService.sendComponentEvent({ event: '' });
@@ -210,9 +236,77 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     });
   }
   protected handleBtnAction(ev: { event: string, element: T }): void {
-    if (ev.event === 'edit')
-      this.goUpdate(ev.element.id);
+    // 1. Primero verificar si hay un handler personalizado
+    const customHandler = this.actionHandlers?.get(ev.event);
+    if (customHandler) {
+      customHandler(ev.element);
+      return;
+    }
+
+    // 2. Si no hay handler personalizado, verificar si es una acción base que podemos manejar
+    if (this.enableDefaultActions && this.canHandleBaseAction(ev.event)) {
+      this.handleBaseAction(ev.event, ev.element);
+      return;
+    }
+
+    // 3. Si llegamos aquí, no hay handler para esta acción
+    console.warn(`No handler found for action: ${ev.event}`);
   }
+
+  private canHandleBaseAction(action: string): boolean {
+    return Object.values(BaseDataComponent.BASE_ACTIONS).includes(action as any);
+  }
+
+  private handleBaseAction(action: string, element: T): void {
+    switch (action) {
+      case BaseDataComponent.BASE_ACTIONS.EDIT:
+        this.handleEditAction(element);
+        break;
+      case BaseDataComponent.BASE_ACTIONS.CREATE:
+        this.handleCreateAction();
+        break;
+      case BaseDataComponent.BASE_ACTIONS.VIEW:
+        this.handleViewAction(element);
+        break;
+      default:
+        console.warn(`Base action ${action} is not implemented`);
+    }
+  }
+
+  private handleEditAction(element: T): void {
+    if (!this.hasFormCapability()) {
+      console.warn('Edit action requires dataForms to be configured');
+      return;
+    }
+    this.goUpdate(element.id);
+  }
+
+  private handleCreateAction(): void {
+    if (!this.hasFormCapability()) {
+      console.warn('Create action requires dataForms to be configured');
+      return;
+    }
+    this.goCreate();
+  }
+
+  private handleViewAction(element: T): void {
+    // Por defecto, view es lo mismo que edit pero en modo solo lectura
+    // Los features pueden sobrescribir esto con su propio handler
+    console.log('View action - implement custom handler for specific behavior', element);
+  }
+
+  private hasFormCapability(): boolean {
+    return !AppUtil.verifyEmpty(this.dataForms);
+  }
+
+  private initDefaultActionHandlers(): void {
+    // Este método ahora solo inicializa el Map si no existe
+    // Las acciones base se manejan en handleBaseAction()
+    if (!this.actionHandlers) {
+      this.actionHandlers = new Map();
+    }
+  }
+
   protected verifyEmpty(data: any): boolean {
     return AppUtil.verifyEmpty(data);
   }

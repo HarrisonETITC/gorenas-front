@@ -16,7 +16,7 @@ import {
   RoleModel,
   RoleModelView
 } from '@gorenas/domain';
-import { FieldsServicePort } from '../ports/forms/fields-service.port';
+import { FormBaseServicePort } from '../ports/forms/form-base-service.port';
 import { FormDataServicePort } from '../ports/forms/form-data-service.port';
 
 // Configuration tokens
@@ -29,7 +29,7 @@ export const PAGINATOR_SERVICE = new InjectionToken<PaginatorServicePort>('Pagin
 export const APPLICATION_SERVICE = new InjectionToken<ApplicationServicePort>('ApplicationService');
 export const AUTH_SERVICE = new InjectionToken<AuthServicePort>('AuthService');
 export const STORAGE_PROVIDER = new InjectionToken<StoragePort>('StorageProvider');
-export const FIELDS_SERVICE = new InjectionToken<FieldsServicePort>('FieldsService');
+export const FIELDS_SERVICE = new InjectionToken<FormBaseServicePort>('FieldsService');
 export const FORM_DATA_SERVICE = new InjectionToken<FormDataServicePort>('FormDataService');
 
 // Features
