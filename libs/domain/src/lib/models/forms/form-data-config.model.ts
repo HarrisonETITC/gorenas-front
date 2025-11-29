@@ -1,6 +1,9 @@
 import { FormItemModel } from "./form-item.model";
 import { GetByIdPort } from "../../ports/get-by-id.port";
 
+/**
+ * Configuración para formularios dinámicos
+ */
 export class FormDataConfig<T = any> {
     public static readonly MODE_FORM = 'form';
     public static readonly MODE_CONTROLS = 'controls';

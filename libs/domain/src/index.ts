@@ -49,9 +49,12 @@ export * from './lib/constants/storage.constants'
 // Form models
 export * from './lib/models/forms/form-item.model'
 export * from './lib/models/forms/form-data-config.model'
-export * from './lib/models/forms/options/auto-complete.options'
-export * from './lib/models/forms/options/number.options'
-export * from './lib/models/forms/options/select.options'
+
+// Form Items - Arquitectura principal de formularios
+export * from './lib/models/forms/items'
+
+// Interfaces
+export * from './lib/interfaces/base-form-item.port'
 
 // Ports  
 export * from './lib/ports/get-available.port'
