@@ -13,10 +13,10 @@ import { Observable, of } from 'rxjs';
 })
 export class BranchesComponent implements OnInit, UseBaseDataComponent {
   protected readonly moduleName = AppModel.MODULE_BRANCHES;
+  protected actionHandlers: Map<string, (element: BranchModel) => void>;
   pageConfig: BaseDataConfig;
   headers: Map<string, string>;
   filterFields: FormItemModel<any>[] = BranchFilter.FIELDS;
-  protected actionHandlers: Map<string, (element: BranchModel) => void>;
 
   constructor(
     @Inject(BRANCH_SERVICE)

@@ -5,6 +5,7 @@ export * from './lib/adapters/roles-adapter.service'
 export * from './lib/adapters/user-adapter.service'
 
 export * from './lib/providers/branch.providers'
+export * from './lib/providers/employee.providers'
 export * from './lib/providers/permission.providers'
 export * from './lib/providers/person.providers'
 export * from './lib/providers/role.providers'

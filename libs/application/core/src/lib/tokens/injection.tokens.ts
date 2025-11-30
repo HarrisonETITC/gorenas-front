@@ -9,6 +9,8 @@ import { PersonPort } from '../ports/features/person.port';
 import {
   BranchModel,
   BranchModelView,
+  EmployeeModel,
+  EmployeeModelView,
   PermissionModel,
   PermissionModelView,
   PersonModel,
@@ -34,6 +36,7 @@ export const FORM_DATA_SERVICE = new InjectionToken<FormDataServicePort>('FormDa
 
 // Features
 export const BRANCH_SERVICE = new InjectionToken<ApiServicePort<BranchModel, BranchModelView>>('BranchService');
+export const EMPLOYEE_SERVICE = new InjectionToken<ApiServicePort<EmployeeModel, EmployeeModelView>>('EmployeeService');
 export const PERMISSION_SERVICE = new InjectionToken<ApiServicePort<PermissionModel, PermissionModelView>>('PermissionService');
 export const PERSON_SERVICE = new InjectionToken<ApiServicePort<PersonModel, PersonModelView> & PersonPort>('PersonService');
 export const ROLE_SERVICE = new InjectionToken<ApiServicePort<RoleModel, RoleModelView>>('RoleService');

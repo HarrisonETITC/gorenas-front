@@ -6,6 +6,7 @@ export * from './lib/filters/permission.filter'
 export * from './lib/filters/branch.filter'
 
 export * from './lib/forms/branch.forms'
+export * from './lib/forms/employee.forms'
 export * from './lib/forms/forms.util'
 export * from './lib/forms/permission.forms'
 export * from './lib/forms/validators/date.validator'

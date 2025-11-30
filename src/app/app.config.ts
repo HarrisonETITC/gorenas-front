@@ -15,7 +15,8 @@ import {
   PersonProviders,
   PermissionProviders,
   RoleProviders,
-  BranchProviders
+  BranchProviders,
+  EmployeeProviders
 } from '@gorenas/data-access-features';
 import { APP_CONFIG_PROVIDERS } from './config/app.config';
 
@@ -35,6 +36,7 @@ export const appConfig: ApplicationConfig = {
     ...PersonProviders,
     ...PermissionProviders,
     ...BranchProviders,
+    ...EmployeeProviders,
     ...RoleProviders,
     ...NotificationProviders
   ]

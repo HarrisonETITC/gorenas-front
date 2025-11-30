@@ -99,6 +99,9 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
     return Object.keys(valor);
   }
   protected transformValue(value: any, key?: string) {
+    if (typeof value === 'number')
+      return value;
+
     if (!AppUtil.verifyEmpty(new Date(value))) {
       const resultDate = new Date(value);
       return `${resultDate.toLocaleDateString()} ${resultDate.toLocaleTimeString()}`;
