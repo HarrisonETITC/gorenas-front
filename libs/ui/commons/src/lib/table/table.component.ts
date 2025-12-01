@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { 
   AppUtil, 
   PAGINATOR_SERVICE, 
@@ -20,6 +20,7 @@ import { BtnConfig } from '@gorenas/domain';
   imports: [CommonModule, PaginatorComponent, RouterModule, MatTableModule, MatIconModule, MatTooltipModule],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   schemas: []
 })
 export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy, AfterViewInit, DestroySubsPort {
@@ -40,7 +41,8 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
 
   constructor(
     @Inject(PAGINATOR_SERVICE)
-    private readonly paginatorService: PaginatorServicePort<T>
+    private readonly paginatorService: PaginatorServicePort<T>,
+    private readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -54,6 +56,7 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
           this.rawData = rawData;
           this.paginatorService.originalData = this.rawData;
         }
+        this.cdr.markForCheck();
       }),
       takeUntil(this.finishSubs$),
       ignoreElements()
@@ -72,6 +75,7 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
         tap((info) => {
           this.filteredData = info;
           this.loadingData = false;
+          this.cdr.markForCheck();
         }),
         map(info => {
           const headers = Object.keys(info[0]);
@@ -83,6 +87,7 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
       )
       .subscribe((info) => {
         this.headers = info;
+        this.cdr.markForCheck();
       });
   }
 

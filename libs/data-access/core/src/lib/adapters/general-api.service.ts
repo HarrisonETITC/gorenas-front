@@ -45,7 +45,11 @@ export abstract class GeneralApiService<T extends GeneralModel, U = T> implement
         return this.http.delete<void>(`${this.baseUrl}${URL_DELETE}?id=${id}`);
     }
     getAvailable(query?: string): Observable<Array<IdValue>> {
-        return AppUtil.verifyEmpty(query) ? of([]) : this.http.get<Array<IdValue>>(`${this.baseUrl}${URL_AVAILABLE}?query=${encodeURIComponent(query!)}`)
+        if (AppUtil.verifyEmpty(query))
+            return of([]);
+
+
+        return this.http.get<Array<IdValue>>(`${this.baseUrl}${URL_AVAILABLE}?query=${encodeURIComponent(query!)}`)
     }
     getCanSee(params?: GeneralFilter): Observable<U[]> {
         const filters = AppUtil.processFiltersWithEncoding(params || {});

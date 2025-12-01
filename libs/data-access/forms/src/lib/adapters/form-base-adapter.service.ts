@@ -107,9 +107,15 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
         for (const controlKey of Array.from(this.controls.keys())) {
             const control = this.getControl(controlKey);
 
-            if (!AppUtil.verifyEmpty(control.value))
-                obj[controlKey] = control.value;
-
+            if (!AppUtil.verifyEmpty(control.value)) {
+                const value = control.value;
+                // Si el valor es un objeto con 'value' (ej: autocomplete), extraer el texto
+                if (value !== null && typeof value === 'object' && 'value' in value) {
+                    obj[controlKey] = value.value;
+                } else {
+                    obj[controlKey] = value;
+                }
+            }
         }
 
         return obj;

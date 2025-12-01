@@ -16,7 +16,6 @@ import {
   FormCloseComponentPort,
   DestroySubsPort
 } from '@gorenas/application-core';
-import { FormsProviders } from '@gorenas/data-access-forms';
 import { FormDataConfig, FormsUtil } from '@gorenas/shared-util-forms';
 import { concatMap, filter, first, Observable, of, Subject, takeUntil, tap } from 'rxjs';
 import { FormBaseComponent } from '../form-base/form-base.component';
@@ -25,10 +24,8 @@ import { FormBaseComponent } from '../form-base/form-base.component';
   selector: 'app-form-base-data',
   imports: [MatIconModule, MatButtonModule, MatTooltipModule, FormBaseComponent],
   templateUrl: './form-base-data.component.html',
-  styleUrl: './form-base-data.component.css',
-  providers: [
-    FormsProviders[0]
-  ]
+  styleUrl: './form-base-data.component.css'
+  // No providers - usa la instancia de FIELDS_SERVICE del padre (base-data.component.ts)
 })
 export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseComponentPort, DestroySubsPort {
   @Input({ transform: (id: string) => +id }) id: number;

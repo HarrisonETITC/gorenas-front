@@ -7,7 +7,8 @@ import {
   AppModel,
   TableConfig,
   BtnConfig,
-  PermissionModelView
+  PermissionModelView,
+  AutocompleteOptions
 } from '@gorenas/domain';
 import {
   ApiServicePort,
@@ -66,10 +67,11 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
     createForm.dataInitializer = this.service;
     const roleAutocompleteField = createForm.fields.find(f => f.name === 'role');
 
-    if (AppUtil.verifyEmpty(roleAutocompleteField.autocompleteOptions))
-      roleAutocompleteField.autocompleteOptions = {
-        endpoint: this.roleService
-      };
+    if (AppUtil.verifyEmpty(roleAutocompleteField.autocompleteOptions)) {
+      const roleAutocomplete = new AutocompleteOptions();
+      roleAutocomplete.endpoint = this.roleService;
+      roleAutocompleteField.autocompleteOptions = roleAutocomplete;
+    }
 
     return [createForm];
   }

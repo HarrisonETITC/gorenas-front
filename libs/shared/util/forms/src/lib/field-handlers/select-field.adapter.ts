@@ -5,11 +5,18 @@ import { FieldInitializerPort } from "@gorenas/application-core";
 
 export class SelectFieldAdapter implements FieldInitializerPort {
     validateField(field: FormItemModel): void {
-        if (AppUtil.verifyEmpty(field.selectOptions) || AppUtil.verifyEmpty(field.selectOptions.options))
-            throw new Error(`Las opciones son requeridas para un campo de tipo select. Nombre del campo sin opciones: '${field.name}'`);
+        // Solo advertir si no hay opciones, pero no lanzar error
+        if (AppUtil.verifyEmpty(field.selectOptions) || AppUtil.verifyEmpty(field.selectOptions.options)) {
+            console.warn(`Campo select '${field.name}' sin opciones configuradas. Se inicializará con array vacío.`);
+        }
     }
     initField(field: FormItemModel): void {
-        return;
+        // Inicializar selectOptions si no existe
+        if (AppUtil.verifyEmpty(field.selectOptions)) {
+            field.selectOptions = { options: [] };
+        } else if (AppUtil.verifyEmpty(field.selectOptions.options)) {
+            field.selectOptions.options = [];
+        }
     }
     isFieldType(field: FormItemModel): boolean {
         return field.type === FormItemModel.TYPE_SELECT;
@@ -21,7 +28,14 @@ export class SelectFieldAdapter implements FieldInitializerPort {
         return fields;
     }
     setValue(val: any, field: FormItemModel) {
-        field.defaultValue = field.selectOptions?.options.find((opt) => opt.value == val).viewValue ?? '';
+        // Verificar que existen las opciones antes de buscar
+        if (AppUtil.verifyEmpty(field.selectOptions?.options)) {
+            field.defaultValue = val;
+            return of();
+        }
+        
+        const found = field.selectOptions.options.find((opt) => opt.value == val);
+        field.defaultValue = found?.viewValue ?? '';
         return of();
     }
 }

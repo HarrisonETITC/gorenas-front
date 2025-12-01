@@ -157,8 +157,11 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
       takeUntil(this.finishSubs$),
       tap(value => {
         if (!value) {
-          this.dataManager.next([]);
-          this.fieldsService.sendFiltersEvent();
+          // Ejecutar fuera del ciclo de detección de cambios
+          setTimeout(() => {
+            this.search(this.initFilterRaw);
+            this.fieldsService.sendFiltersEvent();
+          }, 0);
         }
       })
     );
@@ -205,15 +208,32 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     this.router.navigate([formRoute], { relativeTo: this.route });
   }
   private notifyForms(isEdit: boolean = false) {
+    // Limpiar controles antes de abrir el formulario para evitar valores residuales
+    if (!isEdit) {
+      this.fieldsService.resetControls();
+    }
+    
     this.dataForms.forEach((config, index) => {
       const defValues = this.formsDefsValues.get(index);
       
       // Solo restaurar valores por defecto si no es edición
       if (!isEdit) {
-        config.fields = config.fields.map((field, fieldIndex) => ({
-          ...field,
-          defaultValue: defValues[fieldIndex]
-        }));
+        config.fields = config.fields.map((field, fieldIndex) => {
+          // Preservar la instancia de autocompleteOptions para mantener la referencia al Subject
+          const newField = {
+            ...field,
+            defaultValue: defValues[fieldIndex]
+          };
+          // Restaurar la referencia original de autocompleteOptions (no copiar)
+          if (field.autocompleteOptions) {
+            newField.autocompleteOptions = field.autocompleteOptions;
+          }
+          // Restaurar la referencia original de selectOptions
+          if (field.selectOptions) {
+            newField.selectOptions = field.selectOptions;
+          }
+          return newField;
+        });
       }
       
       // Asegurar que el dataInitializer esté configurado para edición
@@ -229,10 +249,55 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
       filter(ev => ev.event === 'create' || ev.event === 'update' || ev.event === 'close'),
       takeUntil(this.finishSubs$)
     ).subscribe((ev) => {
-      if (ev.event === 'create' || ev.event === 'update')
-        this.formDataService.sendComponentEvent({ event: 'done' })
-      if (ev.event === 'close')
+      if (ev.event === 'create') {
+        this.handleCreateSubmit();
+      } else if (ev.event === 'update') {
+        this.handleUpdateSubmit();
+      } else if (ev.event === 'close') {
         formSub.unsubscribe();
+      }
+    });
+  }
+
+  /**
+   * Maneja el envío del formulario de creación
+   */
+  private handleCreateSubmit(): void {
+    const formData = this.fieldsService.getObject() as T;
+    console.log('[BaseData] Creando:', formData);
+    
+    this.service.create(formData).pipe(
+      take(1)
+    ).subscribe({
+      next: (result) => {
+        console.log('[BaseData] Creado exitosamente:', result);
+        this.formDataService.sendComponentEvent({ event: 'done' });
+      },
+      error: (err) => {
+        console.error('[BaseData] Error al crear:', err);
+        this.formDataService.sendComponentEvent({ event: 'error', message: err?.message || 'Error al crear' });
+      }
+    });
+  }
+
+  /**
+   * Maneja el envío del formulario de actualización
+   */
+  private handleUpdateSubmit(): void {
+    const formData = this.fieldsService.getObject() as T;
+    console.log('[BaseData] Actualizando:', formData);
+    
+    this.service.modify(formData).pipe(
+      take(1)
+    ).subscribe({
+      next: (result) => {
+        console.log('[BaseData] Actualizado exitosamente:', result);
+        this.formDataService.sendComponentEvent({ event: 'done' });
+      },
+      error: (err) => {
+        console.error('[BaseData] Error al actualizar:', err);
+        this.formDataService.sendComponentEvent({ event: 'error', message: err?.message || 'Error al actualizar' });
+      }
     });
   }
   protected handleBtnAction(ev: { event: string, element: T }): void {

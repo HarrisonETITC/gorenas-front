@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { ApiServicePort, BaseDataConfig, BRANCH_SERVICE, EMPLOYEE_SERVICE, PERSON_SERVICE, UseBaseDataComponent } from "@gorenas/application-core";
-import { FormItemModel, GeneralFilter, FormDataConfig, AppModel, EmployeeModel, EmployeeModelView, PersonModel, PersonModelView, BranchModelView, BranchModel, BtnConfig, TableConfig } from "@gorenas/domain";
+import { FormItemModel, GeneralFilter, FormDataConfig, AppModel, EmployeeModel, EmployeeModelView, PersonModel, PersonModelView, BranchModelView, BranchModel, BtnConfig, TableConfig, AutocompleteOptions } from "@gorenas/domain";
 import { EmployeeForms } from "@gorenas/shared-util-forms";
 import { BaseDataComponent } from "@gorenas/ui-commons";
 import { Observable, of } from "rxjs";
@@ -37,12 +37,16 @@ export class EmployeesComponent implements OnInit, UseBaseDataComponent {
   getForms(): Array<FormDataConfig> {
     const createForm = EmployeeForms.CREATE_FORM;
     createForm.dataInitializer = this.service;
-    createForm.fields[0].autocompleteOptions = {
-      endpoint: this.personService
-    };
-    createForm.fields[2].autocompleteOptions = {
-      endpoint: this.branchService
-    }
+    
+    // Configurar autocomplete para persona
+    const personAutocomplete = new AutocompleteOptions();
+    personAutocomplete.endpoint = this.personService;
+    createForm.fields[0].autocompleteOptions = personAutocomplete;
+    
+    // Configurar autocomplete para sucursal
+    const branchAutocomplete = new AutocompleteOptions();
+    branchAutocomplete.endpoint = this.branchService;
+    createForm.fields[2].autocompleteOptions = branchAutocomplete;
 
     return [createForm];
   }
