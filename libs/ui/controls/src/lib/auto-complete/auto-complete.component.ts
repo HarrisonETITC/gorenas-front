@@ -54,7 +54,10 @@ export class AutoCompleteComponent implements OnInit, AfterViewInit, FormFieldCo
   verifyEmpty(val: any): boolean {
     return AppUtil.verifyEmpty(val);
   }
-  displayName(value: IdValue): string {
+  displayName(value: IdValue | string): string {
+    if (typeof value === 'string') {
+      return value;
+    }
     return value?.value ?? '';
   }
   handleOptionSelected(event: MatAutocompleteSelectedEvent) {

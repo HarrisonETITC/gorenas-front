@@ -28,14 +28,9 @@ export class SelectFieldAdapter implements FieldInitializerPort {
         return fields;
     }
     setValue(val: any, field: FormItemModel) {
-        // Verificar que existen las opciones antes de buscar
-        if (AppUtil.verifyEmpty(field.selectOptions?.options)) {
-            field.defaultValue = val;
-            return of();
-        }
-        
-        const found = field.selectOptions.options.find((opt) => opt.value == val);
-        field.defaultValue = found?.viewValue ?? '';
+        // Asignar el valor directamente (el código, no el texto)
+        // El select usará este valor para seleccionar la opción correcta
+        field.defaultValue = val;
         return of();
     }
 }

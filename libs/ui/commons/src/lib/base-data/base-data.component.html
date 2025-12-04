@@ -5,31 +5,33 @@
     @if(!(isFormView$ | async)) {
         <div class="flex flex-col h-full">
             <div class="flex items-center py-4 px-1"
-                [ngClass]="{ 'justify-end': filterExtended, 'justify-between': !filterExtended }">
-                @if (!filterExtended) {
+                [ngClass]="{ 'justify-end': filterExtended || verifyEmpty(filters), 'justify-between': !filterExtended && !verifyEmpty(filters) }">
+                @if (!filterExtended && !verifyEmpty(filters)) {
                     <app-filters-compact class="compact"
                         [fields]="filters"
                         (searchHandler)="handleSearch($event)"
                     ></app-filters-compact>
                 }
                 <div class="flex flex-col items-end justify-center">
-                    <div>
-                        <button
-                            [matMenuTriggerFor]="settings"
-                            mat-icon-button>
-                            <mat-icon>settings_outline</mat-icon>
-                        </button>
-                        <mat-menu #settings="matMenu">
-                            <p class="text-white flex flex-col p-2 pl-4 h-full relative before:content-dot before:absolute before:text-white before:left-1 before:text-xl before:top-1">
-                                Modo de filtros: {{ filterExtended? 'Extendido' : 'Compacto' }}
-                                <mat-slide-toggle
-                                    (click)="$event.stopPropagation()"
-                                    (change)="filterExtended = !filterExtended;"
-                                    [checked]="filterExtended"
-                                ></mat-slide-toggle>
-                            </p>
-                        </mat-menu>
-                    </div>
+                    @if (!verifyEmpty(filters)) {
+                        <div>
+                            <button
+                                [matMenuTriggerFor]="settings"
+                                mat-icon-button>
+                                <mat-icon>settings_outline</mat-icon>
+                            </button>
+                            <mat-menu #settings="matMenu">
+                                <p class="text-white flex flex-col p-2 pl-4 h-full relative before:content-dot before:absolute before:text-white before:left-1 before:text-xl before:top-1">
+                                    Modo de filtros: {{ filterExtended? 'Extendido' : 'Compacto' }}
+                                    <mat-slide-toggle
+                                        (click)="$event.stopPropagation()"
+                                        (change)="filterExtended = !filterExtended;"
+                                        [checked]="filterExtended"
+                                    ></mat-slide-toggle>
+                                </p>
+                            </mat-menu>
+                        </div>
+                    }
                     @if(!verifyEmpty(dataForms)) {
                         <button class="bg-action hover:bg-actionHover text-white text-sm leading-6 border-none rounded h-8 px-4 transition-all duration-200 cursor-pointer flex items-center"
                             (click)="goCreate()">
@@ -42,7 +44,7 @@
                 </div>
             </div>
             <div class="flex justify-center gap-1 h-full">
-                @if(filterExtended) {
+                @if(filterExtended && !verifyEmpty(filters)) {
                     <app-filters-extended 
                         [fields]="filters"
                         (searchHandler)="handleSearch($event)"

@@ -56,23 +56,10 @@ export class AutocompleteFieldAdapter implements FieldInitializerPort, Autocompl
             .subscribe(query => this.initAutoCompleteData(field, query));
     }
     setValue(val: any, field: FormItemModel) {
-        // Verificar que existe el endpoint antes de usarlo
-        if (AppUtil.verifyEmpty(field.autocompleteOptions?.endpoint)) {
-            field.defaultValue = val;
-            return of(undefined);
-        }
-        
-        return field.autocompleteOptions.endpoint.getIdValueMany([val]).pipe(
-            filter(data => !AppUtil.verifyEmptySimple(data)),
-            tap(data => {
-                if (AppUtil.verifyEmpty(data))
-                    field.defaultValue = '';
-                else
-                    field.defaultValue = data[0];
-            }),
-            take(1),
-            map(_ => { return })
-        );
+        // Para edición, simplemente asignar el valor de texto directamente
+        // El autocomplete mostrará el texto y el usuario puede cambiarlo si lo desea
+        field.defaultValue = val;
+        return of(undefined);
     }
     private initAutoCompleteData(field: FormItemModel, query?: string) {
         // Verificar que existe el endpoint antes de usarlo

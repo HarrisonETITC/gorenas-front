@@ -90,14 +90,25 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
 
     this.isEditForm = !AppUtil.verifyEmpty(this.id);
     this.actualForm = this.forms[this.actualFormIndex];
+    
+    console.log('[FormBaseData] initForm - isEditForm:', this.isEditForm, 'id:', this.id);
 
     if (!this.isEditForm)
       this.fieldsService.updateFields(this.actualForm.fields);
     else {
+      console.log('[FormBaseData] Llamando getById con id:', this.id);
       this.actualForm.dataInitializer.getById(this.id).pipe(
-        concatMap(data => FormsUtil.assignValuesOnFields(data, this.actualForm.fields))
-      ).subscribe(() => {
-        this.fieldsService.updateFields(this.actualForm.fields)
+        tap(data => console.log('[FormBaseData] Datos recibidos de getById:', data)),
+        concatMap(data => FormsUtil.assignValuesOnFields(data, this.actualForm.fields)),
+        tap(() => console.log('[FormBaseData] Campos después de assignValues:', this.actualForm.fields.map(f => ({ name: f.name, defaultValue: f.defaultValue }))))
+      ).subscribe({
+        next: () => {
+          console.log('[FormBaseData] Llamando updateFields');
+          this.fieldsService.updateFields(this.actualForm.fields);
+        },
+        error: (err) => {
+          console.error('[FormBaseData] Error en getById:', err);
+        }
       });
     }
   }
@@ -122,5 +133,21 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
     } else {
       this.notificationSevice.showNotification(WarningConfig('Errores de validación', 'Tiene errores en el formulario'));
     }
+  }
+
+  /**
+   * Obtiene el título dinámico según si es creación o edición
+   */
+  protected getFormTitle(): string {
+    if (!this.actualForm) return '';
+    return this.actualForm.getTitle(this.isEditForm);
+  }
+
+  /**
+   * Obtiene el texto del botón según si es creación o edición
+   */
+  protected getButtonTitle(): string {
+    if (!this.actualForm) return '';
+    return this.actualForm.getButtonTitle(this.isEditForm);
   }
 }

@@ -81,6 +81,12 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
         return this.controls.get(name)!;
     }
     updateFields(fields: Array<FormItemModel>): void {
+        // Actualizar valores de controles existentes con los nuevos defaultValue
+        for (const field of fields) {
+            if (this.existsControl(field.name) && field.defaultValue !== undefined) {
+                this.getControl(field.name).setValue(field.defaultValue, { emitEvent: false });
+            }
+        }
         this.fieldsHandler.next(fields);
     }
     manualUpdateFields(): void {
@@ -161,8 +167,13 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
     private initControl(field: FormItemModel): FormControl {
         let insertControl = null;
 
-        if (this.existsControl(field.name))
+        if (this.existsControl(field.name)) {
             insertControl = this.getControl(field.name);
+            // Actualizar el valor del control existente con el nuevo defaultValue
+            if (field.defaultValue !== undefined) {
+                insertControl.setValue(field.defaultValue, { emitEvent: false });
+            }
+        }
         else
             insertControl = new FormControl(field.defaultValue, { validators: (AppUtil.verifyEmpty(field.validators) ? [] : field.validators) });
 

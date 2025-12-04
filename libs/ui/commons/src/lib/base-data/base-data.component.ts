@@ -144,6 +144,11 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
       ignoreElements()
     ).subscribe();
 
+    // Si no hay filtros configurados, cargar datos inmediatamente
+    if (AppUtil.verifyEmpty(this.filters)) {
+      this.search(this.initFilterRaw);
+    }
+
     this.fieldsService.getFields().pipe(
       filter(fields => !AppUtil.verifyEmpty(fields)),
       take(1),
