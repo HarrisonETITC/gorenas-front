@@ -16,7 +16,9 @@ import {
   PersonModel,
   PersonModelView,
   RoleModel,
-  RoleModelView
+  RoleModelView,
+  SaleModel,
+  SaleModelView
 } from '@gorenas/domain';
 import { FormBaseServicePort } from '../ports/forms/form-base-service.port';
 import { FormDataServicePort } from '../ports/forms/form-data-service.port';
@@ -40,6 +42,7 @@ export const EMPLOYEE_SERVICE = new InjectionToken<ApiServicePort<EmployeeModel,
 export const PERMISSION_SERVICE = new InjectionToken<ApiServicePort<PermissionModel, PermissionModelView>>('PermissionService');
 export const PERSON_SERVICE = new InjectionToken<ApiServicePort<PersonModel, PersonModelView> & PersonPort>('PersonService');
 export const ROLE_SERVICE = new InjectionToken<ApiServicePort<RoleModel, RoleModelView>>('RoleService');
+export const SALE_SERVICE = new InjectionToken<ApiServicePort<SaleModel, SaleModelView>>('SaleService');
 
 // Configuration interfaces
 export interface AppConfig {

@@ -5,6 +5,7 @@ export const URL_PERSON = 'person';
 export const URL_ROLE = 'role';
 export const URL_USER = 'user';
 export const URL_EMPLOYEE = 'employee';
+export const URL_SALE = 'sale';
 
 // Complements for Base Endpoints
 export const INFO_BY_USER_ID = 'infoByUserId';

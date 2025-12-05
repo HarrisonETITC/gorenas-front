@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { FormBaseServicePort } from "@gorenas/application-core";
-import { FormItemModel } from "@gorenas/domain";
+import { FormItemModel, IdValue } from "@gorenas/domain";
 import { AppUtil } from "@gorenas/application-core";
 import { FormsUtil } from "@gorenas/shared-util-forms";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -120,8 +120,8 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
                 const field = this.actualFields.find(f => f.name === controlKey);
                 
                 // Si el valor es un objeto con 'value' (ej: autocomplete), extraer el texto
-                if (value !== null && typeof value === 'object' && 'value' in value) {
-                    obj[controlKey] = value.value;
+                if (field?.type === FormItemModel.TYPE_AUTO_COMPLETE && value !== null && typeof value === 'object' && 'id' in value) {
+                    obj[controlKey] = (value as IdValue)?.id;
                 } 
                 // Si es un campo de tipo número, convertir a número
                 else if (field?.type === FormItemModel.TYPE_NUMBER && typeof value === 'string') {

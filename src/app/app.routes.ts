@@ -14,6 +14,7 @@ import { RoleModel } from '@gorenas/domain';
 import { PermissionComponent } from '@gorenas/ui-features';
 import { formDataGuard } from '@gorenas/shared-angular';
 import { AppModel } from '@gorenas/domain';
+import { SalesComponent } from 'libs/ui/features/src/lib/sales/sales.component';
 
 const createUpdateRoutes: Routes = [
     {
@@ -54,7 +55,7 @@ export const routes: Routes = [
                 path: AppModel.MODULE_EMPLOYEES, component: EmployeesComponent, canActivate: [appGuard], children: createUpdateRoutes
             },
             {
-                path: AppModel.MODULE_SALES, component: ApplicationComponent, canActivate: [appGuard], children: createUpdateRoutes
+                path: AppModel.MODULE_SALES, component: SalesComponent, canActivate: [appGuard], children: createUpdateRoutes
             },
             {
                 path: AppModel.MODULE_USERS, component: ApplicationComponent, canActivate: [appGuard], children: createUpdateRoutes,
