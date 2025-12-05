@@ -35,7 +35,7 @@ export class EmployeeForms {
                 validators: [Validators.required]
             },
             {
-                label: 'Estado de la sucursal',
+                label: 'Estado del empleado',
                 type: FormItemModel.TYPE_SELECT,
                 name: 'state',
                 icon: 'shield',

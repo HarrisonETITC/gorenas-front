@@ -116,8 +116,20 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
     this.router.navigate([this.getReturnRoute()], { relativeTo: this.route });
   }
   protected handleFormMainButton() {
+    // Debug: ver estado del formulario
+    console.log('[FormBaseData] Form valid:', this.formBase.form.valid);
+    console.log('[FormBaseData] Form controls:', Object.keys(this.formBase.form.controls).map(key => ({
+      name: key,
+      valid: this.formBase.form.controls[key].valid,
+      errors: this.formBase.form.controls[key].errors,
+      value: this.formBase.form.controls[key].value
+    })));
+    
     if (this.formBase.form.valid) {
-      this.formDataService.sendFormEvent({ event: this.isEditForm ? 'update' : 'create' });
+      this.formDataService.sendFormEvent({ 
+        event: this.isEditForm ? 'update' : 'create',
+        id: this.isEditForm ? this.id : undefined
+      });
       this.formDataService.getComponentEvent().pipe(
         filter(ev => ev.event === 'done' || ev.event === 'error'),
         first()

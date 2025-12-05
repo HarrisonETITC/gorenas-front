@@ -114,11 +114,20 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
             const control = this.getControl(controlKey);
 
             if (!AppUtil.verifyEmpty(control.value)) {
-                const value = control.value;
+                let value = control.value;
+                
+                // Buscar el campo para conocer su tipo
+                const field = this.actualFields.find(f => f.name === controlKey);
+                
                 // Si el valor es un objeto con 'value' (ej: autocomplete), extraer el texto
                 if (value !== null && typeof value === 'object' && 'value' in value) {
                     obj[controlKey] = value.value;
-                } else {
+                } 
+                // Si es un campo de tipo número, convertir a número
+                else if (field?.type === FormItemModel.TYPE_NUMBER && typeof value === 'string') {
+                    obj[controlKey] = Number(value);
+                } 
+                else {
                     obj[controlKey] = value;
                 }
             }

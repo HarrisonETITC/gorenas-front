@@ -55,7 +55,11 @@ export class NumberFieldAdapter implements FieldInitializerPort {
         return [...fields, ...numberExtras];
     }
     setValue(val: any, field: FormItemModel) {
-        field.defaultValue = val;
+        // Convertir a número para que los validadores min/max funcionen correctamente
+        const numericValue = val !== null && val !== undefined && val !== '' 
+            ? Number(val) 
+            : val;
+        field.defaultValue = numericValue;
         return of();
     }
 }

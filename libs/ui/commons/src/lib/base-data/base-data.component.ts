@@ -22,7 +22,10 @@ import {
   AUTH_SERVICE,
   FIELDS_SERVICE,
   UseTable,
-  BaseDataConfig
+  BaseDataConfig,
+  NOTIFICATION_SERVICE,
+  NotificationServicePort,
+  SuccessConfig
 } from '@gorenas/application-core';
 import { FormsProviders } from '@gorenas/data-access-forms';
 import { UtilsProviders } from '@gorenas/data-access-commons';
@@ -103,6 +106,8 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     private readonly fieldsService: FormBaseServicePort,
     @Inject(FORM_DATA_SERVICE)
     private readonly formDataService: FormDataServicePort,
+    @Inject(NOTIFICATION_SERVICE)
+    private readonly notificationService: NotificationServicePort,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     readonly cdr: ChangeDetectorRef
@@ -257,7 +262,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
       if (ev.event === 'create') {
         this.handleCreateSubmit();
       } else if (ev.event === 'update') {
-        this.handleUpdateSubmit();
+        this.handleUpdateSubmit(ev.id);
       } else if (ev.event === 'close') {
         formSub.unsubscribe();
       }
@@ -276,6 +281,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     ).subscribe({
       next: (result) => {
         console.log('[BaseData] Creado exitosamente:', result);
+        this.notificationService.showNotification(SuccessConfig('Registro creado', 'El registro se ha creado exitosamente'));
         this.formDataService.sendComponentEvent({ event: 'done' });
       },
       error: (err) => {
@@ -288,8 +294,12 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
   /**
    * Maneja el envío del formulario de actualización
    */
-  private handleUpdateSubmit(): void {
+  private handleUpdateSubmit(id?: number): void {
     const formData = this.fieldsService.getObject() as T;
+    // Agregar el id al objeto para la actualización
+    if (id !== undefined) {
+      (formData as any).id = id;
+    }
     console.log('[BaseData] Actualizando:', formData);
     
     this.service.modify(formData).pipe(
@@ -297,6 +307,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     ).subscribe({
       next: (result) => {
         console.log('[BaseData] Actualizado exitosamente:', result);
+        this.notificationService.showNotification(SuccessConfig('Registro actualizado', 'El registro se ha actualizado exitosamente'));
         this.formDataService.sendComponentEvent({ event: 'done' });
       },
       error: (err) => {

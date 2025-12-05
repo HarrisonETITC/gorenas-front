@@ -56,8 +56,7 @@ export class EmployeesComponent implements OnInit, UseBaseDataComponent {
   getTableConfig(): TableConfig {
     return {
       buttons: [
-        BtnConfig.BASIC_EDIT_CONFIG,
-        BtnConfig.BASIC_DISABLE_CONFIG,
+        BtnConfig.BASIC_EDIT_CONFIG
       ]
     }
   }
