@@ -17,6 +17,7 @@ import { AppModel } from '@gorenas/domain';
 import { SalesComponent } from 'libs/ui/features/src/lib/sales/sales.component';
 import { UsersComponent } from 'libs/ui/features/src/lib/users/users.component';
 import { PersonsComponent } from 'libs/ui/features/src/lib/persons/persons.component';
+import { RolesComponent } from 'libs/ui/features/src/lib/roles/roles.component';
 
 const createUpdateRoutes: Routes = [
     {
@@ -67,7 +68,7 @@ export const routes: Routes = [
                 path: AppModel.MODULE_PERSONS, component: PersonsComponent, canActivate: [appGuard], children: createUpdateRoutes
             },
             {
-                path: AppModel.MODULE_ROLES, component: ApplicationComponent, canActivate: [appGuard], children: createUpdateRoutes,
+                path: AppModel.MODULE_ROLES, component: RolesComponent, canActivate: [appGuard], children: createUpdateRoutes,
                 data: { acceptedRoles: [RoleModel.ROLE_ADMINISTRATOR] }
             },
             {
