@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { 
-  AppUtil, 
-  PAGINATOR_SERVICE, 
-  PaginatorServicePort, 
-  DestroySubsPort 
+import {
+  AppUtil,
+  PAGINATOR_SERVICE,
+  PaginatorServicePort,
+  DestroySubsPort
 } from '@gorenas/application-core';
 import { distinctUntilChanged, filter, ignoreElements, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { PaginatorComponent } from '../paginator/paginator.component';
@@ -34,7 +34,8 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
   protected headers: Array<string>;
   protected rawData: Array<T>;
   protected filteredData: Array<T>;
-  protected headersDinero = ['ganancias', 'mes', 'total', 'totales', 'monto'];
+  protected readonly headersDate = ['created', 'updated'];
+  protected readonly headersMoney = ['salary', 'amount', 'price', 'earnings', 'salesAmmounth'];
   protected loadingData = true;
 
   finishSubs$: Subject<void> = new Subject();
@@ -104,22 +105,24 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
     return Object.keys(valor);
   }
   protected transformValue(value: any, key?: string) {
-    if (typeof value === 'number')
-      return value;
+    if (value == 22 || Number(22) == value) {
+      console.log('asd')
+    }
 
-    if (!AppUtil.verifyEmpty(new Date(value))) {
+    if (this.headersDate.includes(key) && !AppUtil.verifyEmpty(value)) {
       const resultDate = new Date(value);
       return `${resultDate.toLocaleDateString()} ${resultDate.toLocaleTimeString()}`;
     }
 
-    if (!AppUtil.verifyEmpty(key) && this.headersDinero.includes(key)) {
+    if (!AppUtil.verifyEmpty(key) && this.headersMoney.includes(key))
       return Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(value);
-    }
 
     if (!AppUtil.verifyEmpty(this.valuesMap) && !AppUtil.verifyEmpty(this.valuesMap.get(key))) {
       const obj = this.valuesMap.get(key).find((r) => r.id == value);
       return obj.value;
     }
+
+    if (typeof value === 'number') return value;
 
     return value;
   }

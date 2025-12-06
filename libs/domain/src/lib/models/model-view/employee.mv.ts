@@ -10,6 +10,8 @@ export class EmployeeModelView extends GeneralModel {
         this.headers.set('branch', 'Sucursal');
         this.headers.set('sales', 'Número de ventas');
         this.headers.set('salesAmmounth', 'Total vendido');
+        this.headers.set('salary', 'Salario');
+        this.headers.set('state', 'Estado');
     }
 
     name: string;
