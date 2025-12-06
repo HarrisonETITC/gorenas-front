@@ -9,7 +9,7 @@ import { Observable } from "rxjs";
 
 export interface ApiServicePort<T extends GeneralModel, U = T> extends GetAvailablePort, GetIdValueMany {
     getAll(): Observable<Array<U>>;
-    getById(id: number): Observable<U>;
+    getById(id: number, options?: Map<string, string>): Observable<U>;
     create(data: T): Observable<T>;
     modify(data: T): Observable<T>;
     delete(id: number): Observable<void>;

@@ -16,6 +16,7 @@ export class PersonModel extends GeneralModel {
     public static readonly RH_AB_MINUS = 'AB-';
     public static readonly RH_TYPES = new Array<string>();
 
+    public static readonly TYPE_IDENTIFICATION_NAMES = new Map<string, string>();
 
     static {
         this.TYPES_IDENTIFICATION.push(this.TYPE_IDENTIFICATION_CC);
@@ -29,6 +30,10 @@ export class PersonModel extends GeneralModel {
         this.RH_TYPES.push(this.RH_B_MINUS);
         this.RH_TYPES.push(this.RH_AB_PLUS);
         this.RH_TYPES.push(this.RH_AB_MINUS);
+
+        this.TYPE_IDENTIFICATION_NAMES.set(this.TYPE_IDENTIFICATION_CC, 'Cédula de ciudadanía');
+        this.TYPE_IDENTIFICATION_NAMES.set(this.TYPE_IDENTIFICATION_CE, 'Cédula de extranjería');
+        this.TYPE_IDENTIFICATION_NAMES.set(this.TYPE_IDENTIFICATION_TI, 'Tarjeta de identidad');
     }
 
     names?: string;

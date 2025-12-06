@@ -56,8 +56,28 @@ export class AutocompleteFieldAdapter implements FieldInitializerPort, Autocompl
             .subscribe(query => this.initAutoCompleteData(field, query));
     }
     setValue(val: any, field: FormItemModel) {
-        // Para edición, simplemente asignar el valor de texto directamente
-        // El autocomplete mostrará el texto y el usuario puede cambiarlo si lo desea
+        // Si el valor es un número (ID), necesitamos obtener el IdValue correspondiente
+        if (typeof val === 'number' && !AppUtil.verifyEmpty(field.autocompleteOptions?.endpoint)) {
+            console.log(`[AutocompleteAdapter] setValue - Obteniendo IdValue para ID: ${val}, campo: ${field.name}`);
+            
+            return field.autocompleteOptions.endpoint.getIdValueMany([val]).pipe(
+                take(1),
+                map(idValues => {
+                    if (idValues && idValues.length > 0) {
+                        // Asignar el IdValue completo (id + value/nombre)
+                        field.defaultValue = idValues[0];
+                        console.log(`[AutocompleteAdapter] setValue - IdValue obtenido:`, idValues[0]);
+                    } else {
+                        // Si no se encuentra, mantener el ID como fallback
+                        field.defaultValue = val;
+                        console.warn(`[AutocompleteAdapter] setValue - No se encontró IdValue para ID: ${val}`);
+                    }
+                    return undefined;
+                })
+            );
+        }
+        
+        // Para otros casos (string, objeto IdValue, etc.), asignar directamente
         field.defaultValue = val;
         return of(undefined);
     }

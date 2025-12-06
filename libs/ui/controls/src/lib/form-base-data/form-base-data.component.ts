@@ -98,11 +98,15 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
       ? this.actualForm.fields.filter(f => !f.hideOnEdit)
       : this.actualForm.fields;
 
+    console.log('[FormBaseData] Campos a usar:', fieldsToUse.map(f => ({ name: f.name, type: f.type })));
+
     if (!this.isEditForm)
       this.fieldsService.updateFields(fieldsToUse);
     else {
       console.log('[FormBaseData] Llamando getById con id:', this.id);
-      this.actualForm.dataInitializer.getById(this.id).pipe(
+      const options: Map<string, string> = new Map();
+      options.set('isEdition', 'true');
+      this.actualForm.dataInitializer.getById(this.id, options).pipe(
         tap(data => console.log('[FormBaseData] Datos recibidos de getById:', data)),
         concatMap(data => FormsUtil.assignValuesOnFields(data, fieldsToUse)),
         tap(() => console.log('[FormBaseData] Campos después de assignValues:', fieldsToUse.map(f => ({ name: f.name, defaultValue: f.defaultValue }))))
