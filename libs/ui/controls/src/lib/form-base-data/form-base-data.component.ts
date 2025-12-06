@@ -93,18 +93,23 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
     
     console.log('[FormBaseData] initForm - isEditForm:', this.isEditForm, 'id:', this.id);
 
+    // Filtrar campos que tienen hideOnEdit=true si estamos en modo edición
+    const fieldsToUse = this.isEditForm 
+      ? this.actualForm.fields.filter(f => !f.hideOnEdit)
+      : this.actualForm.fields;
+
     if (!this.isEditForm)
-      this.fieldsService.updateFields(this.actualForm.fields);
+      this.fieldsService.updateFields(fieldsToUse);
     else {
       console.log('[FormBaseData] Llamando getById con id:', this.id);
       this.actualForm.dataInitializer.getById(this.id).pipe(
         tap(data => console.log('[FormBaseData] Datos recibidos de getById:', data)),
-        concatMap(data => FormsUtil.assignValuesOnFields(data, this.actualForm.fields)),
-        tap(() => console.log('[FormBaseData] Campos después de assignValues:', this.actualForm.fields.map(f => ({ name: f.name, defaultValue: f.defaultValue }))))
+        concatMap(data => FormsUtil.assignValuesOnFields(data, fieldsToUse)),
+        tap(() => console.log('[FormBaseData] Campos después de assignValues:', fieldsToUse.map(f => ({ name: f.name, defaultValue: f.defaultValue }))))
       ).subscribe({
         next: () => {
           console.log('[FormBaseData] Llamando updateFields');
-          this.fieldsService.updateFields(this.actualForm.fields);
+          this.fieldsService.updateFields(fieldsToUse);
         },
         error: (err) => {
           console.error('[FormBaseData] Error en getById:', err);

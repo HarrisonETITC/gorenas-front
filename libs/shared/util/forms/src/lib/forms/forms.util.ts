@@ -5,7 +5,7 @@ import { AutocompleteFieldAdapter } from "../field-handlers/auto-complete-field.
 import { SelectFieldAdapter } from "../field-handlers/select-field.adapter";
 import { FormItemModel } from "@gorenas/domain";
 import { NumberFieldAdapter } from "../field-handlers/number-field.adapter";
-import { catchError, from, mergeMap, Observable, of } from "rxjs";
+import { catchError, forkJoin, from, mergeMap, Observable, of } from "rxjs";
 
 export class FormsUtil {
     static readonly FORMS_HANDLER = new Map<string, FieldInitializerPort>();
@@ -54,20 +54,28 @@ export class FormsUtil {
     static assignValuesOnFields(val: any, fields: Array<FormItemModel>): Observable<void> {
         const observables = new Array<Observable<void>>();
 
+        console.log('[FormsUtil] assignValuesOnFields - val:', val);
+        console.log('[FormsUtil] assignValuesOnFields - fields:', fields.map(f => f.name));
+
         Object.keys(val).forEach((key) => {
             const value = val[key];
             const field = fields.find(field => field.name === key);
+            console.log(`[FormsUtil] Procesando key: ${key}, value:`, value, 'field encontrado:', !!field);
             if (!AppUtil.verifyEmpty(value) && !AppUtil.verifyEmpty(field))
                 observables.push(this.assignValue(value, field));
         });
 
-        return from(observables).pipe(
-            mergeMap(obs => obs),
+        if (observables.length === 0) {
+            return of(undefined);
+        }
+
+        return forkJoin(observables).pipe(
+            mergeMap(() => of(undefined)),
             catchError(err => {
-                console.log(err);
-                return of();
+                console.error('[FormsUtil] Error en assignValuesOnFields:', err);
+                return of(undefined);
             })
-        )
+        );
     }
     static assignValue(val: any, field: FormItemModel): Observable<void> {
 
@@ -76,7 +84,7 @@ export class FormsUtil {
         }
 
         field.defaultValue = val;
-        return of();
+        return of(undefined);
     }
 
     // static convertirFormObjeto<T>(form: FormGroup, campos: Array<FormItem>, id?: number): T {

@@ -60,6 +60,6 @@ export class NumberFieldAdapter implements FieldInitializerPort {
             ? Number(val) 
             : val;
         field.defaultValue = numericValue;
-        return of();
+        return of(undefined);
     }
 }

@@ -33,4 +33,6 @@ export class FormItemModel<T = any> {
     numberOptions?: NumberFieldOptions;
     active?: boolean;
     transparent?: boolean;
+    /** Si es true, el campo no se mostrará en el formulario de edición */
+    hideOnEdit?: boolean;
 }

@@ -1,5 +1,6 @@
 import { Validators } from "@angular/forms";
 import { FormDataConfig, FormItemModel, StateModel, ViewValue } from "@gorenas/domain";
+import { StateField } from "./general/state.fields";
 
 export class EmployeeForms {
     public static readonly CREATE_FORM = new FormDataConfig();
@@ -36,13 +37,7 @@ export class EmployeeForms {
             },
             {
                 label: 'Estado del empleado',
-                type: FormItemModel.TYPE_SELECT,
-                name: 'state',
-                icon: 'shield',
-                validators: [Validators.required],
-                selectOptions: {
-                    options: Array.from(StateModel.STATES_NAMES.keys()).map(key => new ViewValue(key, StateModel.STATES_NAMES.get(key)))
-                }
+                ...StateField
             }
         ]
     }

@@ -31,6 +31,6 @@ export class SelectFieldAdapter implements FieldInitializerPort {
         // Asignar el valor directamente (el código, no el texto)
         // El select usará este valor para seleccionar la opción correcta
         field.defaultValue = val;
-        return of();
+        return of(undefined);
     }
 }

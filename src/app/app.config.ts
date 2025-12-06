@@ -20,6 +20,7 @@ import {
 } from '@gorenas/data-access-features';
 import { APP_CONFIG_PROVIDERS } from './config/app.config';
 import { SaleProviders } from 'libs/data-access/features/src/lib/providers/sale.providers';
+import { UserProviders } from 'libs/data-access/features/src/lib/providers/user.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,6 +37,7 @@ export const appConfig: ApplicationConfig = {
     ...ApplicationProviders,
     ...PersonProviders,
     ...PermissionProviders,
+    ...UserProviders,
     ...BranchProviders,
     ...SaleProviders,
     ...EmployeeProviders,
