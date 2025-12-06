@@ -1,4 +1,4 @@
-import { GeneralFilter } from "@gorenas/domain";
+import { GeneralFilter, ViewValue } from "@gorenas/domain";
 
 export class AppUtil {
     public static verificarVacio(valor: any): boolean {
@@ -88,5 +88,10 @@ export class AppUtil {
         if (this.verifyEmpty(filters)) return '';
 
         return Array.from(filters.keys()).map((val, i) => `${(i == 0) ? '?' : '&'}${val}=${encodeURIComponent(filters.get(val)!)}`).join('');
+    }
+
+    public static getViewValuesFromMap(map: Map<string, string>): Array<ViewValue> {
+        if (this.verifyEmpty(map)) return [];
+        return Array.from(map.keys()).map(key => new ViewValue(key, !this.verifyEmpty(map.get(key)) ? map.get(key)! : ''));
     }
 }

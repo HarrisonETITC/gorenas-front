@@ -1,4 +1,5 @@
 import { Validators } from "@angular/forms";
+import { AppUtil } from "@gorenas/application-core";
 import { FormItemModel, StateModel, ViewValue } from "@gorenas/domain";
 
 export const StateField: FormItemModel = {
@@ -8,6 +9,6 @@ export const StateField: FormItemModel = {
     icon: 'shield',
     validators: [Validators.required],
     selectOptions: {
-        options: Array.from(StateModel.STATES_NAMES.keys()).map(key => new ViewValue(key, StateModel.STATES_NAMES.get(key)))
+        options: AppUtil.getViewValuesFromMap(StateModel.STATES_NAMES)
     }
 }

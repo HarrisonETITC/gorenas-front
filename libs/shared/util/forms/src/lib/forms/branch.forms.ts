@@ -1,4 +1,5 @@
 import { Validators } from "@angular/forms";
+import { AppUtil } from "@gorenas/application-core";
 import { FormDataConfig, ViewValue } from "@gorenas/domain";
 import { FormItemModel } from "@gorenas/domain";
 import { StateModel } from "@gorenas/domain";
@@ -33,7 +34,7 @@ export class BranchForms {
                 icon: 'shield',
                 validators: [Validators.required],
                 selectOptions: {
-                    options: Array.from(StateModel.STATES_NAMES.keys()).map(key => new ViewValue(key, StateModel.STATES_NAMES.get(key)))
+                    options: AppUtil.getViewValuesFromMap(StateModel.STATES_NAMES)
                 }
             }
         ]

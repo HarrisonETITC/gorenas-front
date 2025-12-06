@@ -1,4 +1,5 @@
 import { Validators } from "@angular/forms";
+import { AppUtil } from "@gorenas/application-core";
 import { FormDataConfig, FormItemModel, PersonModel, ViewValue } from "@gorenas/domain";
 
 export class PersonForms {
@@ -28,7 +29,7 @@ export class PersonForms {
                 name: 'typeIdentification',
                 icon: 'assignment_ind',
                 selectOptions: {
-                    options: Array.from(PersonModel.TYPE_IDENTIFICATION_NAMES.keys()).map(key => new ViewValue(key, PersonModel.TYPE_IDENTIFICATION_NAMES.get(key)))
+                    options: AppUtil.getViewValuesFromMap(PersonModel.TYPE_IDENTIFICATION_NAMES)
                 },
                 validators: [Validators.required]
             },

@@ -1,4 +1,5 @@
 import { Validators } from "@angular/forms";
+import { AppUtil } from "@gorenas/application-core";
 import { FormDataConfig, FormItemModel, SaleModel, SaleModelView, ViewValue } from "@gorenas/domain";
 
 export class SaleForms {
@@ -30,7 +31,7 @@ export class SaleForms {
                 icon: 'credit_card',
                 validators: [Validators.required],
                 selectOptions: {
-                    options: Array.from(SaleModel.PAYMENT_METHODS_NAMES.keys()).map(key => new ViewValue(key, SaleModel.PAYMENT_METHODS_NAMES.get(key)))
+                    options: AppUtil.getViewValuesFromMap(SaleModel.PAYMENT_METHODS_NAMES)
                 }
             }
         ]

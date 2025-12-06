@@ -2,6 +2,7 @@ import { PermissionModel, ViewValue } from "@gorenas/domain";
 import { RoleModel } from "@gorenas/domain";
 import { FormItemModel } from "../items/form-item.model";
 import { GeneralFilter } from "@gorenas/domain";
+import { AppUtil } from "@gorenas/application-core";
 
 export class PermissionFilter extends GeneralFilter {
     public static readonly FIELDS = new Array<FormItemModel>();
@@ -15,7 +16,7 @@ export class PermissionFilter extends GeneralFilter {
                 type: FormItemModel.TYPE_SELECT,
                 defaultValue: '',
                 selectOptions: {
-                    options: Array.from(RoleModel.ROLES_NAMES.keys()).map(key =>  new ViewValue(key, RoleModel.ROLES_NAMES.get(key)))
+                    options: AppUtil.getViewValuesFromMap(RoleModel.ROLES_NAMES)
                 },
                 active: true,
                 transparent: true
@@ -27,9 +28,7 @@ export class PermissionFilter extends GeneralFilter {
                 type: FormItemModel.TYPE_SELECT,
                 defaultValue: '',
                 selectOptions: {
-                    options: [new ViewValue('', 'Todos')].concat(Array.from(PermissionModel.MODULES_MAP.keys()).map(
-                        key => new ViewValue(key, PermissionModel.MODULES_MAP.get(key))
-                    ))
+                    options: [new ViewValue('', 'Todos')].concat(AppUtil.getViewValuesFromMap(PermissionModel.MODULES_MAP))
                 },
                 transparent: true
             },
