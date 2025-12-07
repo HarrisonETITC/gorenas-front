@@ -113,8 +113,9 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
         tap(() => console.log('[FormBaseData] Campos después de assignValues:', this.fieldsToDisplay.map(f => ({ name: f.name, defaultValue: f.defaultValue }))))
       ).subscribe({
         next: () => {
-          console.log('[FormBaseData] Llamando updateFields');
-          this.fieldsService.updateFields(this.fieldsToDisplay);
+          console.log('[FormBaseData] Llamando updateFields con preserveValues=false para cargar datos de edición');
+          // En modo edición, forzar actualización de valores de los controles con los datos obtenidos
+          this.fieldsService.updateFields(this.fieldsToDisplay, false);
         },
         error: (err) => {
           console.error('[FormBaseData] Error en getById:', err);

@@ -31,8 +31,7 @@ import {
 import { FormsProviders } from '@gorenas/data-access-forms';
 import { UtilsProviders } from '@gorenas/data-access-commons';
 import {
-  FormDataConfig,
-  PermissionFilter
+  FormDataConfig
 } from '@gorenas/shared-util-forms';
 import {
   FiltersCompactComponent,

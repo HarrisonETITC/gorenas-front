@@ -29,11 +29,8 @@ const AUTOCOMPLETE_SUBJECTS_STORE = new Map<string, BehaviorSubject<Array<IdValu
  * ```
  */
 export class AutoCompleteFormItem extends BaseFormItemAdapter<IdValue> {
-    /** Endpoint para obtener datos del autocomplete */
     endpoint: GetAvailablePort & GetIdValueMany;
-    /** Observable con las opciones actuales */
     options$?: Observable<Array<IdValue>>;
-    /** ID interno para el store de subjects */
     private _fieldId?: string;
 
     constructor(
@@ -54,9 +51,6 @@ export class AutoCompleteFormItem extends BaseFormItemAdapter<IdValue> {
         this.validate();
     }
 
-    /**
-     * Inicializa el Subject usando un store global
-     */
     initOptionsSubject(): BehaviorSubject<Array<IdValue>> {
         const id = this._fieldId || `autocomplete_${Date.now()}_${Math.random()}`;
         this._fieldId = id;
@@ -69,9 +63,6 @@ export class AutoCompleteFormItem extends BaseFormItemAdapter<IdValue> {
         return AUTOCOMPLETE_SUBJECTS_STORE.get(id)!;
     }
 
-    /**
-     * Actualiza las opciones emitiendo un nuevo valor
-     */
     updateOptions(options: Array<IdValue>): void {
         if (this._fieldId && AUTOCOMPLETE_SUBJECTS_STORE.has(this._fieldId)) {
             AUTOCOMPLETE_SUBJECTS_STORE.get(this._fieldId)!.next(options);

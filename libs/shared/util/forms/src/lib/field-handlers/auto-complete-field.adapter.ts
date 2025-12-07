@@ -1,5 +1,5 @@
 import { AutocompleteFieldPort } from "@gorenas/application-core";
-import { 
+import {
     FormField,
     isAutoCompleteFormItem,
     BaseFormItemPort,
@@ -42,18 +42,18 @@ export class AutocompleteFieldAdapter implements FieldInitializerPort, Autocompl
             filter(query => query !== undefined)
         ).subscribe(query => this.initAutoCompleteData(field, query));
     }
-    setValue(val: any, field: FormField) {
+    setValue(val: number | IdValue, field: FormField) {
         if (!isAutoCompleteFormItem(field)) {
             field.defaultValue = val;
             return of(undefined);
         }
-        
+
         const endpoint = field.endpoint;
-        
+
         // Si el valor es un número (ID), obtener el IdValue correspondiente
         if (typeof val === 'number' && !AppUtil.verifyEmpty(endpoint)) {
             console.log(`[AutocompleteAdapter] setValue - Obteniendo IdValue para ID: ${val}, campo: ${field.name}`);
-            
+
             return endpoint.getIdValueMany([val]).pipe(
                 take(1),
                 map(idValues => {
@@ -69,21 +69,22 @@ export class AutocompleteFieldAdapter implements FieldInitializerPort, Autocompl
                 })
             );
         }
-        
-        field.defaultValue = val;
+
+        if (val instanceof IdValue) field.defaultValue = val;
+        else field.defaultValue = new IdValue(NaN, '');
         return of(undefined);
     }
-    
+
     private initAutoCompleteData(field: FormField, query?: string) {
         if (!isAutoCompleteFormItem(field)) {
             return;
         }
-        
+
         const endpoint = field.endpoint;
-        
+
         if (!AppUtil.verifyEmpty(endpoint)) {
             console.log(`[AutocompleteAdapter] Buscando: "${query}" para campo: ${field.name}`);
-            
+
             endpoint.getAvailable(query).pipe(
                 take(1)
             ).subscribe(options => {
