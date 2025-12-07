@@ -39,13 +39,13 @@ export class EmployeesComponent implements OnInit, UseBaseDataComponent {
     createForm.dataInitializer = this.service;
     
     // Configurar endpoint para campo persona
-    const personField = createForm.fields.find(f => f.name === 'person');
+    const personField = createForm.fields.find(f => f.name === 'personId');
     if (isAutoCompleteFormItem(personField)) {
       (personField as AutoCompleteFormItem).endpoint = this.personService;
     }
     
     // Configurar endpoint para campo sucursal
-    const branchField = createForm.fields.find(f => f.name === 'branch');
+    const branchField = createForm.fields.find(f => f.name === 'branchId');
     if (isAutoCompleteFormItem(branchField)) {
       (branchField as AutoCompleteFormItem).endpoint = this.branchService;
     }

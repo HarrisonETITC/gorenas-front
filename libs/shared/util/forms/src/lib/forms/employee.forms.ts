@@ -17,7 +17,7 @@ export class EmployeeForms {
         
         // Campo persona asociada - AUTOCOMPLETE
         const personField = new AutoCompleteFormItem(
-            'person',
+            'personId',
             'Persona asociada',
             null, // endpoint se asigna dinámicamente
             'person_alert',
@@ -37,7 +37,7 @@ export class EmployeeForms {
 
         // Campo sucursal asignada - AUTOCOMPLETE
         const branchField = new AutoCompleteFormItem(
-            'branch',
+            'branchId',
             'Sucursal asignada',
             null, // endpoint se asigna dinámicamente
             'add_location_alt',

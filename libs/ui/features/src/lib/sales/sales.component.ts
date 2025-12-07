@@ -37,7 +37,7 @@ export class SalesComponent implements OnInit, UseBaseDataComponent {
         createForm.dataInitializer = this.service;
 
         // Configurar endpoint para campo empleado
-        const employeeField = createForm.fields.find(f => f.name === 'employee');
+        const employeeField = createForm.fields.find(f => f.name === 'employeeId');
         if (isAutoCompleteFormItem(employeeField)) {
             (employeeField as AutoCompleteFormItem).endpoint = this.employeeService;
         }

@@ -18,7 +18,7 @@ export class SaleForms {
         
         // Campo empleado - AUTOCOMPLETE
         const employeeField = new AutoCompleteFormItem(
-            'employee',
+            'employeeId',
             'Realizada por',
             null, // endpoint se asigna dinámicamente
             'person_alert',
