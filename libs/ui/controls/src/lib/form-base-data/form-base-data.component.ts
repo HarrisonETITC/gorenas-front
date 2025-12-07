@@ -90,11 +90,11 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
 
     this.isEditForm = !AppUtil.verifyEmpty(this.id);
     this.actualForm = this.forms[this.actualFormIndex];
-    
+
     console.log('[FormBaseData] initForm - isEditForm:', this.isEditForm, 'id:', this.id);
 
     // Filtrar campos que tienen hideOnEdit=true si estamos en modo edición
-    const fieldsToUse = this.isEditForm 
+    const fieldsToUse = this.isEditForm
       ? this.actualForm.fields.filter(f => !f.hideOnEdit)
       : this.actualForm.fields;
 
@@ -133,9 +133,9 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
       errors: this.formBase.form.controls[key].errors,
       value: this.formBase.form.controls[key].value
     })));
-    
+
     if (this.formBase.form.valid) {
-      this.formDataService.sendFormEvent({ 
+      this.formDataService.sendFormEvent({
         event: this.isEditForm ? 'update' : 'create',
         id: this.isEditForm ? this.id : undefined
       });

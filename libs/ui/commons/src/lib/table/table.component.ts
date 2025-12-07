@@ -106,7 +106,7 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
   }
   protected transformValue(value: any, key?: string) {
     if (value == 22 || Number(22) == value) {
-      console.log('asd')
+      //console.log('asd')
     }
 
     if (this.headersDate.includes(key) && !AppUtil.verifyEmpty(value)) {
@@ -120,6 +120,15 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
     if (!AppUtil.verifyEmpty(this.valuesMap) && !AppUtil.verifyEmpty(this.valuesMap.get(key))) {
       const obj = this.valuesMap.get(key).find((r) => r.id == value);
       return obj.value;
+    }
+    if (!AppUtil.verifyEmpty(this.generalConfig?.columnMappings)) {
+      const columnMap = this.generalConfig.columnMappings.get(key);
+      if (!AppUtil.verifyEmpty(columnMap)) {
+        const mappedValue = columnMap.get(value);
+        if (!AppUtil.verifyEmpty(mappedValue)) {
+          return mappedValue;
+        }
+      }
     }
 
     if (typeof value === 'number') return value;

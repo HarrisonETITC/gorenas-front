@@ -5,10 +5,15 @@ export class PermissionModelView extends GeneralModel {
 
     static {
         this.headers.set('id', 'ID');
-        this.headers.set('name', 'Nombre del permiso');
+        this.headers.set('module', 'Módulo');
+        this.headers.set('component', 'Component');
+        this.headers.set('action', 'Acción');
         this.headers.set('role', 'Permiso asignado a')
     }
 
-    name: string;
+    module: string;
+    component: string;
+    action: string;
     role: string;
+    roleId?: number;
 }

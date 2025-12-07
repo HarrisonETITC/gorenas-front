@@ -65,9 +65,9 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
   getForms(): Array<FormDataConfig> {
     const createForm = PermissionForms.CREATE_FORM;
     createForm.dataInitializer = this.service;
-    const roleAutocompleteField = createForm.fields.find(f => f.name === 'role');
+    const roleAutocompleteField = createForm.fields.find(f => f.name === 'roleId');
 
-    if (AppUtil.verifyEmpty(roleAutocompleteField.autocompleteOptions)) {
+    if (AppUtil.verifyEmpty(roleAutocompleteField?.autocompleteOptions)) {
       const roleAutocomplete = new AutocompleteOptions();
       roleAutocomplete.endpoint = this.roleService;
       roleAutocompleteField.autocompleteOptions = roleAutocomplete;
@@ -79,10 +79,19 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
     PermissionFilter.FIELDS.find(f => f.name === 'roleName').defaultValue = data;
   }
   getTableConfig(): TableConfig {
+    const columnMappings = new Map<string, Map<string, string>>();
+    const moduleMap = PermissionModel.MODULES_MAP;
+    columnMappings.set('module', moduleMap);
+    const actionMap = PermissionModel.ACTIONS_MAP;
+    columnMappings.set('action', actionMap);
+    const componentMap = PermissionModel.COMPONENTS_MAP;
+    columnMappings.set('component', componentMap);
+
     return {
       buttons: [
         BtnConfig.BASIC_EDIT_CONFIG
-      ]
+      ],
+      columnMappings
     }
   }
 }

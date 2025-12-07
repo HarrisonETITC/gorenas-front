@@ -2,6 +2,7 @@ import { GeneralModel } from "./general.model";
 import { AppModel } from "./application.model";
 
 export class PermissionModel extends GeneralModel {
+    public static readonly PERMISSION_ALL_MODULES = 'all_modules';
     public static readonly MODULE_DASHBOARD = 'Dashboard';
     public static readonly MODULE_BRANCHES = 'Sucursales';
     public static readonly MODULE_EMPLOYEES = 'Empleados';
@@ -26,6 +27,7 @@ export class PermissionModel extends GeneralModel {
     public static readonly COMPONENTS_MAP = new Map<string, string>();
 
     static {
+        this.MODULES_MAP.set(this.PERMISSION_ALL_MODULES, 'Todos los módulos');
         this.MODULES_MAP.set(AppModel.MODULE_BRANCHES, this.MODULE_BRANCHES);
         this.MODULES_MAP.set(AppModel.MODULE_EMPLOYEES, this.MODULE_EMPLOYEES);
         this.MODULES_MAP.set(AppModel.MODULE_SALES, this.MODULE_SALES);
@@ -33,7 +35,7 @@ export class PermissionModel extends GeneralModel {
         this.MODULES_MAP.set(AppModel.MODULE_PERSONS, this.MODULE_PERSONS);
         this.MODULES_MAP.set(AppModel.MODULE_ROLES, this.MODULE_ROLES);
         this.MODULES_MAP.set(AppModel.MODULE_PERMISSIONS, this.MODULE_PERMISSIONS);
-        this.MODULES_MAP.set(AppModel.MODULE_DASHBOARD, this.MODULE_PERMISSIONS);
+        this.MODULES_MAP.set(AppModel.MODULE_DASHBOARD, this.MODULE_DASHBOARD);
 
         this.ACTIONS.push(this.ACTION_VIEW);
         this.ACTIONS.push(this.ACTION_CREATE);
@@ -50,10 +52,10 @@ export class PermissionModel extends GeneralModel {
     }
 
     name!: string;
-    role!: number;
+    roleId!: number;
 
     public PermissionModel() {
         this.name = '';
-        this.role = 0;
+        this.roleId = 0;
     }
 }
