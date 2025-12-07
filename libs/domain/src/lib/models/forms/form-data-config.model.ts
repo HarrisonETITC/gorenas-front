@@ -1,11 +1,10 @@
-import { FormItemModel } from "./form-item.model";
 import { GetByIdPort } from "../../ports/get-by-id.port";
 import { BaseFormItemPort } from "../../interfaces/base-form-item.port";
 
 /**
- * Tipo unión que acepta tanto el FormItemModel legacy como las nuevas clases específicas
+ * Tipo que representa un campo de formulario
  */
-export type FormField = FormItemModel | BaseFormItemPort;
+export type FormField = BaseFormItemPort;
 
 /**
  * Configuración para formularios dinámicos

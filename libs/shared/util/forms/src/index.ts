@@ -15,12 +15,11 @@ export * from './lib/forms/forms.util'
 export * from './lib/forms/permission.forms'
 export * from './lib/forms/validators/date.validator'
 
-export * from './lib/items/form-item.model'
 export * from './lib/items/auto-complete.options'
 export * from './lib/items/number.options'
 export * from './lib/items/select.options'
 
 export * from './lib/forms/form-data-config.model'
 
-// Re-export FormField from domain for backward compatibility
+// Re-export FormField from domain for convenience
 export type { FormField } from '@gorenas/domain'

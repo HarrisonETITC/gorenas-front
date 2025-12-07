@@ -47,7 +47,6 @@ export * from './lib/constants/http-errors.constants'
 export * from './lib/constants/storage.constants'
 
 // Form models
-export * from './lib/models/forms/form-item.model'
 export * from './lib/models/forms/form-data-config.model'
 export * from './lib/models/forms/options/auto-complete.options'
 export * from './lib/models/forms/options/select.options'

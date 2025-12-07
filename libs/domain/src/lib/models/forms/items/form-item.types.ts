@@ -1,20 +1,15 @@
 import { AutoCompleteFormItem } from "./auto-complete-form-item.model";
 import { DateTimeFormItem } from "./datetime-form-item.model";
+import { NumberFormItem } from "./number-form-item.model";
 import { SelectFormItem } from "./select-form-item.model";
 import { TextFormItem } from "./text-form-item.model";
-import { FormItemModel } from "../form-item.model";
 import { BaseFormItemPort } from "../../../interfaces/base-form-item.port";
 import { FormField } from "../form-data-config.model";
 
 /**
- * Union type que representa todos los tipos de form items disponibles (nuevas clases)
+ * Union type que representa todos los tipos de form items disponibles
  */
-export type FormItem = TextFormItem | SelectFormItem | AutoCompleteFormItem | DateTimeFormItem;
-
-/**
- * Union type que incluye tanto las nuevas clases como el FormItemModel legacy
- */
-export type AnyFormItem = FormItem | FormItemModel;
+export type FormItem = TextFormItem | SelectFormItem | AutoCompleteFormItem | DateTimeFormItem | NumberFormItem;
 
 /**
  * Type guard para verificar si un item es de tipo TextFormItem
@@ -45,28 +40,24 @@ export function isDateTimeFormItem(item: FormField): item is DateTimeFormItem {
 }
 
 /**
- * Type guard para verificar si un item es del FormItemModel legacy
+ * Type guard para verificar si un item es de tipo NumberFormItem
  */
-export function isLegacyFormItem(item: FormField): item is FormItemModel {
-    return item instanceof FormItemModel;
+export function isNumberFormItem(item: FormField): item is NumberFormItem {
+    return item instanceof NumberFormItem;
 }
 
 /**
- * Type guard para verificar si un campo es de tipo select (funciona con ambos sistemas)
+ * Type guard para verificar si un campo es de tipo select
  */
 export function isSelectField(item: FormField): boolean {
-    if (isSelectFormItem(item)) return true;
-    if (isLegacyFormItem(item)) return item.type === FormItemModel.TYPE_SELECT;
-    return item.type === BaseFormItemPort.TYPE_SELECT;
+    return isSelectFormItem(item) || item.type === BaseFormItemPort.TYPE_SELECT;
 }
 
 /**
- * Type guard para verificar si un campo es de tipo autocomplete (funciona con ambos sistemas)
+ * Type guard para verificar si un campo es de tipo autocomplete
  */
 export function isAutoCompleteField(item: FormField): boolean {
-    if (isAutoCompleteFormItem(item)) return true;
-    if (isLegacyFormItem(item)) return item.type === FormItemModel.TYPE_AUTO_COMPLETE;
-    return item.type === BaseFormItemPort.TYPE_AUTO_COMPLETE;
+    return isAutoCompleteFormItem(item) || item.type === BaseFormItemPort.TYPE_AUTO_COMPLETE;
 }
 
 /**
@@ -81,11 +72,10 @@ export function isTextField(item: FormField): boolean {
 }
 
 /**
- * Type guard para verificar si un campo es de tipo datetime (funciona con ambos sistemas)
+ * Type guard para verificar si un campo es de tipo datetime
  */
 export function isDateTimeField(item: FormField): boolean {
-    if (isDateTimeFormItem(item)) return true;
-    return item.type === BaseFormItemPort.TYPE_DATETIME;
+    return isDateTimeFormItem(item) || item.type === BaseFormItemPort.TYPE_DATETIME;
 }
 
 /**

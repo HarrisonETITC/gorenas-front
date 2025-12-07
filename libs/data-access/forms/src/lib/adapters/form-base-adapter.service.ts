@@ -182,17 +182,15 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
         let insertControl = null;
 
         if (this.existsControl(field.name)) {
+            // Si el control ya existe, preservar el valor actual del usuario
+            // No sobrescribir con defaultValue para no perder estado al cambiar entre vistas
             insertControl = this.getControl(field.name);
-            // Actualizar el valor del control existente con el nuevo defaultValue
-            if (field.defaultValue !== undefined) {
-                insertControl.setValue(field.defaultValue, { emitEvent: false });
-            }
         }
-        else
+        else {
             insertControl = new FormControl(field.defaultValue, { validators: (AppUtil.verifyEmpty(field.validators) ? [] : field.validators) });
-
-        if (!this.existsControl(field.name))
             this.setControl(field.name, insertControl);
+        }
+
         return insertControl;
     }
 }

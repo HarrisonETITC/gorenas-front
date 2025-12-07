@@ -57,15 +57,11 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
         const control = this.formBase.controlsMap.get(key);
         const field = this.fields.find(f => f.name === key);
         if (field.type === BaseFormItemPort.TYPE_SELECT) {
-          // Para nuevas clases SelectFormItem
           if (isSelectFormItem(field)) {
             const option = field.options?.find(o => o.value === control.value);
             return new ViewValue(field.label, option?.viewValue || control.value);
           }
-          // Para legacy FormItemModel (usando any para acceder a selectOptions)
-          const legacyField = field as any;
-          const option = legacyField.selectOptions?.options?.find((o: ViewValue) => o.value === control.value);
-          return new ViewValue(field.label, option?.viewValue || control.value);
+          return new ViewValue(field.label, control.value);
         } else if (field.type === BaseFormItemPort.TYPE_AUTO_COMPLETE) {
           return new ViewValue(field.label, (control.value as IdValue).value);
         } else {

@@ -11,8 +11,6 @@ import {
   DestroySubsPort
 } from '@gorenas/application-core';
 import { 
-  AutocompleteOptions, 
-  FormItemModel,
   FormField,
   isSelectFormItem,
   isAutoCompleteFormItem,
@@ -116,76 +114,41 @@ export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySub
 
   /**
    * Pre-inicializa las opciones de los campos para evitar errores NG0100
-   * Funciona con el sistema legacy (FormItemModel) y las nuevas clases específicas
    */
   private initializeFieldOptions(): void {
     for (const field of this.fields) {
-      // Para nuevas clases (AutoCompleteFormItem), ya tienen options$ inicializado
+      // AutoCompleteFormItem ya tiene options$ inicializado
       if (isAutoCompleteFormItem(field)) {
-        continue; // Las nuevas clases ya están inicializadas
-      }
-      // Para clases legacy (FormItemModel)
-      if (field.type === BaseFormItemPort.TYPE_AUTO_COMPLETE) {
-        const legacyField = field as FormItemModel;
-        if (!legacyField.autocompleteOptions) {
-          const autocompleteOpts = new AutocompleteOptions();
-          autocompleteOpts.endpoint = null as any;
-          autocompleteOpts.initOptionsSubject();
-          legacyField.autocompleteOptions = autocompleteOpts;
-        }
-      }
-      
-      // Para nuevas clases (SelectFormItem), ya tienen options
-      if (isSelectFormItem(field)) {
+        field.initOptionsSubject();
         continue;
       }
-      // Para clases legacy (FormItemModel)
-      if (field.type === BaseFormItemPort.TYPE_SELECT) {
-        const legacyField = field as FormItemModel;
-        if (!legacyField.selectOptions) {
-          legacyField.selectOptions = { options: [] };
-        }
+      
+      // SelectFormItem ya tiene options inicializado
+      if (isSelectFormItem(field)) {
+        continue;
       }
     }
   }
 
   /**
    * Obtiene las opciones de autocomplete de forma segura
-   * Funciona con el sistema legacy (FormItemModel) y las nuevas clases específicas
    */
   protected getAutocompleteOptions(field: FormField): Observable<any[]> {
-    // Nueva clase AutoCompleteFormItem
     if (isAutoCompleteFormItem(field)) {
       field.initOptionsSubject();
       return field.options$ ?? this.emptyObservable$;
     }
-    
-    // Clase legacy (FormItemModel)
-    const legacyField = field as FormItemModel;
-    const autocompleteOpts = legacyField.autocompleteOptions as AutocompleteOptions | undefined;
-    if (autocompleteOpts && typeof autocompleteOpts.initOptionsSubject === 'function') {
-      if (typeof autocompleteOpts.setFieldId === 'function') {
-        autocompleteOpts.setFieldId(field.name);
-      }
-      autocompleteOpts.initOptionsSubject(field.name);
-      return autocompleteOpts.options ?? this.emptyObservable$;
-    }
-    return autocompleteOpts?.options ?? this.emptyObservable$;
+    return this.emptyObservable$;
   }
 
   /**
    * Obtiene las opciones de select de forma segura
-   * Funciona con el sistema legacy (FormItemModel) y las nuevas clases específicas
    */
   protected getSelectOptions(field: FormField): any[] {
-    // Nueva clase SelectFormItem
     if (isSelectFormItem(field)) {
       return field.options ?? [];
     }
-    
-    // Clase legacy (FormItemModel)
-    const legacyField = field as FormItemModel;
-    return legacyField.selectOptions?.options ?? [];
+    return [];
   }
   protected isBasicControl(type: string) {
     return type === BaseFormItemPort.TYPE_TEXT || type === BaseFormItemPort.TYPE_PASSWORD || type === BaseFormItemPort.TYPE_NUMBER;
