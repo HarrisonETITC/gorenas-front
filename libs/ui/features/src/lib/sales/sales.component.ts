@@ -36,9 +36,10 @@ export class SalesComponent implements OnInit, UseBaseDataComponent {
         const createForm = SaleForms.CREATE_FORM;
         createForm.dataInitializer = this.service;
 
+        const employeeField = createForm.fields[0] as FormItemModel;
         const employeeAutocomplete = new AutocompleteOptions();
         employeeAutocomplete.endpoint = this.employeeService;
-        createForm.fields[0].autocompleteOptions = employeeAutocomplete;
+        employeeField.autocompleteOptions = employeeAutocomplete;
 
         return [createForm];
     }

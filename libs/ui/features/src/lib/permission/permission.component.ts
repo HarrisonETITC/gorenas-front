@@ -8,7 +8,8 @@ import {
   TableConfig,
   BtnConfig,
   PermissionModelView,
-  AutocompleteOptions
+  isAutoCompleteFormItem,
+  AutoCompleteFormItem
 } from '@gorenas/domain';
 import {
   ApiServicePort,
@@ -65,12 +66,13 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
   getForms(): Array<FormDataConfig> {
     const createForm = PermissionForms.CREATE_FORM;
     createForm.dataInitializer = this.service;
-    const roleAutocompleteField = createForm.fields.find(f => f.name === 'roleId');
-
-    if (AppUtil.verifyEmpty(roleAutocompleteField?.autocompleteOptions)) {
-      const roleAutocomplete = new AutocompleteOptions();
-      roleAutocomplete.endpoint = this.roleService;
-      roleAutocompleteField.autocompleteOptions = roleAutocomplete;
+    
+    // Buscar el campo de rol y configurar el endpoint
+    const roleField = createForm.fields.find(f => f.name === 'roleId');
+    
+    if (isAutoCompleteFormItem(roleField)) {
+      // Nueva clase AutoCompleteFormItem - asignar endpoint directamente
+      (roleField as AutoCompleteFormItem).endpoint = this.roleService;
     }
 
     return [createForm];

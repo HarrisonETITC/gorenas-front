@@ -38,15 +38,17 @@ export class EmployeesComponent implements OnInit, UseBaseDataComponent {
     const createForm = EmployeeForms.CREATE_FORM;
     createForm.dataInitializer = this.service;
     
-    // Configurar autocomplete para persona
+    // Configurar autocomplete para persona (cast a FormItemModel para acceso legacy)
+    const personField = createForm.fields[0] as FormItemModel;
     const personAutocomplete = new AutocompleteOptions();
     personAutocomplete.endpoint = this.personService;
-    createForm.fields[0].autocompleteOptions = personAutocomplete;
+    personField.autocompleteOptions = personAutocomplete;
     
-    // Configurar autocomplete para sucursal
+    // Configurar autocomplete para sucursal (cast a FormItemModel para acceso legacy)
+    const branchField = createForm.fields[2] as FormItemModel;
     const branchAutocomplete = new AutocompleteOptions();
     branchAutocomplete.endpoint = this.branchService;
-    createForm.fields[2].autocompleteOptions = branchAutocomplete;
+    branchField.autocompleteOptions = branchAutocomplete;
 
     return [createForm];
   }

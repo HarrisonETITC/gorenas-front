@@ -38,15 +38,15 @@ export class PersonsComponent implements OnInit, UseBaseDataComponent {
         const createForm = PersonForms.CREATE_FORM;
         createForm.dataInitializer = this.service;
 
+        const userField = createForm.fields.find(f => f.name === 'userId') as FormItemModel;
         const userAutocomplete = new AutocompleteOptions();
         userAutocomplete.endpoint = this.userService;
-        createForm.fields.find(f => f.name === 'userId')
-            .autocompleteOptions = userAutocomplete;
+        userField.autocompleteOptions = userAutocomplete;
 
+        const roleField = createForm.fields.find(f => f.name === 'roleId') as FormItemModel;
         const roleAutocomplete = new AutocompleteOptions();
         roleAutocomplete.endpoint = this.roleService;
-        createForm.fields.find(f => f.name === 'roleId')
-            .autocompleteOptions = roleAutocomplete;
+        roleField.autocompleteOptions = roleAutocomplete;
 
         return [createForm];
     }

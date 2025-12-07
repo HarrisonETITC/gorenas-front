@@ -3,48 +3,55 @@ import { ViewValue } from "../../general/view-value.model";
 import { BaseFormItemAdapter } from "./base-form-item.adapter";
 import { BaseFormItemPort } from "../../../interfaces/base-form-item.port";
 
-export class SelectFormItem extends BaseFormItemAdapter<ViewValue> {
-    private _options: Array<ViewValue>;
+/**
+ * Clase específica para campos de tipo Select.
+ * Contiene las opciones disponibles directamente como propiedad.
+ * 
+ * @example
+ * ```typescript
+ * const moduleField = new SelectFormItem(
+ *   'module',
+ *   'Módulo del permiso',
+ *   AppUtil.getViewValuesFromMap(PermissionModel.MODULES_MAP),
+ *   'category',
+ *   null,
+ *   [Validators.required]
+ * );
+ * ```
+ */
+export class SelectFormItem extends BaseFormItemAdapter<string> {
+    /** Opciones disponibles para el select */
+    options: Array<ViewValue>;
 
     constructor(
         name: string,
         label: string,
         options: Array<ViewValue> = [],
         icon: string = '',
-        defaultValue: ViewValue = null,
+        defaultValue: string = null,
         validators: Array<ValidatorFn> = [],
         active: boolean = false,
-        transparent: boolean = false
+        transparent: boolean = false,
+        hideOnEdit: boolean = false
     ) {
-        super(name, BaseFormItemPort.TYPE_SELECT, label, icon, defaultValue, validators, active, transparent);
-        this._options = options || [];
+        super(name, BaseFormItemPort.TYPE_SELECT, label, icon, defaultValue, validators, active, transparent, hideOnEdit);
+        this.options = options || [];
         this.validate();
     }
 
-    get options(): Array<ViewValue> {
-        return this._options;
-    }
-
-    set options(options: Array<ViewValue>) {
-        this._options = options || [];
-    }
-
     override validate(): void | never {
-        // Llamar validación del padre
         super.validate();
         
-        // Asegurar que options es un array válido
-        if (!Array.isArray(this._options)) {
-            this._options = [];
+        if (!Array.isArray(this.options)) {
+            this.options = [];
         }
         
-        // Validar que defaultValue esté en las opciones si se proporciona
-        if (this.defaultValue && this._options.length > 0) {
-            const isValidDefault = this._options.some(option => 
-                option.value === this.defaultValue?.value
+        if (this.defaultValue && this.options.length > 0) {
+            const isValidDefault = this.options.some(option => 
+                option.value === this.defaultValue
             );
             if (!isValidDefault) {
-                console.warn(`El valor por defecto "${this.defaultValue.value}" no está en las opciones disponibles para el campo "${this.name}"`);
+                console.warn(`El valor por defecto "${this.defaultValue}" no está en las opciones disponibles para el campo "${this.name}"`);
             }
         }
     }

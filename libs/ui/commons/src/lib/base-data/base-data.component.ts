@@ -229,20 +229,10 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
       // Solo restaurar valores por defecto si no es edición
       if (!isEdit) {
         config.fields = config.fields.map((field, fieldIndex) => {
-          // Preservar la instancia de autocompleteOptions para mantener la referencia al Subject
-          const newField = {
-            ...field,
-            defaultValue: defValues[fieldIndex]
-          };
-          // Restaurar la referencia original de autocompleteOptions (no copiar)
-          if (field.autocompleteOptions) {
-            newField.autocompleteOptions = field.autocompleteOptions;
-          }
-          // Restaurar la referencia original de selectOptions
-          if (field.selectOptions) {
-            newField.selectOptions = field.selectOptions;
-          }
-          return newField;
+          // Preservar la instancia original y solo actualizar el defaultValue
+          // Esto mantiene las referencias a autocompleteOptions/selectOptions/options
+          field.defaultValue = defValues[fieldIndex];
+          return field;
         });
       }
       

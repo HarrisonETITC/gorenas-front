@@ -1,9 +1,12 @@
 import { ValidatorFn } from "@angular/forms";
 import { BaseFormItemPort } from "../../../interfaces/base-form-item.port";
 
+/**
+ * Implementación base para todos los tipos de campos de formulario.
+ * Proporciona la estructura común y validaciones básicas.
+ */
 export class BaseFormItemAdapter<T> extends BaseFormItemPort<T> {
     
-    // Usar las constantes del padre en lugar de types literales
     constructor(
         name: string,
         type: typeof BaseFormItemPort.TYPE_TEXT | 
@@ -18,6 +21,7 @@ export class BaseFormItemAdapter<T> extends BaseFormItemPort<T> {
         validators: Array<ValidatorFn> = [],
         active: boolean = false,
         transparent: boolean = false,
+        hideOnEdit: boolean = false
     ) {
         super();
         this.name = name;
@@ -28,6 +32,7 @@ export class BaseFormItemAdapter<T> extends BaseFormItemPort<T> {
         this.validators = validators;
         this.active = active;
         this.transparent = transparent;
+        this.hideOnEdit = hideOnEdit;
     }
 
     override validate(): void | never {

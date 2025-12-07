@@ -1,5 +1,11 @@
 import { FormItemModel } from "./form-item.model";
 import { GetByIdPort } from "../../ports/get-by-id.port";
+import { BaseFormItemPort } from "../../interfaces/base-form-item.port";
+
+/**
+ * Tipo unión que acepta tanto el FormItemModel legacy como las nuevas clases específicas
+ */
+export type FormField = FormItemModel | BaseFormItemPort;
 
 /**
  * Configuración para formularios dinámicos
@@ -14,7 +20,7 @@ export class FormDataConfig<T = any> {
     editTitle?: string;
     /** Texto del botón en modo edición (opcional, si no se define usa 'Actualizar') */
     editButtonTitle?: string;
-    fields!: Array<FormItemModel>;
+    fields!: Array<FormField>;
     transparentMode?: boolean;
     tabTitle?: string;
     dataInitializer?: GetByIdPort<T>;

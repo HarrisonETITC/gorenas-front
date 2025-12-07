@@ -10,7 +10,14 @@ import {
   FIELDS_SERVICE,
   DestroySubsPort
 } from '@gorenas/application-core';
-import { AutocompleteOptions, FormItemModel } from '@gorenas/domain';
+import { 
+  AutocompleteOptions, 
+  FormItemModel,
+  FormField,
+  isSelectFormItem,
+  isAutoCompleteFormItem,
+  BaseFormItemPort
+} from '@gorenas/domain';
 import { FormsUtil } from '@gorenas/shared-util-forms';
 import { filter, ignoreElements, Observable, of, Subject, take, takeUntil, tap } from 'rxjs';
 import { AutoCompleteComponent } from '../auto-complete/auto-complete.component';
@@ -29,7 +36,7 @@ export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySub
   public static readonly MODE_FORM = 'form';
   public static readonly MODE_CONTROLS = 'controls';
 
-  @Input({ required: true }) fields: Array<FormItemModel>;
+  @Input({ required: true }) fields: Array<FormField>;
   @Input({ required: true }) mode: 'form' | 'controls';
   @Input({ required: false }) automaticUpdate: boolean;
   @Input({ required: false }) showAll: boolean;
@@ -84,7 +91,7 @@ export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySub
 
     this.service.getFields().pipe(
       take(1),
-      tap((fields: Array<FormItemModel>) => {
+      tap((fields: Array<FormField>) => {
         this.fields = fields;
         this.cdr.markForCheck();
       }),
@@ -106,29 +113,54 @@ export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySub
 
   /**
    * Pre-inicializa las opciones de los campos para evitar errores NG0100
+   * Funciona con el sistema legacy (FormItemModel) y las nuevas clases específicas
    */
   private initializeFieldOptions(): void {
     for (const field of this.fields) {
-      if (field.type === FormItemModel.TYPE_AUTO_COMPLETE && !field.autocompleteOptions) {
-        const autocompleteOpts = new AutocompleteOptions();
-        autocompleteOpts.endpoint = null as any;
-        autocompleteOpts.initOptionsSubject();
-        field.autocompleteOptions = autocompleteOpts;
+      // Para nuevas clases (AutoCompleteFormItem), ya tienen options$ inicializado
+      if (isAutoCompleteFormItem(field)) {
+        continue; // Las nuevas clases ya están inicializadas
       }
-      if (field.type === FormItemModel.TYPE_SELECT && !field.selectOptions) {
-        field.selectOptions = { options: [] };
+      // Para clases legacy (FormItemModel)
+      if (field.type === BaseFormItemPort.TYPE_AUTO_COMPLETE) {
+        const legacyField = field as FormItemModel;
+        if (!legacyField.autocompleteOptions) {
+          const autocompleteOpts = new AutocompleteOptions();
+          autocompleteOpts.endpoint = null as any;
+          autocompleteOpts.initOptionsSubject();
+          legacyField.autocompleteOptions = autocompleteOpts;
+        }
+      }
+      
+      // Para nuevas clases (SelectFormItem), ya tienen options
+      if (isSelectFormItem(field)) {
+        continue;
+      }
+      // Para clases legacy (FormItemModel)
+      if (field.type === BaseFormItemPort.TYPE_SELECT) {
+        const legacyField = field as FormItemModel;
+        if (!legacyField.selectOptions) {
+          legacyField.selectOptions = { options: [] };
+        }
       }
     }
   }
 
   /**
    * Obtiene las opciones de autocomplete de forma segura
-   * Inicializa el Subject si es necesario para garantizar que el Observable esté listo
+   * Funciona con el sistema legacy (FormItemModel) y las nuevas clases específicas
    */
-  protected getAutocompleteOptions(field: FormItemModel): Observable<any[]> {
-    const autocompleteOpts = field.autocompleteOptions as AutocompleteOptions | undefined;
+  protected getAutocompleteOptions(field: FormField): Observable<any[]> {
+    // Nueva clase AutoCompleteFormItem
+    if (isAutoCompleteFormItem(field)) {
+      field.initOptionsSubject();
+      return field.options$ ?? this.emptyObservable$;
+    }
+    
+    // Clase legacy (FormItemModel)
+    const legacyField = field as FormItemModel;
+    const autocompleteOpts = legacyField.autocompleteOptions as AutocompleteOptions | undefined;
     if (autocompleteOpts && typeof autocompleteOpts.initOptionsSubject === 'function') {
-      // Usar el nombre del campo como ID para conectar con el store global
       if (typeof autocompleteOpts.setFieldId === 'function') {
         autocompleteOpts.setFieldId(field.name);
       }
@@ -140,21 +172,29 @@ export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySub
 
   /**
    * Obtiene las opciones de select de forma segura
+   * Funciona con el sistema legacy (FormItemModel) y las nuevas clases específicas
    */
-  protected getSelectOptions(field: FormItemModel): any[] {
-    return field.selectOptions?.options ?? [];
+  protected getSelectOptions(field: FormField): any[] {
+    // Nueva clase SelectFormItem
+    if (isSelectFormItem(field)) {
+      return field.options ?? [];
+    }
+    
+    // Clase legacy (FormItemModel)
+    const legacyField = field as FormItemModel;
+    return legacyField.selectOptions?.options ?? [];
   }
   protected isBasicControl(type: string) {
-    return type === FormItemModel.TYPE_TEXT || type === FormItemModel.TYPE_PASSWORD || type === FormItemModel.TYPE_NUMBER;
+    return type === BaseFormItemPort.TYPE_TEXT || type === BaseFormItemPort.TYPE_PASSWORD || type === BaseFormItemPort.TYPE_NUMBER;
   }
   protected isSelectControl(type: string) {
-    return type === FormItemModel.TYPE_SELECT;
+    return type === BaseFormItemPort.TYPE_SELECT;
   }
   protected isDatePickerControl(type: string) {
-    return type === FormItemModel.TYPE_DATETIME;
+    return type === BaseFormItemPort.TYPE_DATETIME;
   }
   protected isAutoCompleteControl(type: string) {
-    return type === FormItemModel.TYPE_AUTO_COMPLETE;
+    return type === BaseFormItemPort.TYPE_AUTO_COMPLETE;
   }
   protected getControl(name: string): FormControl<any> {
     if (this.mode === FormBaseComponent.MODE_FORM)
@@ -162,8 +202,8 @@ export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySub
 
     return this.controlsMap.get(name);
   }
-  protected updateAutoCompleteData(queryHandler: Observable<string>, field: FormItemModel): void {
-    const formHandler = (FormsUtil.FORMS_HANDLER.get(FormItemModel.TYPE_AUTO_COMPLETE) as unknown as AutocompleteFieldPort);
+  protected updateAutoCompleteData(queryHandler: Observable<string>, field: FormField): void {
+    const formHandler = (FormsUtil.FORMS_HANDLER.get(BaseFormItemPort.TYPE_AUTO_COMPLETE) as unknown as AutocompleteFieldPort);
     formHandler.updateAutoCompleteData(queryHandler, field);
   }
   protected handleEvents() {
