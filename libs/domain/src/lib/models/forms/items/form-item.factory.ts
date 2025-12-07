@@ -5,6 +5,7 @@ import { IdValue } from "../../general/id-value.model";
 import { ViewValue } from "../../general/view-value.model";
 import { BaseFormItemPort } from "../../../interfaces/base-form-item.port";
 import { AutoCompleteFormItem } from "./auto-complete-form-item.model";
+import { DateTimeFormItem } from "./datetime-form-item.model";
 import { SelectFormItem } from "./select-form-item.model";
 import { TextFormItem } from "./text-form-item.model";
 
@@ -46,6 +47,13 @@ export interface SelectFormItemConfig extends BaseFormItemConfig {
 export interface AutoCompleteFormItemConfig extends BaseFormItemConfig {
     endpoint: GetAvailablePort & GetIdValueMany;
     defaultValue?: IdValue;
+}
+
+/**
+ * Configuración específica para campos datetime
+ */
+export interface DateTimeFormItemConfig extends BaseFormItemConfig {
+    defaultValue?: Date | string;
 }
 
 /**
@@ -95,6 +103,22 @@ export class FormItemFactory {
             config.name,
             config.label,
             config.endpoint,
+            config.icon || '',
+            config.defaultValue ?? null,
+            config.validators || [],
+            config.active || false,
+            config.transparent || false,
+            config.hideOnEdit || false
+        );
+    }
+
+    /**
+     * Crea un item datetime
+     */
+    static createDateTimeItem(config: DateTimeFormItemConfig): DateTimeFormItem {
+        return new DateTimeFormItem(
+            config.name,
+            config.label,
             config.icon || '',
             config.defaultValue ?? null,
             config.validators || [],
