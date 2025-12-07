@@ -110,6 +110,9 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
     getObject() {
         const obj: { [key: string]: any } = {};
 
+        console.log('[getObject] actualFields:', this.actualFields.map(f => ({ name: f.name, type: f.type })));
+        console.log('[getObject] controls keys:', Array.from(this.controls.keys()));
+
         for (const controlKey of Array.from(this.controls.keys())) {
             const control = this.getControl(controlKey);
 
@@ -119,8 +122,12 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
                 // Buscar el campo para conocer su tipo
                 const field = this.actualFields.find(f => f.name === controlKey);
                 
-                // Si el valor es un objeto con 'value' (ej: autocomplete), extraer el texto
+                console.log(`[getObject] Campo: ${controlKey}, field encontrado:`, field ? { name: field.name, type: field.type } : 'NO ENCONTRADO');
+                console.log(`[getObject] Valor:`, value, 'Tipo de valor:', typeof value);
+                
+                // Si el valor es un objeto con 'id' (ej: autocomplete), extraer el id
                 if (field?.type === FormItemModel.TYPE_AUTO_COMPLETE && value !== null && typeof value === 'object' && 'id' in value) {
+                    console.log(`[getObject] -> Extrayendo ID de autocomplete:`, (value as IdValue)?.id);
                     obj[controlKey] = (value as IdValue)?.id;
                 } 
                 // Si es un campo de tipo número, convertir a número

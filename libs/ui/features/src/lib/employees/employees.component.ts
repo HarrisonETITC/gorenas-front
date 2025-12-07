@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { ApiServicePort, BaseDataConfig, BRANCH_SERVICE, EMPLOYEE_SERVICE, PERSON_SERVICE, UseBaseDataComponent } from "@gorenas/application-core";
-import { FormItemModel, GeneralFilter, FormDataConfig, AppModel, EmployeeModel, EmployeeModelView, PersonModel, PersonModelView, BranchModelView, BranchModel, BtnConfig, TableConfig, AutocompleteOptions } from "@gorenas/domain";
+import { FormField, GeneralFilter, FormDataConfig, AppModel, EmployeeModel, EmployeeModelView, PersonModel, PersonModelView, BranchModelView, BranchModel, BtnConfig, TableConfig, isAutoCompleteFormItem, AutoCompleteFormItem } from "@gorenas/domain";
 import { EmployeeForms } from "@gorenas/shared-util-forms";
 import { BaseDataComponent } from "@gorenas/ui-commons";
 import { Observable, of } from "rxjs";
@@ -15,7 +15,7 @@ export class EmployeesComponent implements OnInit, UseBaseDataComponent {
   protected readonly moduleName = AppModel.MODULE_EMPLOYEES;
   protected actionHandlers: Map<string, (element: EmployeeModel) => void>;
   headers: Map<string, string>;
-  filterFields: FormItemModel<any>[];
+  filterFields: FormField[];
   pageConfig: BaseDataConfig;
 
   constructor(
@@ -38,17 +38,17 @@ export class EmployeesComponent implements OnInit, UseBaseDataComponent {
     const createForm = EmployeeForms.CREATE_FORM;
     createForm.dataInitializer = this.service;
     
-    // Configurar autocomplete para persona (cast a FormItemModel para acceso legacy)
-    const personField = createForm.fields[0] as FormItemModel;
-    const personAutocomplete = new AutocompleteOptions();
-    personAutocomplete.endpoint = this.personService;
-    personField.autocompleteOptions = personAutocomplete;
+    // Configurar endpoint para campo persona
+    const personField = createForm.fields.find(f => f.name === 'person');
+    if (isAutoCompleteFormItem(personField)) {
+      (personField as AutoCompleteFormItem).endpoint = this.personService;
+    }
     
-    // Configurar autocomplete para sucursal (cast a FormItemModel para acceso legacy)
-    const branchField = createForm.fields[2] as FormItemModel;
-    const branchAutocomplete = new AutocompleteOptions();
-    branchAutocomplete.endpoint = this.branchService;
-    branchField.autocompleteOptions = branchAutocomplete;
+    // Configurar endpoint para campo sucursal
+    const branchField = createForm.fields.find(f => f.name === 'branch');
+    if (isAutoCompleteFormItem(branchField)) {
+      (branchField as AutoCompleteFormItem).endpoint = this.branchService;
+    }
 
     return [createForm];
   }

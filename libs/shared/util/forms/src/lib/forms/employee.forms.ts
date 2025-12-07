@@ -1,5 +1,11 @@
 import { Validators } from "@angular/forms";
-import { FormDataConfig, FormItemModel, StateModel, ViewValue } from "@gorenas/domain";
+import { 
+    FormDataConfig, 
+    TextFormItem, 
+    SelectFormItem,
+    AutoCompleteFormItem,
+    BaseFormItemPort 
+} from "@gorenas/domain";
 import { StateField } from "./general/state.fields";
 
 export class EmployeeForms {
@@ -8,37 +14,52 @@ export class EmployeeForms {
     static {
         this.CREATE_FORM.title = 'Crear Empleado';
         this.CREATE_FORM.buttonTitle = 'Crear';
+        
+        // Campo persona asociada - AUTOCOMPLETE
+        const personField = new AutoCompleteFormItem(
+            'person',
+            'Persona asociada',
+            null, // endpoint se asigna dinámicamente
+            'person_alert',
+            null,
+            [Validators.required]
+        );
+
+        // Campo salario - NUMBER
+        const salaryField = new TextFormItem(
+            'salary',
+            BaseFormItemPort.TYPE_NUMBER,
+            'Salario',
+            'money_bag',
+            1420000,
+            [Validators.required, Validators.min(1420000)]
+        );
+
+        // Campo sucursal asignada - AUTOCOMPLETE
+        const branchField = new AutoCompleteFormItem(
+            'branch',
+            'Sucursal asignada',
+            null, // endpoint se asigna dinámicamente
+            'add_location_alt',
+            null,
+            [Validators.required]
+        );
+
+        // Crear copia del StateField con label personalizado
+        const stateField = new SelectFormItem(
+            StateField.name,
+            'Estado del empleado',
+            StateField.options,
+            StateField.icon,
+            null,
+            [Validators.required]
+        );
+
         this.CREATE_FORM.fields = [
-            {
-                label: 'Persona asociada',
-                type: FormItemModel.TYPE_AUTO_COMPLETE,
-                name: 'person',
-                icon: 'person_alert',
-                validators: [Validators.required]
-            },
-            {
-                label: 'Salario',
-                type: FormItemModel.TYPE_NUMBER,
-                name: 'salary',
-                icon: 'money_bag',
-                validators: [Validators.required, Validators.min(1420000)],
-                numberOptions: {
-                    enableGreatherThan: false,
-                    enableLessThan: false
-                },
-                defaultValue: 1420000
-            },
-            {
-                label: 'Sucursal asignada',
-                type: FormItemModel.TYPE_AUTO_COMPLETE,
-                name: 'branch',
-                icon: 'add_location_alt',
-                validators: [Validators.required]
-            },
-            {
-                label: 'Estado del empleado',
-                ...StateField
-            }
-        ]
+            personField,
+            salaryField,
+            branchField,
+            stateField
+        ];
     }
 }
