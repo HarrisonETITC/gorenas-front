@@ -5,8 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormBaseComponent } from '@gorenas/ui-controls';
-import { FormItemModel } from '@gorenas/shared-util-forms';
-import { IdValue, ViewValue } from '@gorenas/domain';
+import { FormField, IdValue, ViewValue, BaseFormItemPort, isSelectFormItem } from '@gorenas/domain';
 import { ChildUpdatePort, FIELDS_SERVICE, FormBaseServicePort, AppUtil } from '@gorenas/application-core';
 
 @Component({
@@ -16,7 +15,7 @@ import { ChildUpdatePort, FIELDS_SERVICE, FormBaseServicePort, AppUtil } from '@
   styleUrl: './filters-compact.component.css'
 })
 export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
-  @Input({ required: true }) fields: Array<FormItemModel>;
+  @Input({ required: true }) fields: Array<FormField>;
   @Output() searchHandler = new EventEmitter<Observable<any>>();
   @ViewChild(FormBaseComponent) protected readonly formBase: FormBaseComponent;
   private readonly outputEventHandler = new BehaviorSubject<any>({});
@@ -57,9 +56,17 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
       .map(key => {
         const control = this.formBase.controlsMap.get(key);
         const field = this.fields.find(f => f.name === key);
-        if (field.type === FormItemModel.TYPE_SELECT) {
-          return new ViewValue(field.label, field.selectOptions.options.find(o => o.value === control.value).viewValue);
-        } else if (field.type === FormItemModel.TYPE_AUTO_COMPLETE) {
+        if (field.type === BaseFormItemPort.TYPE_SELECT) {
+          // Para nuevas clases SelectFormItem
+          if (isSelectFormItem(field)) {
+            const option = field.options?.find(o => o.value === control.value);
+            return new ViewValue(field.label, option?.viewValue || control.value);
+          }
+          // Para legacy FormItemModel (usando any para acceder a selectOptions)
+          const legacyField = field as any;
+          const option = legacyField.selectOptions?.options?.find((o: ViewValue) => o.value === control.value);
+          return new ViewValue(field.label, option?.viewValue || control.value);
+        } else if (field.type === BaseFormItemPort.TYPE_AUTO_COMPLETE) {
           return new ViewValue(field.label, (control.value as IdValue).value);
         } else {
           return new ViewValue(field.label, control.value);

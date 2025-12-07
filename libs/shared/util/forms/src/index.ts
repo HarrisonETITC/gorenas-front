@@ -21,3 +21,6 @@ export * from './lib/items/number.options'
 export * from './lib/items/select.options'
 
 export * from './lib/forms/form-data-config.model'
+
+// Re-export FormField from domain for backward compatibility
+export type { FormField } from '@gorenas/domain'

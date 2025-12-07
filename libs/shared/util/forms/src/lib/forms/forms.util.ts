@@ -3,7 +3,7 @@ import { AppUtil } from "@gorenas/application-core";
 import { FieldInitializerPort } from "@gorenas/application-core";
 import { AutocompleteFieldAdapter } from "../field-handlers/auto-complete-field.adapter";
 import { SelectFieldAdapter } from "../field-handlers/select-field.adapter";
-import { FormItemModel } from "@gorenas/domain";
+import { BaseFormItemPort, FormField } from "@gorenas/domain";
 import { NumberFieldAdapter } from "../field-handlers/number-field.adapter";
 import { catchError, forkJoin, from, mergeMap, Observable, of } from "rxjs";
 
@@ -11,9 +11,9 @@ export class FormsUtil {
     static readonly FORMS_HANDLER = new Map<string, FieldInitializerPort>();
 
     static {
-        FormsUtil.FORMS_HANDLER.set(FormItemModel.TYPE_AUTO_COMPLETE, new AutocompleteFieldAdapter());
-        FormsUtil.FORMS_HANDLER.set(FormItemModel.TYPE_SELECT, new SelectFieldAdapter());
-        FormsUtil.FORMS_HANDLER.set(FormItemModel.TYPE_NUMBER, new NumberFieldAdapter())
+        FormsUtil.FORMS_HANDLER.set(BaseFormItemPort.TYPE_AUTO_COMPLETE, new AutocompleteFieldAdapter());
+        FormsUtil.FORMS_HANDLER.set(BaseFormItemPort.TYPE_SELECT, new SelectFieldAdapter());
+        FormsUtil.FORMS_HANDLER.set(BaseFormItemPort.TYPE_NUMBER, new NumberFieldAdapter())
     }
 
     static errorMessage(group: FormGroup, formControl: string, control?: FormControl): string {
@@ -51,7 +51,7 @@ export class FormsUtil {
     static hasError(group: FormGroup, formControl: string): boolean {
         return group.get(formControl).invalid && group.get(formControl).touched;
     }
-    static assignValuesOnFields(val: any, fields: Array<FormItemModel>): Observable<void> {
+    static assignValuesOnFields(val: any, fields: Array<FormField>): Observable<void> {
         const observables = new Array<Observable<void>>();
 
         console.log('[FormsUtil] assignValuesOnFields - val:', val);
@@ -77,7 +77,7 @@ export class FormsUtil {
             })
         );
     }
-    static assignValue(val: any, field: FormItemModel): Observable<void> {
+    static assignValue(val: any, field: FormField): Observable<void> {
 
         if (this.FORMS_HANDLER.has(field.type)) {
             return this.FORMS_HANDLER.get(field.type).setValue(val, field);

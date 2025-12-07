@@ -8,7 +8,7 @@ import {
   FIELDS_SERVICE
 } from '@gorenas/application-core';
 import { FormBaseComponent } from '@gorenas/ui-controls';
-import { FormItemModel } from '@gorenas/shared-util-forms';
+import { FormField } from '@gorenas/domain';
 import {
   BehaviorSubject,
   Observable
@@ -22,7 +22,7 @@ import {
 })
 export class FiltersExtendedComponent implements OnInit {
   private readonly outputEventHandler = new BehaviorSubject<any>({});
-  @Input({ required: true }) fields: Array<FormItemModel>;
+  @Input({ required: true }) fields: Array<FormField>;
   @Output() searchHandler = new EventEmitter<Observable<any>>();
   @ViewChild(FormBaseComponent) formBase: FormBaseComponent;
   protected autoSearch: boolean = false;

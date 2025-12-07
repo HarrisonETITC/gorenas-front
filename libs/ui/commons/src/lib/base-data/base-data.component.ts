@@ -9,7 +9,8 @@ import {
   GeneralModel,
   TableConfig,
   ViewValue,
-  GeneralFilter
+  GeneralFilter,
+  FormField
 } from '@gorenas/domain';
 import {
   AppUtil,
@@ -31,7 +32,6 @@ import { FormsProviders } from '@gorenas/data-access-forms';
 import { UtilsProviders } from '@gorenas/data-access-commons';
 import {
   FormDataConfig,
-  FormItemModel,
   PermissionFilter
 } from '@gorenas/shared-util-forms';
 import {
@@ -85,7 +85,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
   @Input({ required: true }) initFilter$: Observable<GeneralFilter>;
   @Input({ required: true }) tableConfig: TableConfig;
   @Input({ required: false }) infoMaps?: Map<string, Array<ViewValue>>;
-  @Input({ required: false }) filters?: Array<FormItemModel>;
+  @Input({ required: false }) filters?: Array<FormField>;
   @Input({ required: false }) dataForms?: Array<FormDataConfig>;
   @Input({ required: false }) actionHandlers?: Map<string, (element: T) => void>;
   @Input({ required: false }) enableDefaultActions: boolean = true;
