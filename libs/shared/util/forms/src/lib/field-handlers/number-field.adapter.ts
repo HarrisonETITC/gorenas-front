@@ -1,61 +1,77 @@
-import { FormItemModel } from "@gorenas/domain";
+import { BaseFormItemPort, NumberFormItem, NumberFieldOptions, FormField, isNumberFormItem } from "@gorenas/domain";
 import { AppUtil } from "@gorenas/application-core";
 import { of } from "rxjs";
 import { FieldInitializerPort } from "@gorenas/application-core";
 
+/**
+ * Obtiene las opciones de número del campo
+ */
+function getNumberOptions(field: FormField): NumberFieldOptions | undefined {
+    if (isNumberFormItem(field)) {
+        return field.numberOptions;
+    }
+    return undefined;
+}
+
 export class NumberFieldAdapter implements FieldInitializerPort {
-    validateField(field: FormItemModel): void {
+    validateField(field: FormField): void {
         // numberOptions es opcional - solo validar si se necesitan features avanzadas
-        // No lanzar error si no hay opciones, simplemente no hacer nada
     }
-    initField(field: FormItemModel): void {
-        // Inicializar numberOptions con valores por defecto si no existe
-        if (AppUtil.verifyEmpty(field.numberOptions)) {
-            field.numberOptions = {
-                enableGreatherThan: false,
-                enableLessThan: false
-            };
-        }
+    initField(field: FormField): void {
+        // NumberFormItem ya está inicializado en el constructor
     }
-    isFieldType(field: FormItemModel): boolean {
-        return field.type === FormItemModel.TYPE_NUMBER;
+    isFieldType(field: FormField): boolean {
+        return field.type === BaseFormItemPort.TYPE_NUMBER;
     }
-    getExtraFields(field: FormItemModel): Array<FormItemModel> {
-        const extra: Array<FormItemModel> = [];
+    getExtraFields(field: FormField): Array<FormField> {
+        const extra: Array<FormField> = [];
         
-        // Solo procesar si hay numberOptions configuradas
-        if (AppUtil.verifyEmpty(field.numberOptions)) {
+        if (!isNumberFormItem(field)) {
             return extra;
         }
         
-        if (field.numberOptions.enableGreatherThan) {
-            const fieldCopy = { ...field };
-            const extraLabel = field.numberOptions.greatherThanLabel;
-            fieldCopy.name = `${fieldCopy.name}GreatherThan`;
-            fieldCopy.label = `${fieldCopy.label}${AppUtil.verifyEmpty(extraLabel) ? '' : extraLabel}`;
-            fieldCopy.icon = 'arrow_upward';
-
-            extra.push(fieldCopy);
+        const numberOptions = field.numberOptions;
+        
+        if (AppUtil.verifyEmpty(numberOptions)) {
+            return extra;
         }
-        if (field.numberOptions.enableLessThan) {
-            const fieldCopy = { ...field };
-            const extraLabel = field.numberOptions.lessThanLabel;
-            fieldCopy.name = `${fieldCopy.name}LessThan`;
-            fieldCopy.label = `${fieldCopy.label}${AppUtil.verifyEmpty(extraLabel) ? '' : extraLabel}`;
-            fieldCopy.icon = `arrow_downward`;
-
-            extra.push(fieldCopy);
+        
+        if (numberOptions.enableGreatherThan) {
+            const extraLabel = numberOptions.greatherThanLabel;
+            const extraField = new NumberFormItem(
+                `${field.name}GreatherThan`,
+                `${field.label}${AppUtil.verifyEmpty(extraLabel) ? '' : extraLabel}`,
+                'arrow_upward',
+                field.defaultValue,
+                field.validators || [],
+                field.active,
+                field.transparent,
+                field.hideOnEdit
+            );
+            extra.push(extraField);
+        }
+        
+        if (numberOptions.enableLessThan) {
+            const extraLabel = numberOptions.lessThanLabel;
+            const extraField = new NumberFormItem(
+                `${field.name}LessThan`,
+                `${field.label}${AppUtil.verifyEmpty(extraLabel) ? '' : extraLabel}`,
+                'arrow_downward',
+                field.defaultValue,
+                field.validators || [],
+                field.active,
+                field.transparent,
+                field.hideOnEdit
+            );
+            extra.push(extraField);
         }
         return extra;
     }
-    processExtraFields(extraFields: Array<FormItemModel>, fields: Array<FormItemModel>) {
-        // Mantener campos originales Y agregar los extra (greaterThan/lessThan) si existen
-        // Los campos extra se usan para filtros, los originales para CRUD
-        const numberExtras = extraFields.filter(f => f.type === FormItemModel.TYPE_NUMBER);
+    processExtraFields(extraFields: Array<FormField>, fields: Array<FormField>) {
+        const numberExtras = extraFields.filter(f => f.type === BaseFormItemPort.TYPE_NUMBER);
         return [...fields, ...numberExtras];
     }
-    setValue(val: any, field: FormItemModel) {
-        // Convertir a número para que los validadores min/max funcionen correctamente
+    setValue(val: any, field: FormField) {
         const numericValue = val !== null && val !== undefined && val !== '' 
             ? Number(val) 
             : val;

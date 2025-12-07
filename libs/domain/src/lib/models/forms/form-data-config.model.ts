@@ -1,5 +1,10 @@
-import { FormItemModel } from "./form-item.model";
 import { GetByIdPort } from "../../ports/get-by-id.port";
+import { BaseFormItemPort } from "../../interfaces/base-form-item.port";
+
+/**
+ * Tipo que representa un campo de formulario
+ */
+export type FormField = BaseFormItemPort;
 
 /**
  * Configuración para formularios dinámicos
@@ -14,7 +19,7 @@ export class FormDataConfig<T = any> {
     editTitle?: string;
     /** Texto del botón en modo edición (opcional, si no se define usa 'Actualizar') */
     editButtonTitle?: string;
-    fields!: Array<FormItemModel>;
+    fields!: Array<FormField>;
     transparentMode?: boolean;
     tabTitle?: string;
     dataInitializer?: GetByIdPort<T>;

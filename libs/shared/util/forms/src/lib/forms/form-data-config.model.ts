@@ -1,4 +1,4 @@
-import { FormItemModel } from "../items/form-item.model";
+import { FormField } from "@gorenas/domain";
 import { GetByIdPort } from "@gorenas/application-core";
 
 export class FormDataConfig<T = any> {
@@ -11,7 +11,7 @@ export class FormDataConfig<T = any> {
     editTitle?: string;
     /** Texto del botón en modo edición (opcional, si no se define usa 'Actualizar') */
     editButtonTitle?: string;
-    fields!: Array<FormItemModel>;
+    fields!: Array<FormField>;
     transparentMode?: boolean;
     tabTitle?: string;
     dataInitializer?: GetByIdPort<T>;

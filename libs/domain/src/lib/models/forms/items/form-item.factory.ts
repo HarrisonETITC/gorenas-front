@@ -1,11 +1,11 @@
 import { ValidatorFn } from "@angular/forms";
-import { Observable } from "rxjs";
 import { GetAvailablePort } from "../../../ports/get-available.port";
 import { GetIdValueMany } from "../../../ports/get-idvalue-many.port";
 import { IdValue } from "../../general/id-value.model";
 import { ViewValue } from "../../general/view-value.model";
 import { BaseFormItemPort } from "../../../interfaces/base-form-item.port";
 import { AutoCompleteFormItem } from "./auto-complete-form-item.model";
+import { DateTimeFormItem } from "./datetime-form-item.model";
 import { SelectFormItem } from "./select-form-item.model";
 import { TextFormItem } from "./text-form-item.model";
 
@@ -20,6 +20,7 @@ export interface BaseFormItemConfig {
     validators?: Array<ValidatorFn>;
     active?: boolean;
     transparent?: boolean;
+    hideOnEdit?: boolean;
 }
 
 /**
@@ -37,7 +38,7 @@ export interface TextFormItemConfig extends BaseFormItemConfig {
  */
 export interface SelectFormItemConfig extends BaseFormItemConfig {
     options: Array<ViewValue>;
-    defaultValue?: ViewValue;
+    defaultValue?: string;
 }
 
 /**
@@ -45,8 +46,14 @@ export interface SelectFormItemConfig extends BaseFormItemConfig {
  */
 export interface AutoCompleteFormItemConfig extends BaseFormItemConfig {
     endpoint: GetAvailablePort & GetIdValueMany;
-    options?: Observable<Array<IdValue>>;
     defaultValue?: IdValue;
+}
+
+/**
+ * Configuración específica para campos datetime
+ */
+export interface DateTimeFormItemConfig extends BaseFormItemConfig {
+    defaultValue?: Date | string;
 }
 
 /**
@@ -63,10 +70,11 @@ export class FormItemFactory {
             config.type,
             config.label,
             config.icon || '',
-            config.defaultValue || null,
+            config.defaultValue ?? null,
             config.validators || [],
             config.active || false,
-            config.transparent || false
+            config.transparent || false,
+            config.hideOnEdit || false
         );
     }
 
@@ -79,10 +87,11 @@ export class FormItemFactory {
             config.label,
             config.options || [],
             config.icon || '',
-            config.defaultValue || null,
+            config.defaultValue ?? null,
             config.validators || [],
             config.active || false,
-            config.transparent || false
+            config.transparent || false,
+            config.hideOnEdit || false
         );
     }
 
@@ -94,51 +103,70 @@ export class FormItemFactory {
             config.name,
             config.label,
             config.endpoint,
-            config.options,
             config.icon || '',
-            config.defaultValue || null,
+            config.defaultValue ?? null,
             config.validators || [],
             config.active || false,
-            config.transparent || false
+            config.transparent || false,
+            config.hideOnEdit || false
+        );
+    }
+
+    /**
+     * Crea un item datetime
+     */
+    static createDateTimeItem(config: DateTimeFormItemConfig): DateTimeFormItem {
+        return new DateTimeFormItem(
+            config.name,
+            config.label,
+            config.icon || '',
+            config.defaultValue ?? null,
+            config.validators || [],
+            config.active || false,
+            config.transparent || false,
+            config.hideOnEdit || false
         );
     }
 
     /**
      * Método helper para crear un campo de texto simple
      */
-    static createSimpleTextField(name: string, label: string, required = false): TextFormItem {
+    static createSimpleTextField(name: string, label: string, required = false, hideOnEdit = false): TextFormItem {
         const validators = required ? [] : []; // Aquí se pueden agregar validadores según sea necesario
         return FormItemFactory.createTextItem({
             name,
             label,
             type: BaseFormItemPort.TYPE_TEXT,
-            validators
+            validators,
+            hideOnEdit
         });
     }
 
     /**
      * Método helper para crear un campo de número simple
      */
-    static createSimpleNumberField(name: string, label: string, required = false): TextFormItem {
+    static createSimpleNumberField(name: string, label: string, required = false, hideOnEdit = false): TextFormItem {
         const validators = required ? [] : []; // Aquí se pueden agregar validadores según sea necesario
         return FormItemFactory.createTextItem({
             name,
             label,
             type: BaseFormItemPort.TYPE_NUMBER,
-            validators
+            validators,
+            hideOnEdit
         });
     }
 
     /**
      * Método helper para crear un campo de password simple
      */
-    static createSimplePasswordField(name: string, label: string, required = false): TextFormItem {
+    static createSimplePasswordField(name: string, label: string, required = false, hideOnEdit = false): TextFormItem {
         const validators = required ? [] : []; // Aquí se pueden agregar validadores según sea necesario
         return FormItemFactory.createTextItem({
             name,
             label,
             type: BaseFormItemPort.TYPE_PASSWORD,
-            validators
+            validators,
+            hideOnEdit
         });
     }
 }

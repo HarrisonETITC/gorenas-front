@@ -1,6 +1,15 @@
 import { Validators } from "@angular/forms";
 import { AppUtil } from "@gorenas/application-core";
-import { FormDataConfig, FormItemModel, PersonModel, ViewValue } from "@gorenas/domain";
+import { 
+    FormDataConfig, 
+    PersonModel, 
+    ViewValue,
+    TextFormItem,
+    SelectFormItem,
+    AutoCompleteFormItem,
+    DateTimeFormItem,
+    BaseFormItemPort
+} from "@gorenas/domain";
 
 export class PersonForms {
     public static readonly CREATE_FORM = new FormDataConfig();
@@ -8,80 +17,113 @@ export class PersonForms {
     static {
         this.CREATE_FORM.title = 'Crear Persona';
         this.CREATE_FORM.buttonTitle = 'Crear';
+        
+        // Campo nombre(s) - TEXT
+        const namesField = new TextFormItem(
+            'names',
+            BaseFormItemPort.TYPE_TEXT,
+            'Nombre(s)',
+            'badge',
+            null,
+            [Validators.required]
+        );
+
+        // Campo apellido(s) - TEXT
+        const surnamesField = new TextFormItem(
+            'surnames',
+            BaseFormItemPort.TYPE_TEXT,
+            'Apellido(s)',
+            'badge',
+            null,
+            [Validators.required]
+        );
+
+        // Campo tipo de identificación - SELECT
+        const typeIdentificationField = new SelectFormItem(
+            'typeIdentification',
+            'Tipo de identificación',
+            AppUtil.getViewValuesFromMap(PersonModel.TYPE_IDENTIFICATION_NAMES),
+            'assignment_ind',
+            null,
+            [Validators.required]
+        );
+
+        // Campo número de identificación - NUMBER
+        const identificationField = new TextFormItem(
+            'identification',
+            BaseFormItemPort.TYPE_NUMBER,
+            'Número de identificación',
+            'fingerprint',
+            null,
+            [Validators.required]
+        );
+
+        // Campo número de celular - NUMBER
+        const phoneNumberField = new TextFormItem(
+            'phoneNumber',
+            BaseFormItemPort.TYPE_NUMBER,
+            'Número de celular',
+            'smartphone',
+            null,
+            [Validators.required]
+        );
+
+        // Campo RH - SELECT (opcional)
+        const rhField = new SelectFormItem(
+            'rh',
+            'RH',
+            PersonModel.RH_TYPES.map(rh => new ViewValue(rh, rh)),
+            'bloodtype'
+        );
+
+        // Campo dirección - TEXT (opcional)
+        const addressField = new TextFormItem(
+            'address',
+            BaseFormItemPort.TYPE_TEXT,
+            'Dirección',
+            'home'
+        );
+
+        // Campo fecha de nacimiento - DATETIME (opcional)
+        const bornField = new DateTimeFormItem(
+            'born',
+            'Fecha de nacimiento',
+            'cake'
+        );
+
+        // Campo usuario asociado - AUTOCOMPLETE
+        // El endpoint se configura en el componente (persons.component.ts)
+        const userIdField = new AutoCompleteFormItem(
+            'userId',
+            'Usuario asociado',
+            null, // endpoint se asigna dinámicamente
+            'person',
+            null,
+            [Validators.required]
+        );
+
+        // Campo rol - AUTOCOMPLETE
+        // El endpoint se configura en el componente (persons.component.ts)
+        const roleIdField = new AutoCompleteFormItem(
+            'roleId',
+            'Rol',
+            null, // endpoint se asigna dinámicamente
+            'security',
+            null,
+            [Validators.required]
+        );
+
         this.CREATE_FORM.fields = [
-            {
-                label: 'Nombre(s)',
-                type: FormItemModel.TYPE_TEXT,
-                name: 'names',
-                icon: 'badge',
-                validators: [Validators.required],
-            },
-            {
-                label: 'Apellido(s)',
-                type: FormItemModel.TYPE_TEXT,
-                name: 'surnames',
-                icon: 'badge',
-                validators: [Validators.required],
-            },
-            {
-                label: 'Tipo de identificación',
-                type: FormItemModel.TYPE_SELECT,
-                name: 'typeIdentification',
-                icon: 'assignment_ind',
-                selectOptions: {
-                    options: AppUtil.getViewValuesFromMap(PersonModel.TYPE_IDENTIFICATION_NAMES)
-                },
-                validators: [Validators.required]
-            },
-            {
-                label: 'Número de identificación',
-                type: FormItemModel.TYPE_NUMBER,
-                name: 'identification',
-                icon: 'fingerprint',
-                validators: [Validators.required],
-            },
-            {
-                label: 'Número de celular',
-                type: FormItemModel.TYPE_NUMBER,
-                name: 'phoneNumber',
-                icon: 'smartphone',
-                validators: [Validators.required],
-            },
-            {
-                label: 'RH',
-                type: FormItemModel.TYPE_SELECT,
-                name: 'rh',
-                icon: 'bloodtype',
-                selectOptions: {
-                    options: PersonModel.RH_TYPES.map(rh => new ViewValue(rh, rh))
-                }
-            },
-            {
-                label: 'Dirección',
-                type: FormItemModel.TYPE_TEXT,
-                name: 'address',
-                icon: 'home',
-            },
-            {
-                label: 'Fecha de nacimiento',
-                type: FormItemModel.TYPE_DATETIME,
-                name: 'born',
-                icon: 'cake'
-            },
-            {
-                label: 'Usuario asociado',
-                type: FormItemModel.TYPE_AUTO_COMPLETE,
-                name: 'userId',
-                icon: 'person',
-                validators: [Validators.required]
-            },
-            {
-                label: 'Rol',
-                type: FormItemModel.TYPE_AUTO_COMPLETE,
-                name: 'roleId',
-                icon: 'security',
-                validators: [Validators.required]
-            }
-        ]
+            namesField,
+            surnamesField,
+            typeIdentificationField,
+            identificationField,
+            phoneNumberField,
+            rhField,
+            addressField,
+            bornField,
+            userIdField,
+            roleIdField
+        ];
     }
 }

@@ -8,7 +8,9 @@ import {
   TableConfig,
   BtnConfig,
   PermissionModelView,
-  AutocompleteOptions
+  isAutoCompleteFormItem,
+  AutoCompleteFormItem,
+  FormField
 } from '@gorenas/domain';
 import {
   ApiServicePort,
@@ -20,7 +22,7 @@ import {
   UseBaseDataComponent,
   BaseDataConfig
 } from '@gorenas/application-core';
-import { FormItemModel, PermissionFilter, PermissionForms, FormDataConfig } from '@gorenas/shared-util-forms';
+import { PermissionFilter, PermissionForms, FormDataConfig } from '@gorenas/shared-util-forms';
 import { FormsProviders } from '@gorenas/data-access-forms';
 import { BaseDataComponent } from '@gorenas/ui-commons';
 
@@ -37,7 +39,7 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
   protected readonly moduleName = AppModel.MODULE_PERMISSIONS;
   pageConfig: BaseDataConfig;
   headers: Map<string, string>;
-  filterFields: Array<FormItemModel> = PermissionFilter.FIELDS;
+  filterFields: Array<FormField> = PermissionFilter.FIELDS;
 
   constructor(
     @Inject(PERMISSION_SERVICE)
@@ -65,12 +67,13 @@ export class PermissionComponent implements OnInit, UseBaseDataComponent {
   getForms(): Array<FormDataConfig> {
     const createForm = PermissionForms.CREATE_FORM;
     createForm.dataInitializer = this.service;
-    const roleAutocompleteField = createForm.fields.find(f => f.name === 'roleId');
-
-    if (AppUtil.verifyEmpty(roleAutocompleteField?.autocompleteOptions)) {
-      const roleAutocomplete = new AutocompleteOptions();
-      roleAutocomplete.endpoint = this.roleService;
-      roleAutocompleteField.autocompleteOptions = roleAutocomplete;
+    
+    // Buscar el campo de rol y configurar el endpoint
+    const roleField = createForm.fields.find(f => f.name === 'roleId');
+    
+    if (isAutoCompleteFormItem(roleField)) {
+      // Nueva clase AutoCompleteFormItem - asignar endpoint directamente
+      (roleField as AutoCompleteFormItem).endpoint = this.roleService;
     }
 
     return [createForm];

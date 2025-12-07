@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { ApiServicePort, BaseDataConfig, BRANCH_SERVICE, EMPLOYEE_SERVICE, PERSON_SERVICE, UseBaseDataComponent } from "@gorenas/application-core";
-import { FormItemModel, GeneralFilter, FormDataConfig, AppModel, EmployeeModel, EmployeeModelView, PersonModel, PersonModelView, BranchModelView, BranchModel, BtnConfig, TableConfig, AutocompleteOptions } from "@gorenas/domain";
+import { FormField, GeneralFilter, FormDataConfig, AppModel, EmployeeModel, EmployeeModelView, PersonModel, PersonModelView, BranchModelView, BranchModel, BtnConfig, TableConfig, isAutoCompleteFormItem, AutoCompleteFormItem } from "@gorenas/domain";
 import { EmployeeForms } from "@gorenas/shared-util-forms";
 import { BaseDataComponent } from "@gorenas/ui-commons";
 import { Observable, of } from "rxjs";
@@ -15,7 +15,7 @@ export class EmployeesComponent implements OnInit, UseBaseDataComponent {
   protected readonly moduleName = AppModel.MODULE_EMPLOYEES;
   protected actionHandlers: Map<string, (element: EmployeeModel) => void>;
   headers: Map<string, string>;
-  filterFields: FormItemModel<any>[];
+  filterFields: FormField[];
   pageConfig: BaseDataConfig;
 
   constructor(
@@ -38,15 +38,17 @@ export class EmployeesComponent implements OnInit, UseBaseDataComponent {
     const createForm = EmployeeForms.CREATE_FORM;
     createForm.dataInitializer = this.service;
     
-    // Configurar autocomplete para persona
-    const personAutocomplete = new AutocompleteOptions();
-    personAutocomplete.endpoint = this.personService;
-    createForm.fields[0].autocompleteOptions = personAutocomplete;
+    // Configurar endpoint para campo persona
+    const personField = createForm.fields.find(f => f.name === 'personId');
+    if (isAutoCompleteFormItem(personField)) {
+      (personField as AutoCompleteFormItem).endpoint = this.personService;
+    }
     
-    // Configurar autocomplete para sucursal
-    const branchAutocomplete = new AutocompleteOptions();
-    branchAutocomplete.endpoint = this.branchService;
-    createForm.fields[2].autocompleteOptions = branchAutocomplete;
+    // Configurar endpoint para campo sucursal
+    const branchField = createForm.fields.find(f => f.name === 'branchId');
+    if (isAutoCompleteFormItem(branchField)) {
+      (branchField as AutoCompleteFormItem).endpoint = this.branchService;
+    }
 
     return [createForm];
   }

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { ApiServicePort, BaseDataConfig, ROLE_SERVICE, UseBaseDataComponent } from "@gorenas/application-core";
-import { AppModel, BtnConfig, FormDataConfig, FormItemModel, GeneralFilter, RoleModel, RoleModelView, TableConfig } from "@gorenas/domain";
+import { AppModel, BtnConfig, FormDataConfig, FormField, GeneralFilter, RoleModel, RoleModelView, TableConfig } from "@gorenas/domain";
 import { RoleForms } from "@gorenas/shared-util-forms";
 import { BaseDataComponent } from "@gorenas/ui-commons";
 import { Observable, of } from "rxjs";
@@ -15,7 +15,7 @@ export class RolesComponent implements OnInit, UseBaseDataComponent {
     protected readonly moduleName = AppModel.MODULE_ROLES;
     protected actionHandlers: Map<string, (element: RoleModel) => void>;
     headers: Map<string, string>;
-    filterFields: FormItemModel<any>[];
+    filterFields: FormField[];
     pageConfig: BaseDataConfig;
 
     constructor(

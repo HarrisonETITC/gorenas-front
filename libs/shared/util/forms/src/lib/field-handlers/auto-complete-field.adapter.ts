@@ -1,109 +1,95 @@
 import { AutocompleteFieldPort } from "@gorenas/application-core";
-import { AutocompleteOptions, FormItemModel } from "@gorenas/domain";
+import {
+    FormField,
+    isAutoCompleteFormItem,
+    BaseFormItemPort,
+    IdValue
+} from "@gorenas/domain";
 import { AppUtil } from "@gorenas/application-core";
-import { debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, take, tap } from "rxjs";
+import { debounceTime, distinctUntilChanged, filter, map, Observable, of, take } from "rxjs";
 import { FieldInitializerPort } from "@gorenas/application-core";
 
 export class AutocompleteFieldAdapter implements FieldInitializerPort, AutocompleteFieldPort {
-    validateField(field: FormItemModel): void {
-        // Validación más flexible - solo advertir en consola si falta el endpoint
-        if (AppUtil.verifyEmpty(field.autocompleteOptions)) {
-            console.warn(`Campo autocomplete '${field.name}' sin autocompleteOptions configuradas. Se inicializará con valores vacíos.`);
-        } else if (AppUtil.verifyEmpty(field.autocompleteOptions?.endpoint)) {
-            console.warn(`Campo autocomplete '${field.name}' sin endpoint configurado. El autocompletado no funcionará correctamente.`);
+    validateField(field: FormField): void {
+        if (!isAutoCompleteFormItem(field)) {
+            console.warn(`Campo '${field.name}' no es de tipo AutoCompleteFormItem`);
+            return;
+        }
+        if (AppUtil.verifyEmpty(field.endpoint)) {
+            console.warn(`Campo autocomplete '${field.name}' sin endpoint configurado.`);
         }
     }
-    initField(field: FormItemModel): void {
-        // Inicializar autocompleteOptions si no existe
-        if (AppUtil.verifyEmpty(field.autocompleteOptions)) {
-            field.autocompleteOptions = new AutocompleteOptions();
-            field.autocompleteOptions.endpoint = null as any;
+    initField(field: FormField): void {
+        if (!isAutoCompleteFormItem(field)) {
+            return;
         }
-        
-        // Asegurar que sea una instancia de AutocompleteOptions para tener los métodos
-        const currentOptions = field.autocompleteOptions as AutocompleteOptions;
-        if (currentOptions && typeof currentOptions.initOptionsSubject !== 'function') {
-            // Es un objeto plano, necesita ser convertido a instancia
-            const endpoint = currentOptions.endpoint;
-            const newOptions = new AutocompleteOptions();
-            newOptions.endpoint = endpoint;
-            field.autocompleteOptions = newOptions;
-        }
-        
-        // Establecer el fieldId y inicializar el Subject usando el store global
-        const autocompleteOpts = field.autocompleteOptions as AutocompleteOptions;
-        if (autocompleteOpts && typeof autocompleteOpts.setFieldId === 'function') {
-            autocompleteOpts.setFieldId(field.name);
-            autocompleteOpts.initOptionsSubject(field.name);
-            console.log(`[AutocompleteAdapter] Campo inicializado: ${field.name}`);
-        }
+        field.initOptionsSubject();
+        console.log(`[AutocompleteAdapter] Campo inicializado: ${field.name}`);
     }
-    isFieldType(field: FormItemModel): boolean {
-        return field.type === FormItemModel.TYPE_AUTO_COMPLETE;
+    isFieldType(field: FormField): boolean {
+        return field.type === BaseFormItemPort.TYPE_AUTO_COMPLETE;
     }
-    getExtraFields(field: FormItemModel): Array<FormItemModel> {
+    getExtraFields(field: FormField): Array<FormField> {
         return [];
     }
-    processExtraFields(extraFields: Array<FormItemModel>, fields: Array<FormItemModel>) {
+    processExtraFields(extraFields: Array<FormField>, fields: Array<FormField>) {
         return fields;
     }
-    updateAutoCompleteData(queryHandler: Observable<string>, field: FormItemModel) {
+    updateAutoCompleteData(queryHandler: Observable<string>, field: FormField) {
         queryHandler.pipe(
-            debounceTime(300),        // Espera 300ms después de que el usuario deje de escribir
-            distinctUntilChanged(),    // Ignora si el valor es igual al anterior
-            filter(query => query !== undefined) // Ignora valores undefined
-        )
-            .subscribe(query => this.initAutoCompleteData(field, query));
+            debounceTime(300),
+            distinctUntilChanged(),
+            filter(query => query !== undefined)
+        ).subscribe(query => this.initAutoCompleteData(field, query));
     }
-    setValue(val: any, field: FormItemModel) {
-        // Si el valor es un número (ID), necesitamos obtener el IdValue correspondiente
-        if (typeof val === 'number' && !AppUtil.verifyEmpty(field.autocompleteOptions?.endpoint)) {
+    setValue(val: number | IdValue, field: FormField) {
+        if (!isAutoCompleteFormItem(field)) {
+            field.defaultValue = val;
+            return of(undefined);
+        }
+
+        const endpoint = field.endpoint;
+
+        // Si el valor es un número (ID), obtener el IdValue correspondiente
+        if (typeof val === 'number' && !AppUtil.verifyEmpty(endpoint)) {
             console.log(`[AutocompleteAdapter] setValue - Obteniendo IdValue para ID: ${val}, campo: ${field.name}`);
-            
-            return field.autocompleteOptions.endpoint.getIdValueMany([val]).pipe(
+
+            return endpoint.getIdValueMany([val]).pipe(
                 take(1),
                 map(idValues => {
                     if (idValues && idValues.length > 0) {
-                        // Asignar el IdValue completo (id + value/nombre)
                         field.defaultValue = idValues[0];
                         console.log(`[AutocompleteAdapter] setValue - IdValue obtenido:`, idValues[0]);
                     } else {
-                        // Si no se encuentra, mantener el ID como fallback
-                        field.defaultValue = val;
+                        // Si no se encuentra, crear un IdValue con el ID
+                        field.defaultValue = new IdValue(val, String(val));
                         console.warn(`[AutocompleteAdapter] setValue - No se encontró IdValue para ID: ${val}`);
                     }
                     return undefined;
                 })
             );
         }
-        
-        // Para otros casos (string, objeto IdValue, etc.), asignar directamente
-        field.defaultValue = val;
+
+        if (val instanceof IdValue) field.defaultValue = val;
+        else field.defaultValue = new IdValue(NaN, '');
         return of(undefined);
     }
-    private initAutoCompleteData(field: FormItemModel, query?: string) {
-        // Verificar que existe el endpoint antes de usarlo
-        if (!AppUtil.verifyEmpty(field.autocompleteOptions?.endpoint)) {
+
+    private initAutoCompleteData(field: FormField, query?: string) {
+        if (!isAutoCompleteFormItem(field)) {
+            return;
+        }
+
+        const endpoint = field.endpoint;
+
+        if (!AppUtil.verifyEmpty(endpoint)) {
             console.log(`[AutocompleteAdapter] Buscando: "${query}" para campo: ${field.name}`);
-            
-            // Asegurar que el autocompleteOptions tenga el fieldId configurado
-            const autocompleteOpts = field.autocompleteOptions as AutocompleteOptions;
-            if (autocompleteOpts && typeof autocompleteOpts.setFieldId === 'function' && !autocompleteOpts.getFieldId()) {
-                autocompleteOpts.setFieldId(field.name);
-                autocompleteOpts.initOptionsSubject(field.name);
-            }
-            
-            // Hacer la petición HTTP y actualizar las opciones a través del Subject
-            field.autocompleteOptions.endpoint.getAvailable(query).pipe(
+
+            endpoint.getAvailable(query).pipe(
                 take(1)
             ).subscribe(options => {
                 console.log(`[AutocompleteAdapter] Opciones recibidas para ${field.name}:`, options);
-                if (autocompleteOpts && typeof autocompleteOpts.updateOptions === 'function') {
-                    autocompleteOpts.updateOptions(options);
-                    console.log(`[AutocompleteAdapter] Opciones actualizadas en Subject`);
-                } else {
-                    console.error(`[AutocompleteAdapter] No se pudo actualizar - autocompleteOptions no es instancia válida`);
-                }
+                field.updateOptions(options);
             });
         } else {
             console.warn(`[AutocompleteAdapter] No hay endpoint configurado para campo: ${field.name}`);

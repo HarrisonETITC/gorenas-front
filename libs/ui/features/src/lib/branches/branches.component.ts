@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ApiServicePort, BaseDataConfig, BRANCH_SERVICE, UseBaseDataComponent } from '@gorenas/application-core';
 import { BaseDataComponent } from '@gorenas/ui-commons';
-import { AppModel, BranchModel, BtnConfig, TableConfig, BranchModelView } from '@gorenas/domain';
-import { FormDataConfig, FormItemModel, BranchFilter, BranchForms } from '@gorenas/shared-util-forms';
+import { AppModel, BranchModel, BtnConfig, TableConfig, BranchModelView, FormField } from '@gorenas/domain';
+import { FormDataConfig, BranchFilter, BranchForms } from '@gorenas/shared-util-forms';
 import { Observable, of } from 'rxjs';
 
 @Component({
@@ -16,7 +16,7 @@ export class BranchesComponent implements OnInit, UseBaseDataComponent {
   protected actionHandlers: Map<string, (element: BranchModel) => void>;
   pageConfig: BaseDataConfig;
   headers: Map<string, string>;
-  filterFields: FormItemModel<any>[] = BranchFilter.FIELDS;
+  filterFields: FormField[] = BranchFilter.FIELDS;
 
   constructor(
     @Inject(BRANCH_SERVICE)

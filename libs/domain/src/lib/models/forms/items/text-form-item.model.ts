@@ -15,8 +15,9 @@ export class TextFormItem extends BaseFormItemAdapter<string | number> {
         validators: Array<ValidatorFn> = [],
         active: boolean = false,
         transparent: boolean = false,
+        hideOnEdit: boolean = false
     ) {
-        super(name, type, label, icon, defaultValue, validators, active, transparent);
+        super(name, type, label, icon, defaultValue, validators, active, transparent, hideOnEdit);
         this.validate();
     }
 

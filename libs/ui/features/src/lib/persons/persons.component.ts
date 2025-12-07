@@ -1,6 +1,21 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { ApiServicePort, BaseDataConfig, PERSON_SERVICE, ROLE_SERVICE, UseBaseDataComponent, USER_SERVICE } from "@gorenas/application-core";
-import { AppModel, AutocompleteOptions, BtnConfig, FormDataConfig, FormItemModel, GeneralFilter, PersonModel, PersonModelView, RoleModel, RoleModelView, TableConfig, UserModel, UserModelView } from "@gorenas/domain";
+import { 
+    AppModel, 
+    BtnConfig, 
+    FormDataConfig, 
+    GeneralFilter, 
+    PersonModel, 
+    PersonModelView, 
+    RoleModel, 
+    RoleModelView, 
+    TableConfig, 
+    UserModel, 
+    UserModelView,
+    isAutoCompleteFormItem,
+    AutoCompleteFormItem,
+    FormField
+} from "@gorenas/domain";
 import { PersonForms } from "@gorenas/shared-util-forms";
 import { BaseDataComponent } from "@gorenas/ui-commons";
 import { Observable, of } from "rxjs";
@@ -15,7 +30,7 @@ export class PersonsComponent implements OnInit, UseBaseDataComponent {
     protected readonly moduleName = AppModel.MODULE_PERSONS;
     protected actionHandlers: Map<string, (element: PersonModel) => void>;
     headers: Map<string, string>;
-    filterFields: FormItemModel<any>[];
+    filterFields: FormField[];
     pageConfig: BaseDataConfig;
 
     constructor(
@@ -38,15 +53,17 @@ export class PersonsComponent implements OnInit, UseBaseDataComponent {
         const createForm = PersonForms.CREATE_FORM;
         createForm.dataInitializer = this.service;
 
-        const userAutocomplete = new AutocompleteOptions();
-        userAutocomplete.endpoint = this.userService;
-        createForm.fields.find(f => f.name === 'userId')
-            .autocompleteOptions = userAutocomplete;
+        // Configurar endpoint para campo usuario
+        const userField = createForm.fields.find(f => f.name === 'userId');
+        if (isAutoCompleteFormItem(userField)) {
+            (userField as AutoCompleteFormItem).endpoint = this.userService;
+        }
 
-        const roleAutocomplete = new AutocompleteOptions();
-        roleAutocomplete.endpoint = this.roleService;
-        createForm.fields.find(f => f.name === 'roleId')
-            .autocompleteOptions = roleAutocomplete;
+        // Configurar endpoint para campo rol
+        const roleField = createForm.fields.find(f => f.name === 'roleId');
+        if (isAutoCompleteFormItem(roleField)) {
+            (roleField as AutoCompleteFormItem).endpoint = this.roleService;
+        }
 
         return [createForm];
     }

@@ -32,6 +32,7 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
   @ViewChild(FormBaseComponent) private readonly formBase: FormBaseComponent;
   protected forms: Array<FormDataConfig>;
   protected actualForm: FormDataConfig;
+  protected fieldsToDisplay: Array<any> = [];
   protected actualFormIndex: number = NaN;
   readonly finishSubs$ = new Subject<void>();
   private isEditForm: boolean = false;
@@ -94,26 +95,27 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
     console.log('[FormBaseData] initForm - isEditForm:', this.isEditForm, 'id:', this.id);
 
     // Filtrar campos que tienen hideOnEdit=true si estamos en modo edición
-    const fieldsToUse = this.isEditForm
+    this.fieldsToDisplay = this.isEditForm
       ? this.actualForm.fields.filter(f => !f.hideOnEdit)
       : this.actualForm.fields;
 
-    console.log('[FormBaseData] Campos a usar:', fieldsToUse.map(f => ({ name: f.name, type: f.type })));
+    console.log('[FormBaseData] Campos a usar:', this.fieldsToDisplay.map(f => ({ name: f.name, type: f.type })));
 
     if (!this.isEditForm)
-      this.fieldsService.updateFields(fieldsToUse);
+      this.fieldsService.updateFields(this.fieldsToDisplay);
     else {
       console.log('[FormBaseData] Llamando getById con id:', this.id);
       const options: Map<string, string> = new Map();
       options.set('isEdition', 'true');
       this.actualForm.dataInitializer.getById(this.id, options).pipe(
         tap(data => console.log('[FormBaseData] Datos recibidos de getById:', data)),
-        concatMap(data => FormsUtil.assignValuesOnFields(data, fieldsToUse)),
-        tap(() => console.log('[FormBaseData] Campos después de assignValues:', fieldsToUse.map(f => ({ name: f.name, defaultValue: f.defaultValue }))))
+        concatMap(data => FormsUtil.assignValuesOnFields(data, this.fieldsToDisplay)),
+        tap(() => console.log('[FormBaseData] Campos después de assignValues:', this.fieldsToDisplay.map(f => ({ name: f.name, defaultValue: f.defaultValue }))))
       ).subscribe({
         next: () => {
-          console.log('[FormBaseData] Llamando updateFields');
-          this.fieldsService.updateFields(fieldsToUse);
+          console.log('[FormBaseData] Llamando updateFields con preserveValues=false para cargar datos de edición');
+          // En modo edición, forzar actualización de valores de los controles con los datos obtenidos
+          this.fieldsService.updateFields(this.fieldsToDisplay, false);
         },
         error: (err) => {
           console.error('[FormBaseData] Error en getById:', err);

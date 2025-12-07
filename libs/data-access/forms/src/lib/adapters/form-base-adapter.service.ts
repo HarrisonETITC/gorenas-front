@@ -1,20 +1,20 @@
 import { Injectable } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { FormBaseServicePort } from "@gorenas/application-core";
-import { FormItemModel, IdValue } from "@gorenas/domain";
+import { FormField, IdValue, BaseFormItemPort } from "@gorenas/domain";
 import { AppUtil } from "@gorenas/application-core";
 import { FormsUtil } from "@gorenas/shared-util-forms";
 import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable()
 export class FormBaseServiceAdapter implements FormBaseServicePort {
-    private readonly fieldsHandler = new BehaviorSubject<Array<FormItemModel>>([]);
+    private readonly fieldsHandler = new BehaviorSubject<Array<FormField>>([]);
     private readonly cleanFiltersHandler = new BehaviorSubject<string>('');
     private controls = new Map<string, FormControl>();
-    private originalFields: Array<FormItemModel> = [];
-    private actualFields: Array<FormItemModel> = [];
+    private originalFields: Array<FormField> = [];
+    private actualFields: Array<FormField> = [];
 
-    init(fields: Array<FormItemModel>, form?: FormGroup) {
+    init(fields: Array<FormField>, form?: FormGroup) {
         if (this.initEarlyReturn(fields, form))
             return this.controls;
 
@@ -27,7 +27,7 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
             this.controls = new Map<string, FormControl>();
             this.originalFields = fields;
 
-            const extraFields: Array<FormItemModel> = [];
+            const extraFields: Array<FormField> = [];
             for (const field of fields) {
                 if (FormsUtil.FORMS_HANDLER.has(field.type)) {
                     FormsUtil.FORMS_HANDLER.get(field.type)?.validateField(field);
@@ -48,6 +48,9 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
         } else {
             this.initFields(fields);
         }
+
+        // Emitir los campos procesados para que los componentes puedan recibirlos
+        this.fieldsHandler.next(this.actualFields);
 
         return this.controls;
     }
@@ -80,19 +83,23 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
 
         return this.controls.get(name)!;
     }
-    updateFields(fields: Array<FormItemModel>): void {
-        // Actualizar valores de controles existentes con los nuevos defaultValue
-        for (const field of fields) {
-            if (this.existsControl(field.name) && field.defaultValue !== undefined) {
-                this.getControl(field.name).setValue(field.defaultValue, { emitEvent: false });
+    updateFields(fields: Array<FormField>, preserveValues: boolean = true): void {
+        if (!preserveValues) {
+            // Solo actualizar valores si se pide explícitamente
+            for (const field of fields) {
+                if (this.existsControl(field.name) && field.defaultValue !== undefined) {
+                    this.getControl(field.name).setValue(field.defaultValue, { emitEvent: false });
+                }
             }
         }
+        // Actualizar actualFields para mantener consistencia
+        this.actualFields = fields;
         this.fieldsHandler.next(fields);
     }
     manualUpdateFields(): void {
         this.fieldsHandler.next(this.actualFields);
     }
-    getFields(): Observable<Array<FormItemModel>> {
+    getFields(): Observable<Array<FormField>> {
         return this.fieldsHandler.asObservable();
     }
     flushService() {
@@ -115,16 +122,14 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
 
             if (!AppUtil.verifyEmpty(control.value)) {
                 let value = control.value;
-                
-                // Buscar el campo para conocer su tipo
                 const field = this.actualFields.find(f => f.name === controlKey);
                 
-                // Si el valor es un objeto con 'value' (ej: autocomplete), extraer el texto
-                if (field?.type === FormItemModel.TYPE_AUTO_COMPLETE && value !== null && typeof value === 'object' && 'id' in value) {
+                // Si el valor es un objeto con 'id' (ej: autocomplete), extraer el id
+                if (field?.type === BaseFormItemPort.TYPE_AUTO_COMPLETE && value !== null && typeof value === 'object' && 'id' in value) {
                     obj[controlKey] = (value as IdValue)?.id;
                 } 
                 // Si es un campo de tipo número, convertir a número
-                else if (field?.type === FormItemModel.TYPE_NUMBER && typeof value === 'string') {
+                else if (field?.type === BaseFormItemPort.TYPE_NUMBER && typeof value === 'string') {
                     obj[controlKey] = Number(value);
                 } 
                 else {
@@ -139,7 +144,7 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
         Verifica si los campos ya se encuentran inicializados, caso de que así sea, también verifica si se está inicizalizando un
         formulario o si este ya existe.
     */
-    private initEarlyReturn(fields: Array<FormItemModel>, form?: FormGroup): boolean {
+    private initEarlyReturn(fields: Array<FormField>, form?: FormGroup): boolean {
         /* 
             Primera validación: Que los campos originales (la cantidad de campos puede variar ya que un campo de tipo número, por ejemplo
             puede tener otros campos compuestos) no estén vacios y los compara con los campos que llegan. 
@@ -158,36 +163,34 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
         }
         return false;
     }
-    private compareLocalFields(fields: Array<FormItemModel>): boolean {
+    private compareLocalFields(fields: Array<FormField>): boolean {
         return this.originalFields.length > 0 && this.originalFields.length === fields.length
             && this.originalFields.every(f => !AppUtil.verifyEmpty(fields.find(f2 => f.name === f2.name)));
     }
-    private initForm(fields: Array<FormItemModel>, form: FormGroup) {
+    private initForm(fields: Array<FormField>, form: FormGroup) {
         for (const field of fields) {
             const insertControl = this.initControl(field);
 
             form.addControl(field.name, insertControl);
         }
     }
-    private initFields(fields: Array<FormItemModel>) {
+    private initFields(fields: Array<FormField>) {
         for (const field of fields)
             this.initControl(field);
     }
-    private initControl(field: FormItemModel): FormControl {
+    private initControl(field: FormField): FormControl {
         let insertControl = null;
 
         if (this.existsControl(field.name)) {
+            // Si el control ya existe, preservar el valor actual del usuario
+            // No sobrescribir con defaultValue para no perder estado al cambiar entre vistas
             insertControl = this.getControl(field.name);
-            // Actualizar el valor del control existente con el nuevo defaultValue
-            if (field.defaultValue !== undefined) {
-                insertControl.setValue(field.defaultValue, { emitEvent: false });
-            }
         }
-        else
+        else {
             insertControl = new FormControl(field.defaultValue, { validators: (AppUtil.verifyEmpty(field.validators) ? [] : field.validators) });
-
-        if (!this.existsControl(field.name))
             this.setControl(field.name, insertControl);
+        }
+
         return insertControl;
     }
 }

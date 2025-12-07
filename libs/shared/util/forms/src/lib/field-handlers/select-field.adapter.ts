@@ -1,35 +1,31 @@
-import { FormItemModel } from "@gorenas/domain";
+import { FormField, BaseFormItemPort, isSelectFormItem } from "@gorenas/domain";
 import { AppUtil } from "@gorenas/application-core";
 import { of } from "rxjs";
 import { FieldInitializerPort } from "@gorenas/application-core";
 
 export class SelectFieldAdapter implements FieldInitializerPort {
-    validateField(field: FormItemModel): void {
-        // Solo advertir si no hay opciones, pero no lanzar error
-        if (AppUtil.verifyEmpty(field.selectOptions) || AppUtil.verifyEmpty(field.selectOptions.options)) {
-            console.warn(`Campo select '${field.name}' sin opciones configuradas. Se inicializará con array vacío.`);
+    validateField(field: FormField): void {
+        if (!isSelectFormItem(field)) {
+            console.warn(`Campo '${field.name}' no es de tipo SelectFormItem`);
+            return;
+        }
+        if (AppUtil.verifyEmpty(field.options)) {
+            console.warn(`Campo select '${field.name}' sin opciones configuradas.`);
         }
     }
-    initField(field: FormItemModel): void {
-        // Inicializar selectOptions si no existe
-        if (AppUtil.verifyEmpty(field.selectOptions)) {
-            field.selectOptions = { options: [] };
-        } else if (AppUtil.verifyEmpty(field.selectOptions.options)) {
-            field.selectOptions.options = [];
-        }
+    initField(field: FormField): void {
+        // SelectFormItem ya está inicializado en el constructor
     }
-    isFieldType(field: FormItemModel): boolean {
-        return field.type === FormItemModel.TYPE_SELECT;
+    isFieldType(field: FormField): boolean {
+        return field.type === BaseFormItemPort.TYPE_SELECT;
     }
-    getExtraFields(field: FormItemModel): Array<FormItemModel> {
+    getExtraFields(field: FormField): Array<FormField> {
         return [];
     }
-    processExtraFields(extraFields: Array<FormItemModel>, fields: Array<FormItemModel>) {
+    processExtraFields(extraFields: Array<FormField>, fields: Array<FormField>): Array<FormField> {
         return fields;
     }
-    setValue(val: any, field: FormItemModel) {
-        // Asignar el valor directamente (el código, no el texto)
-        // El select usará este valor para seleccionar la opción correcta
+    setValue(val: any, field: FormField) {
         field.defaultValue = val;
         return of(undefined);
     }

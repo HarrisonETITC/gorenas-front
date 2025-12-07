@@ -1,6 +1,13 @@
 import { ValidatorFn } from "@angular/forms";
 
-export abstract class BaseFormItemPort<T> {
+/**
+ * Clase base abstracta para todos los tipos de campos de formulario.
+ * Define las propiedades comunes que todos los campos deben tener.
+ * 
+ * Las clases específicas (SelectFormItem, AutoCompleteFormItem, etc.)
+ * deben extender esta clase y agregar sus propiedades específicas.
+ */
+export abstract class BaseFormItemPort<T = any> {
     public static readonly TYPE_TEXT = 'text';
     public static readonly TYPE_PASSWORD = 'password';
     public static readonly TYPE_NUMBER = 'number';
@@ -19,6 +26,7 @@ export abstract class BaseFormItemPort<T> {
         this.ITEM_TYPES.push(BaseFormItemPort.TYPE_DATETIME);
     }
 
+    // Propiedades comunes a todos los campos
     name: string;
     type: "number" | "text" | "password" | "auto-complete" | "select" | "datetime";
     label: string;
@@ -27,5 +35,7 @@ export abstract class BaseFormItemPort<T> {
     validators?: ValidatorFn[];
     active?: boolean;
     transparent?: boolean;
+    hideOnEdit?: boolean;
+    
     abstract validate(): void | never;
 }

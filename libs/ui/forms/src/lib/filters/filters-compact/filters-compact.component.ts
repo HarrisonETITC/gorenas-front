@@ -4,10 +4,8 @@ import { AsyncPipe } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { filter, tap } from 'rxjs/operators';
 import { FormBaseComponent } from '@gorenas/ui-controls';
-import { FormItemModel } from '@gorenas/shared-util-forms';
-import { IdValue, ViewValue } from '@gorenas/domain';
+import { FormField, IdValue, ViewValue, BaseFormItemPort, isSelectFormItem } from '@gorenas/domain';
 import { ChildUpdatePort, FIELDS_SERVICE, FormBaseServicePort, AppUtil } from '@gorenas/application-core';
 
 @Component({
@@ -17,14 +15,13 @@ import { ChildUpdatePort, FIELDS_SERVICE, FormBaseServicePort, AppUtil } from '@
   styleUrl: './filters-compact.component.css'
 })
 export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
-  @Input({ required: true }) fields: Array<FormItemModel>;
+  @Input({ required: true }) fields: Array<FormField>;
   @Output() searchHandler = new EventEmitter<Observable<any>>();
   @ViewChild(FormBaseComponent) protected readonly formBase: FormBaseComponent;
   private readonly outputEventHandler = new BehaviorSubject<any>({});
   private readonly appliedFiltersHandler = new BehaviorSubject<Array<ViewValue>>([]);
   protected appliedFilters$: Observable<Array<ViewValue>>;
   protected controlsMap: Map<string, FormControl> = new Map();
-  protected procesedFields: Array<FormItemModel> = [];
   firstLoad: boolean = true;
 
   constructor(
@@ -36,17 +33,6 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
   ngOnInit(): void {
     this.appliedFilters$ = this.appliedFiltersHandler.asObservable();
     this.searchHandler.emit(this.outputEventHandler.asObservable());
-
-    this.fieldsService.getFields().pipe(
-      filter(fields => !AppUtil.verifyEmpty(fields)),
-      tap(fields => {
-        this.procesedFields = fields;
-        if (this.firstLoad) {
-          this.firstLoad = false;
-          this.cdr.detectChanges();
-        }
-      })
-    ).subscribe();
   }
   protected handleEvents() {
     this.sendSearchEvent();
@@ -56,7 +42,10 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
     this.outputEventHandler.next(send);
   }
   protected updateActiveFilter(name: string) {
-    this.procesedFields.forEach(field => field.active = (field.name === name));
+    // Actualizar directamente en fields (que es la referencia que usa FormBaseComponent)
+    this.fields.forEach(field => field.active = (field.name === name));
+    // Notificar al servicio para que FormBaseComponent se actualice
+    this.fieldsService.updateFields([...this.fields]);
   }
   protected getAppliedFilters(): void {
     this.appliedFiltersHandler.next(Array.from(this.formBase.controlsMap.keys())
@@ -66,10 +55,14 @@ export class FiltersCompactComponent implements OnInit, ChildUpdatePort {
       })
       .map(key => {
         const control = this.formBase.controlsMap.get(key);
-        const field = this.procesedFields.find(f => f.name === key);
-        if (field.type === FormItemModel.TYPE_SELECT) {
-          return new ViewValue(field.label, field.selectOptions.options.find(o => o.value === control.value).viewValue);
-        } else if (field.type === FormItemModel.TYPE_AUTO_COMPLETE) {
+        const field = this.fields.find(f => f.name === key);
+        if (field.type === BaseFormItemPort.TYPE_SELECT) {
+          if (isSelectFormItem(field)) {
+            const option = field.options?.find(o => o.value === control.value);
+            return new ViewValue(field.label, option?.viewValue || control.value);
+          }
+          return new ViewValue(field.label, control.value);
+        } else if (field.type === BaseFormItemPort.TYPE_AUTO_COMPLETE) {
           return new ViewValue(field.label, (control.value as IdValue).value);
         } else {
           return new ViewValue(field.label, control.value);

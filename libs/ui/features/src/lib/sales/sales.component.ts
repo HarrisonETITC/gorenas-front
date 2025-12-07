@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { ApiServicePort, BaseDataConfig, EMPLOYEE_SERVICE, SALE_SERVICE, UseBaseDataComponent } from "@gorenas/application-core";
-import { AppModel, AutocompleteOptions, BtnConfig, EmployeeModel, EmployeeModelView, FormDataConfig, FormItemModel, GeneralFilter, SaleModel, SaleModelView, TableConfig } from "@gorenas/domain";
+import { AppModel, BtnConfig, EmployeeModel, EmployeeModelView, FormDataConfig, FormField, GeneralFilter, SaleModel, SaleModelView, TableConfig, isAutoCompleteFormItem, AutoCompleteFormItem } from "@gorenas/domain";
 import { SaleForms } from "@gorenas/shared-util-forms";
 import { BaseDataComponent } from "@gorenas/ui-commons";
 import { Observable, of } from "rxjs";
@@ -15,7 +15,7 @@ export class SalesComponent implements OnInit, UseBaseDataComponent {
     protected readonly moduleName = AppModel.MODULE_SALES;
     protected actionHandlers: Map<string, (element: any) => void>;
     headers: Map<string, string>;
-    filterFields: FormItemModel<any>[];
+    filterFields: FormField[];
     pageConfig: BaseDataConfig;
 
     constructor(
@@ -36,9 +36,11 @@ export class SalesComponent implements OnInit, UseBaseDataComponent {
         const createForm = SaleForms.CREATE_FORM;
         createForm.dataInitializer = this.service;
 
-        const employeeAutocomplete = new AutocompleteOptions();
-        employeeAutocomplete.endpoint = this.employeeService;
-        createForm.fields[0].autocompleteOptions = employeeAutocomplete;
+        // Configurar endpoint para campo empleado
+        const employeeField = createForm.fields.find(f => f.name === 'employeeId');
+        if (isAutoCompleteFormItem(employeeField)) {
+            (employeeField as AutoCompleteFormItem).endpoint = this.employeeService;
+        }
 
         return [createForm];
     }

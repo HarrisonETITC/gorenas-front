@@ -1,12 +1,12 @@
 import { FormControl } from "@angular/forms";
-import { FormItemModel } from "@gorenas/domain";
+import { FormField } from "@gorenas/domain";
 import { BehaviorSubject, Observable } from "rxjs";
 
 export abstract class ControlsHandlerPort {
-    protected fieldsHandler = new BehaviorSubject<Array<FormItemModel>>([]);
+    protected fieldsHandler = new BehaviorSubject<Array<FormField>>([]);
     protected controls = new Map<string, FormControl>();
-    protected originalFields: Array<FormItemModel> = [];
-    protected actualFields: Array<FormItemModel> = [];
+    protected originalFields: Array<FormField> = [];
+    protected actualFields: Array<FormField> = [];
 
     resetControls() {
         this.controls.clear();
@@ -29,13 +29,13 @@ export abstract class ControlsHandlerPort {
 
         return this.controls.get(name)!;
     }
-    updateFields(fields: Array<FormItemModel>): void {
+    updateFields(fields: Array<FormField>): void {
         this.fieldsHandler.next(fields);
     }
     manualUpdateFields(): void {
         this.fieldsHandler.next(this.actualFields);
     }
-    getFields(): Observable<Array<FormItemModel>> {
+    getFields(): Observable<Array<FormField>> {
         return this.fieldsHandler.asObservable();
     }
     resetService() {
