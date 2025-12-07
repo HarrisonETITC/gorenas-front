@@ -1,42 +1,47 @@
-import { FormItemModel } from "../items/form-item.model";
+import { BaseFormItemPort, TextFormItem, NumberFormItem } from "@gorenas/domain";
 import { GeneralFilter } from "@gorenas/domain";
 
 export class BranchFilter extends GeneralFilter {
-    public static readonly FIELDS = new Array<FormItemModel>();
+    public static readonly FIELDS = new Array<BaseFormItemPort>();
 
     static {
         this.FIELDS.push(
-            {
-                label: 'Nombre de la sucursal',
-                name: 'name',
-                icon: 'home_outline',
-                type: FormItemModel.TYPE_TEXT,
-                defaultValue: '',
-                active: true,
-                transparent: true
-            },
-            {
-                label: 'Dirección de la sucursal',
-                name: 'address',
-                icon: 'arrow_forward',
-                type: FormItemModel.TYPE_TEXT,
-                defaultValue: '',
-                transparent: true
-            },
-            {
-                label: 'Ganancias de este mes',
-                name: 'earnings',
-                icon: 'attach_money',
-                type: FormItemModel.TYPE_NUMBER,
-                numberOptions: {
+            new TextFormItem(
+                'name',
+                BaseFormItemPort.TYPE_TEXT,
+                'Nombre de la sucursal',
+                'home_outline',
+                '',
+                [],
+                true,
+                true
+            ),
+            new TextFormItem(
+                'address',
+                BaseFormItemPort.TYPE_TEXT,
+                'Dirección de la sucursal',
+                'arrow_forward',
+                '',
+                [],
+                false,
+                true
+            ),
+            new NumberFormItem(
+                'earnings',
+                'Ganancias de este mes',
+                'attach_money',
+                null,
+                [],
+                false,
+                true,
+                false,
+                {
                     enableGreatherThan: true,
-                    enableLessThan: true,
                     greatherThanLabel: ' (Mayor que)',
+                    enableLessThan: true,
                     lessThanLabel: ' (Menor que)'
-                },
-                defaultValue: NaN,
-                transparent: true
-            }
+                }
+            )
         )
     }
 

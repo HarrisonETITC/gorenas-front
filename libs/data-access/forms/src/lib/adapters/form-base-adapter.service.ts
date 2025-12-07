@@ -49,6 +49,9 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
             this.initFields(fields);
         }
 
+        // Emitir los campos procesados para que los componentes puedan recibirlos
+        this.fieldsHandler.next(this.actualFields);
+
         return this.controls;
     }
     setControlValue(name: string, value: any, form?: FormGroup) {
@@ -80,13 +83,17 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
 
         return this.controls.get(name)!;
     }
-    updateFields(fields: Array<FormItemModel>): void {
-        // Actualizar valores de controles existentes con los nuevos defaultValue
-        for (const field of fields) {
-            if (this.existsControl(field.name) && field.defaultValue !== undefined) {
-                this.getControl(field.name).setValue(field.defaultValue, { emitEvent: false });
+    updateFields(fields: Array<FormItemModel>, preserveValues: boolean = true): void {
+        if (!preserveValues) {
+            // Solo actualizar valores si se pide explícitamente
+            for (const field of fields) {
+                if (this.existsControl(field.name) && field.defaultValue !== undefined) {
+                    this.getControl(field.name).setValue(field.defaultValue, { emitEvent: false });
+                }
             }
         }
+        // Actualizar actualFields para mantener consistencia
+        this.actualFields = fields;
         this.fieldsHandler.next(fields);
     }
     manualUpdateFields(): void {
@@ -110,24 +117,15 @@ export class FormBaseServiceAdapter implements FormBaseServicePort {
     getObject() {
         const obj: { [key: string]: any } = {};
 
-        console.log('[getObject] actualFields:', this.actualFields.map(f => ({ name: f.name, type: f.type })));
-        console.log('[getObject] controls keys:', Array.from(this.controls.keys()));
-
         for (const controlKey of Array.from(this.controls.keys())) {
             const control = this.getControl(controlKey);
 
             if (!AppUtil.verifyEmpty(control.value)) {
                 let value = control.value;
-                
-                // Buscar el campo para conocer su tipo
                 const field = this.actualFields.find(f => f.name === controlKey);
-                
-                console.log(`[getObject] Campo: ${controlKey}, field encontrado:`, field ? { name: field.name, type: field.type } : 'NO ENCONTRADO');
-                console.log(`[getObject] Valor:`, value, 'Tipo de valor:', typeof value);
                 
                 // Si el valor es un objeto con 'id' (ej: autocomplete), extraer el id
                 if (field?.type === FormItemModel.TYPE_AUTO_COMPLETE && value !== null && typeof value === 'object' && 'id' in value) {
-                    console.log(`[getObject] -> Extrayendo ID de autocomplete:`, (value as IdValue)?.id);
                     obj[controlKey] = (value as IdValue)?.id;
                 } 
                 // Si es un campo de tipo número, convertir a número

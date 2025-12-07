@@ -61,9 +61,12 @@ export class FormBaseComponent<T = any> implements OnInit, OnDestroy, DestroySub
     if (this.automaticUpdate)
       this.service.getFields().pipe(
         filter(fields => !AppUtil.verifyEmptySimple(fields)),
-        tap(fields => this.fields = fields),
+        tap(fields => {
+          this.fields = fields;
+          this.cdr.markForCheck();
+        }),
         takeUntil(this.finishSubs$)
-      ).subscribe(() => { this.form = new FormGroup({}); this.init() });
+      ).subscribe();
   }
   ngOnDestroy(): void {
     this.destroySubs();

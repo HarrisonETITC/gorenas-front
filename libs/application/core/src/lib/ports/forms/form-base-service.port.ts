@@ -11,7 +11,7 @@ export interface FormBaseServicePort {
     existsControl(name: string): boolean;
     setControl(name: string, control: any): void;
     getControl(name: string): FormControl;
-    updateFields(fields: Array<FormItemModel>): void;
+    updateFields(fields: Array<FormItemModel>, preserveValues?: boolean): void;
     manualUpdateFields(): void;
     getFields(): Observable<Array<FormItemModel>>;
     flushService(): void;
