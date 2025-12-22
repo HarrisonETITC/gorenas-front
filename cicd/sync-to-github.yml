@@ -1,0 +1,95 @@
+trigger: 
+  branches:
+    include:
+      - master
+      - develop
+
+pool: 'Laptop-Agent-Pool'
+
+variables:
+  - group: GENERAL
+
+stages:
+  - stage: Synchronize
+    displayName: 'Synchronize Repositories'
+    jobs:
+      - job: SyncJob
+        container: 'harrison237/node-nest:v1'
+        displayName: 'Sync To GitHub'
+        steps:
+          - checkout: self
+            persistCredentials: true
+            fetchDepth: 0  # Fetch all history for all branches
+
+          - script: |
+              echo "🔧 Git user is: $GITHUB_USER"
+              echo "🔧 Git email is: $GITHUB_EMAIL"
+
+              git config --global user.email "$GITHUB_EMAIL"
+              git config --global user.name "$GITHUB_USER"
+            displayName: 'Configure Git'
+            env:
+              GITHUB_USER: $(GITHUB_USER)
+              GITHUB_EMAIL: $(GITHUB_EMAIL)
+
+          - script: |
+              echo "🔧 GitHub repo is: $GITHUB_REPO"
+              echo "🔧 Current branch: $(Build.SourceBranchName)"
+
+              if [[  -z "$GITHUB_TOKEN" ]]; then
+                echo "❌ GITHUB_TOKEN is not set. Exiting."
+                exit 1
+              else
+                echo "✅ GITHUB_TOKEN is set."
+              fi
+
+              # Add GitHub as a remote
+              git remote add github https://$(GITHUB_TOKEN)@github.com/$GITHUB_USER/$GITHUB_REPO.git 2>/dev/null || git remote set-url github https://$(GITHUB_TOKEN)@github.com/$GITHUB_USER/$GITHUB_REPO.git
+              
+              # Get current branch name
+              BRANCH_NAME=$(Build.SourceBranchName)
+              
+              echo "📤 Pushing branch $BRANCH_NAME to GitHub..."
+              
+              # Push only the current branch to GitHub
+              git push github HEAD:$BRANCH_NAME
+              
+              echo "✅ Successfully synchronized branch $BRANCH_NAME to GitHub"
+            displayName: 'Sync to GitHub'
+            env:
+              GITHUB_TOKEN: $(GITHUB_TOKEN)
+              GITHUB_REPO: $(Build.Repository.Name)
+              GITHUB_USER: $(GITHUB_USER)
+
+          - script: |
+              rm -rf $(Pipeline.Workspace)/
+            displayName: 'Clean Workspace'
+
+      - job: UpdateDeployment
+        displayName: 'Update Gorenas in Seenode'
+        dependsOn: SyncJob
+        steps:
+          - script: |
+              echo "🔧 Seenode Application ID is: $SEENODE_APPLICATION_ID"
+
+              if [[ -z "$SEENODE_API_TOKEN" ]]; then
+                echo "❌ SEENODE_API_TOKEN is not set. Exiting."
+                exit 1
+              else
+                echo "✅ SEENODE_API_TOKEN is set."
+              fi
+
+              echo "🔄 Updating Gorenas in Seenode..."
+              curl -X POST \
+                -H "Authorization: Bearer $SEENODE_API_TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{"gitCommitSha": "$(Build.SourceVersion)"}' \
+                "https://api.seenode.com/v1/applications/$SEENODE_APPLICATION_ID/deployments"
+            displayName: 'Trigger seenode Deployment'
+            env:
+              SEENODE_API_TOKEN: $(SEENODE_API_TOKEN)
+              SEENODE_APPLICATION_ID: $(SEENODE_APPLICATION_ID)
+
+          - script: |
+              rm -rf $(Pipeline.Workspace)/
+            displayName: 'Clean Workspace'
