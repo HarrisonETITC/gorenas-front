@@ -1,21 +1,48 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { ApplicationServicePort, APPLICATION_SERVICE } from '@gorenas/application-core';
+import { ApplicationServicePort, APPLICATION_SERVICE, StatsServicePort, STATS_SERVICE } from '@gorenas/application-core';
+import { BranchSalesStats, EmployeeSalesStats, PaymentMethodStats } from '@gorenas/domain';
+import { StatsProviders } from '@gorenas/data-access-features';
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ReactiveFormsModule, MatDialogModule],
+  imports: [CommonModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
-  providers: []
+  providers: [...StatsProviders]
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  employeesWithMostAmount$: Observable<Array<EmployeeSalesStats>>;
+  employeesWithMostSales$: Observable<Array<EmployeeSalesStats>>;
+  branchesWithMostSales$: Observable<Array<BranchSalesStats>>;
+  paymentMethodStats$: Observable<PaymentMethodStats>;
 
   constructor(
     @Inject(APPLICATION_SERVICE)
-    private readonly appService: ApplicationServicePort
-  ) {
+    private readonly appService: ApplicationServicePort,
+    @Inject(STATS_SERVICE)
+    private readonly statsService: StatsServicePort
+  ) {}
 
+  ngOnInit(): void {
+    this.loadStatistics();
+  }
+
+  private loadStatistics(): void {
+    this.employeesWithMostAmount$ = this.statsService.getEmployeesWithMostAmountSold();
+    this.employeesWithMostSales$ = this.statsService.getEmployeesWithMostSales();
+    this.branchesWithMostSales$ = this.statsService.getBranchesWithMostSales();
+    this.paymentMethodStats$ = this.statsService.getPercentageOfSalesByPaymentMethod();
+    
+    // Debug: Ver qué datos llegan del backend
+    this.paymentMethodStats$.subscribe(stats => {
+      console.log('[Dashboard] Payment Method Stats:', stats);
+      console.log('[Dashboard] cashSalesRatio:', stats.cashSalesRatio);
+      console.log('[Dashboard] debitSalesRatio:', stats.debitSalesRatio);
+    });
   }
 }
+

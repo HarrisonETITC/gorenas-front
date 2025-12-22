@@ -31,6 +31,11 @@ export * from './lib/models/model-view/role.mv'
 export * from './lib/models/model-view/sale.mv'
 export * from './lib/models/model-view/user.mv'
 
+// Stats models
+export * from './lib/models/stats/payment-method-stats.model'
+export * from './lib/models/stats/branch-sales-stats.model'
+export * from './lib/models/stats/employee-sales-stats.model'
+
 export * from './lib/interfaces/basic-notification-config.interface'
 
 // Exports from types

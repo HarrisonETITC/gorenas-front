@@ -24,6 +24,7 @@ import {
 } from '@gorenas/domain';
 import { FormBaseServicePort } from '../ports/forms/form-base-service.port';
 import { FormDataServicePort } from '../ports/forms/form-data-service.port';
+import { StatsServicePort } from '../ports/features/stats-service.port';
 
 // Configuration tokens
 export const API_URL_TOKEN = new InjectionToken<string>('API_URL');
@@ -46,6 +47,7 @@ export const PERMISSION_SERVICE = new InjectionToken<ApiServicePort<PermissionMo
 export const PERSON_SERVICE = new InjectionToken<ApiServicePort<PersonModel, PersonModelView> & PersonPort>('PersonService');
 export const ROLE_SERVICE = new InjectionToken<ApiServicePort<RoleModel, RoleModelView>>('RoleService');
 export const SALE_SERVICE = new InjectionToken<ApiServicePort<SaleModel, SaleModelView>>('SaleService');
+export const STATS_SERVICE = new InjectionToken<StatsServicePort>('StatsService');
 
 // Configuration interfaces
 export interface AppConfig {
