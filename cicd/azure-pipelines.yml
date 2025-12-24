@@ -15,14 +15,14 @@ stages:
         steps:
           - checkout: self
           
-          - script:
+          - script: |
               node -v
               npm -v
 
               if ! command -v pnpm &> /dev/null; then
-                  npm install -g pnpm
+                npm install -g pnpm
               else
-                  echo "pnpm ya está instalado"
+                echo "pnpm ya está instalado"
               fi
             displayName: 'Verify node, npm and pnpm'
 
