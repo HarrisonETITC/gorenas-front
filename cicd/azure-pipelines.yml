@@ -40,7 +40,7 @@ stages:
             displayName: 'Build Application with pnpm'
 
           - script: |
-              cd dist/gorenas-front
+              cd dist/gorenas-front/browser
               echo "[INFO] Current Folder is : $(pwd)"
 
               zip -r $(Build.SourcesDirectory)/gorenas-front-dist.zip ./*
@@ -61,6 +61,7 @@ stages:
                 package.json
                 pnpm-lock.yaml
                 nx.json
+                netlify.toml
               TargetFolder: '$(Build.ArtifactStagingDirectory)/package-files'
             displayName: 'Copy package files'
           
@@ -121,6 +122,7 @@ stages:
                     cp $(Pipeline.Workspace)/package-files/package.json $(Build.SourcesDirectory)/
                     cp $(Pipeline.Workspace)/package-files/pnpm-lock.yaml $(Build.SourcesDirectory)/
                     cp $(Pipeline.Workspace)/package-files/nx.json $(Build.SourcesDirectory)/
+                    cp $(Pipeline.Workspace)/package-files/netlify.toml $(Build.SourcesDirectory)/to-deploy/
 
                     pnpm install --frozen-lockfile --prod
                   displayName: 'Copy instalation packages'

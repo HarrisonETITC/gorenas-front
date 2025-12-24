@@ -1,0 +1,10 @@
+[build]
+  # Directorio donde Angular construye la aplicación
+  publish = "dist/gorenas-front/browser"
+  command = "npm run build -- --configuration=production"
+
+[[redirects]]
+  # Redirige todas las rutas al index.html para que Angular maneje el routing
+  from = "/*"
+  to = "/index.html"
+  status = 200
