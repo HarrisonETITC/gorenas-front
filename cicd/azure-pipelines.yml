@@ -87,6 +87,10 @@ stages:
       - deployment: DeployJob
         displayName: 'Deploy to Netlify'
         environment: 'development'
+        container: 
+          image: 'harrison237/node-angular:v3'
+          env:
+            NODE_OPTIONS: '--experimental-require-module'
         strategy:
           runOnce:
             deploy:
@@ -133,12 +137,12 @@ stages:
                 - script: |
                     echo "[INFO] Netlify Project ID is: $NETLIFY_SITE_ID"
 
-                    if [[ -z "$NETLIFY_TOKEN" ]]; then
-                      echo "[ERROR] NETLIFY_TOKEN is not set. Exiting..."
-                      exit 1
-                    else
-                      echo "[INFO] NETLIFY_TOKEN is set."
-                    fi
+                    echo "\1f680 Deploying to Netlify..."
+                    npx netlify deploy \
+                      --dir=$(Build.SourcesDirectory)/to-deploy/ \
+                      --auth=$NETLIFY_TOKEN \
+                      --site=$NETLIFY_SITE_ID \
+                      --prod
                   displayName: 'Deploy to Netlify'
                   env:
                     NETLIFY_SITE_ID: $(NETLIFY_SITE_ID)
