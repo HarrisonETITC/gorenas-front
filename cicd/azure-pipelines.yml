@@ -132,6 +132,7 @@ stages:
                     npx netlify deploy \
                       --dir=$(Build.SourcesDirectory)/to-deploy/ \
                       --auth=$NETLIFY_TOKEN \
+                      --no-build \
                       --site=$NETLIFY_SITE_ID \
                       --prod
                   displayName: 'Deploy to Netlify'
