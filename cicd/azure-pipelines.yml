@@ -11,8 +11,8 @@ stages:
     jobs:
       - job: BuildJob
         container: 
-          image: 'harrison237/node-angular:v2'
-          env: 
+          image: 'harrison237/node-angular:v3'
+          env:
             NODE_OPTIONS: '--experimental-require-module'
         displayName: 'Build and Test'
         steps:
