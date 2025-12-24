@@ -67,7 +67,14 @@ stages:
               ArtifactName: 'package-files'
             displayName: 'Publish package files'
 
+      - job: CleanupJob
+        displayName: 'Clean Workspace'
+        dependsOn: BuildJob
+        condition: always()
+        steps:
           - script: |
-             rm -rf $(Pipeline.Workspace)/
-            displayName: 'Clean Workspace'
+              echo "Limpiando workspace completo..."
+              rm -rf $(Pipeline.Workspace)/*
+              echo "Limpieza completada"
+            displayName: 'Clean all workspace'
               
