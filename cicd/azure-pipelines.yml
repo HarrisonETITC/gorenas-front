@@ -17,6 +17,10 @@ stages:
         displayName: 'Build and Test'
         steps:
           - checkout: self
+
+          - script: |
+              apt install zip
+            displayName: 'Install Required Packages'
           
           - script: |
               node -v
