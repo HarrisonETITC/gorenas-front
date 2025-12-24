@@ -43,8 +43,14 @@ stages:
 
           - script: |
               cd dist/gorenas-front
+              echo "[INFO] Current Folder is : $(pwd)"
 
               zip -r ../../../gorenas-front-dist.zip ./*
+
+              cd ../../..
+              echo "[INFO] Compressed folder created at : $(pwd)/gorenas-front-dist.zip"
+              echo "[INFO] Sources Directory is: $(Build.SourcesDirectory)"
+
             displayName: 'Zip project folder folder for publishment'
 
           - task: PublishBuildArtifacts@1
