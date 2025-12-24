@@ -42,9 +42,9 @@ stages:
             displayName: 'Build Application with pnpm'
 
           - script: |
-              cd dist/apps/gorenas-front
+              cd dist/gorenas-front
 
-              zip -r ../../../../gorenas-front-dist.zip ./*
+              zip -r ../../../gorenas-front-dist.zip ./*
             displayName: 'Zip project folder folder for publishment'
 
           - task: PublishBuildArtifacts@1
