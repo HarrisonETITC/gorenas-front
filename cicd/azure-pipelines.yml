@@ -33,8 +33,6 @@ stages:
               pnpm install
 
               npx nx --version
-
-              pnpm install --save-dev netlify-cli
             displayName: 'Install Dependencies with pnpm'
 
           - script: |
@@ -81,4 +79,68 @@ stages:
               rm -rf $(Pipeline.Workspace)/*
               echo "Limpieza completada"
             displayName: 'Clean all workspace'
+
+  - stage: Deploy
+    displayName: 'Deploy Application'
+    dependsOn: Build
+    jobs:
+      - deployment: DeployJob
+        displayName: 'Deploy to Netlify'
+        environment: 'development'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: final-project
+                  displayName: 'Download compiled project artifact'
+
+                - download: current
+                  artifact: package-files
+                  displayName: 'Download package files artifact'
+          
+                - script: |
+                    node -v
+                    npm -v
+
+                    if ! command -v pnpm &> /dev/null; then
+                      npm install -g pnpm
+                    else
+                      echo "pnpm ya está instalado"
+                    fi
+                  displayName: 'Verify node, npm and pnpm'
+
+                - script: |
+                    pnpm install --save-dev netlify-cli
+                  displayName: 'Install Dependencies with pnpm'
+
+                - script: |
+                    mkdir -p $(Build.SourcesDirectory)/to-deploy/
+
+                    unzip -o $(Pipeline.Workspace)/final-project/gorenas-front-dist.zip -d $(Build.SourcesDirectory)/to-deploy/
+
+                    ls -la
+                    pwd
+                  displayName: 'Unzip compiled project'
+
+                - script: |
+                    cp $(Pipeline.Workspace)/package-files/package.json $(Build.SourcesDirectory)/
+                    cp $(Pipeline.Workspace)/package-files/pnpm-lock.yaml $(Build.SourcesDirectory)/
+
+                    pnpm install --frozen-lockfile --prod
+                  displayName: 'Copy instalation packages'
+
+                - script: |
+                    echo "[INFO] Netlify Project ID is: $NETLIFY_SITE_ID"
+
+                    if [[ -z "$NETLIFY_TOKEN" ]]; then
+                      echo "[ERROR] NETLIFY_TOKEN is not set. Exiting..."
+                      exit 1
+                    else
+                      echo "[INFO] NETLIFY_TOKEN is set."
+                    fi
+                  displayName: 'Deploy to Netlify'
+                  env:
+                    NETLIFY_SITE_ID: $(NETLIFY_SITE_ID)
+                    NETLIFY_TOKEN: $(NETLIFY_TOKEN)
               
