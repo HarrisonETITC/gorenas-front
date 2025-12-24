@@ -60,6 +60,7 @@ stages:
               Contents: |
                 package.json
                 pnpm-lock.yaml
+                nx.json
               TargetFolder: '$(Build.ArtifactStagingDirectory)/package-files'
             displayName: 'Copy package files'
           
@@ -119,6 +120,7 @@ stages:
                 - script: |
                     cp $(Pipeline.Workspace)/package-files/package.json $(Build.SourcesDirectory)/
                     cp $(Pipeline.Workspace)/package-files/pnpm-lock.yaml $(Build.SourcesDirectory)/
+                    cp $(Pipeline.Workspace)/package-files/nx.json $(Build.SourcesDirectory)/
 
                     pnpm install --frozen-lockfile --prod
                   displayName: 'Copy instalation packages'
