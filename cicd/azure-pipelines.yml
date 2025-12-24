@@ -1,0 +1,70 @@
+trigger: none
+
+pool: 'Laptop-Agent-Pool'
+
+variables:
+  - group: GENERAL
+
+stages:
+  - stage: Build
+    displayName: 'Build Application'
+    jobs:
+      - job: BuildJob
+        container: 'harrison237/node-angular:v2'
+        displayName: 'Build and Test'
+        steps:
+          - checkout: self
+          
+          - script:
+              node -v
+              npm -v
+
+              if ! command -v pnpm &> /dev/null; then
+                  npm install -g pnpm
+              else
+                  echo "pnpm ya está instalado"
+              fi
+            displayName: 'Verify node, npm and pnpm'
+
+          - script: |
+              pnpm install
+
+              npx nx --version
+
+              pnpm install --save-dev netlify-cli
+            displayName: 'Install Dependencies with pnpm'
+
+          - script: |
+              pnpm run build:prod
+            displayName: 'Build Application with pnpm'
+
+          - script: |
+              cd dist/apps/gorenas-front
+
+              zip -r ../../../../gorenas-front-dist.zip ./*
+            displayName: 'Zip project folder folder for publishment'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: 'gorenas-front-dist.zip'
+              ArtifactName: 'final-project'
+            displayName: 'Publish compressed project folder'
+
+          - task: CopyFiles@2
+            inputs:
+              Contents: |
+                package.json
+                pnpm-lock.yaml
+              TargetFolder: '$(Build.ArtifactStagingDirectory)/package-files'
+            displayName: 'Copy package files'
+          
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/package-files'
+              ArtifactName: 'package-files'
+            displayName: 'Publish package files'
+
+          - script: |
+             rm -rf $(Pipeline.Workspace)/
+            displayName: 'Clean Workspace'
+              
