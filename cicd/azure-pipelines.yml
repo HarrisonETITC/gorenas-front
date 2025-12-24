@@ -69,17 +69,6 @@ stages:
               ArtifactName: 'package-files'
             displayName: 'Publish package files'
 
-      - job: CleanupJob
-        displayName: 'Clean Workspace'
-        dependsOn: BuildJob
-        condition: always()
-        steps:
-          - script: |
-              echo "Limpiando workspace completo..."
-              rm -rf $(Pipeline.Workspace)/*
-              echo "Limpieza completada"
-            displayName: 'Clean all workspace'
-
   - stage: Deploy
     displayName: 'Deploy Application'
     dependsOn: Build
@@ -148,3 +137,16 @@ stages:
                     NETLIFY_SITE_ID: $(NETLIFY_SITE_ID)
                     NETLIFY_TOKEN: $(NETLIFY_TOKEN)
               
+  - stage: CleanUp
+    displayName: 'Clean Up'
+    dependsOn: [Build, Deploy]
+    jobs:
+      - job: CleanupJob
+        displayName: 'Clean Workspace'
+        condition: always()
+        steps:
+          - script: |
+              echo "Limpiando workspace completo..."
+              rm -rf $(Pipeline.Workspace)/*
+              echo "Limpieza completada"
+            displayName: 'Clean all workspace'
