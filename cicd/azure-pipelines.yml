@@ -10,7 +10,10 @@ stages:
     displayName: 'Build Application'
     jobs:
       - job: BuildJob
-        container: 'harrison237/node-angular:v2'
+        container: 
+          image: 'harrison237/node-angular:v2'
+          env: 
+            NODE_OPTIONS: '--experimental-require-module'
         displayName: 'Build and Test'
         steps:
           - checkout: self

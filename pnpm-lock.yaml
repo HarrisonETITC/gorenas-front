@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  find-cache-dir: ^5.0.0
-
 importers:
 
   .:
@@ -6186,9 +6183,9 @@ packages:
     resolution: {integrity: sha512-S8KoZgRZN+a5rNwqTxlZZePjT/4cnm0ROV70LedRHZ0p8u9fRID0hJUZQpkKLzro8LfmC8sx23bY6tVNxv8pQA==}
     engines: {node: '>= 18.0.0'}
 
-  find-cache-dir@5.0.0:
-    resolution: {integrity: sha512-OuWNfjfP05JcpAP3JPgAKUhWefjMRfI5iAoSsvE24ANYWJaepAtlSgWECSVEuRgSXpyNEc9DJwG/TZpgcOqyig==}
-    engines: {node: '>=16'}
+  find-cache-dir@4.0.0:
+    resolution: {integrity: sha512-9ZonPT4ZAK4a+1pUPVPZJapbi7O5qbbJPdYw/NOQWZZbVLdDTYM3A4R9z/DpAM08IDaFGsvPgiGZ82WEwUDWjg==}
+    engines: {node: '>=14.16'}
 
   find-cache-directory@6.0.0:
     resolution: {integrity: sha512-CvFd5ivA6HcSHbD+59P7CyzINHXzwhuQK8RY7CxJZtgDSAtRlHiCaQpZQ2lMR/WRyUIEmzUvL6G2AGurMfegZA==}
@@ -16056,7 +16053,7 @@ snapshots:
   babel-loader@9.2.1(@babel/core@7.28.3)(webpack@5.101.3(@swc/core@1.15.3(@swc/helpers@0.5.17))):
     dependencies:
       '@babel/core': 7.28.3
-      find-cache-dir: 5.0.0
+      find-cache-dir: 4.0.0
       schema-utils: 4.3.2
       webpack: 5.101.3(@swc/core@1.15.3(@swc/helpers@0.5.17))
 
@@ -17795,7 +17792,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  find-cache-dir@5.0.0:
+  find-cache-dir@4.0.0:
     dependencies:
       common-path-prefix: 3.0.0
       pkg-dir: 7.0.0
