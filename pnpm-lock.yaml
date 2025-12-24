@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  find-cache-dir: ^5.0.0
+
 importers:
 
   .:
@@ -6183,9 +6186,9 @@ packages:
     resolution: {integrity: sha512-S8KoZgRZN+a5rNwqTxlZZePjT/4cnm0ROV70LedRHZ0p8u9fRID0hJUZQpkKLzro8LfmC8sx23bY6tVNxv8pQA==}
     engines: {node: '>= 18.0.0'}
 
-  find-cache-dir@4.0.0:
-    resolution: {integrity: sha512-9ZonPT4ZAK4a+1pUPVPZJapbi7O5qbbJPdYw/NOQWZZbVLdDTYM3A4R9z/DpAM08IDaFGsvPgiGZ82WEwUDWjg==}
-    engines: {node: '>=14.16'}
+  find-cache-dir@5.0.0:
+    resolution: {integrity: sha512-OuWNfjfP05JcpAP3JPgAKUhWefjMRfI5iAoSsvE24ANYWJaepAtlSgWECSVEuRgSXpyNEc9DJwG/TZpgcOqyig==}
+    engines: {node: '>=16'}
 
   find-cache-directory@6.0.0:
     resolution: {integrity: sha512-CvFd5ivA6HcSHbD+59P7CyzINHXzwhuQK8RY7CxJZtgDSAtRlHiCaQpZQ2lMR/WRyUIEmzUvL6G2AGurMfegZA==}
@@ -11035,7 +11038,7 @@ snapshots:
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-split-export-declaration': 7.24.7
       '@inquirer/confirm': 5.1.14(@types/node@20.19.9)
-      '@vitejs/plugin-basic-ssl': 2.1.0(vite@7.1.11(@types/node@20.19.9)(jiti@2.4.2)(less@4.4.0)(sass-embedded@1.91.0)(sass@1.90.0)(stylus@0.64.0)(terser@5.43.1)(yaml@2.8.1))
+      '@vitejs/plugin-basic-ssl': 2.1.0(vite@7.1.11(@types/node@20.19.9)(jiti@2.4.2)(less@4.4.0)(sass-embedded@1.91.0)(sass@1.91.0)(stylus@0.64.0)(terser@5.43.1)(yaml@2.8.1))
       beasties: 0.3.5
       browserslist: 4.25.4
       esbuild: 0.25.9
@@ -11055,7 +11058,7 @@ snapshots:
       tinyglobby: 0.2.14
       tslib: 2.8.1
       typescript: 5.8.3
-      vite: 7.1.11(@types/node@20.19.9)(jiti@2.4.2)(less@4.4.0)(sass-embedded@1.91.0)(sass@1.91.0)(stylus@0.64.0)(terser@5.43.1)(yaml@2.8.1)
+      vite: 7.1.11(@types/node@20.19.9)(jiti@2.4.2)(less@4.4.0)(sass-embedded@1.91.0)(sass@1.90.0)(stylus@0.64.0)(terser@5.43.1)(yaml@2.8.1)
       watchpack: 2.4.4
     optionalDependencies:
       '@angular/core': 20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1)
@@ -15539,7 +15542,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@vitejs/plugin-basic-ssl@2.1.0(vite@7.1.11(@types/node@20.19.9)(jiti@2.4.2)(less@4.4.0)(sass-embedded@1.91.0)(sass@1.90.0)(stylus@0.64.0)(terser@5.43.1)(yaml@2.8.1))':
+  '@vitejs/plugin-basic-ssl@2.1.0(vite@7.1.11(@types/node@20.19.9)(jiti@2.4.2)(less@4.4.0)(sass-embedded@1.91.0)(sass@1.91.0)(stylus@0.64.0)(terser@5.43.1)(yaml@2.8.1))':
     dependencies:
       vite: 7.1.11(@types/node@20.19.9)(jiti@2.4.2)(less@4.4.0)(sass-embedded@1.91.0)(sass@1.91.0)(stylus@0.64.0)(terser@5.43.1)(yaml@2.8.1)
 
@@ -16053,7 +16056,7 @@ snapshots:
   babel-loader@9.2.1(@babel/core@7.28.3)(webpack@5.101.3(@swc/core@1.15.3(@swc/helpers@0.5.17))):
     dependencies:
       '@babel/core': 7.28.3
-      find-cache-dir: 4.0.0
+      find-cache-dir: 5.0.0
       schema-utils: 4.3.2
       webpack: 5.101.3(@swc/core@1.15.3(@swc/helpers@0.5.17))
 
@@ -17792,7 +17795,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  find-cache-dir@4.0.0:
+  find-cache-dir@5.0.0:
     dependencies:
       common-path-prefix: 3.0.0
       pkg-dir: 7.0.0
@@ -22809,6 +22812,25 @@ snapshots:
   varint@6.0.0: {}
 
   vary@1.1.2: {}
+
+  vite@7.1.11(@types/node@20.19.9)(jiti@2.4.2)(less@4.4.0)(sass-embedded@1.91.0)(sass@1.90.0)(stylus@0.64.0)(terser@5.43.1)(yaml@2.8.1):
+    dependencies:
+      esbuild: 0.25.9
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
+      postcss: 8.5.6
+      rollup: 4.52.3
+      tinyglobby: 0.2.15
+    optionalDependencies:
+      '@types/node': 20.19.9
+      fsevents: 2.3.3
+      jiti: 2.4.2
+      less: 4.4.0
+      sass: 1.90.0
+      sass-embedded: 1.91.0
+      stylus: 0.64.0
+      terser: 5.43.1
+      yaml: 2.8.1
 
   vite@7.1.11(@types/node@20.19.9)(jiti@2.4.2)(less@4.4.0)(sass-embedded@1.91.0)(sass@1.91.0)(stylus@0.64.0)(terser@5.43.1)(yaml@2.8.1):
     dependencies:

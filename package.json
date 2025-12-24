@@ -1,6 +1,11 @@
 {
   "name": "gorenas-front",
   "version": "0.0.0",
+  "pnpm": {
+    "overrides": {
+      "find-cache-dir": "^5.0.0"
+    }
+  },
   "scripts": {
     "ng": "ng",
     "start": "nx serve",
