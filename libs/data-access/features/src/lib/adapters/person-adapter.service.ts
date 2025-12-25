@@ -35,9 +35,15 @@ export class PersonServiceAdapter extends GeneralApiService<PersonModel, PersonM
         return this.http.get<PersonModelView>(url);
     }
 
+    override create(data: PersonModel): Observable<PersonModel> {
+        data.identification = `${data.identification}`;
+        data.phoneNumber = `${data.phoneNumber}`;
+        return super.create(data);
+    }
+
     override modify(data: PersonModel): Observable<PersonModel> {
         data.identification = `${data.identification}`;
         data.phoneNumber = `${data.phoneNumber}`;
-        return this.http.put<PersonModel>(`${this.baseUrl}${URL_MODIFY}`, data);
+        return super.modify(data);
     }
 }

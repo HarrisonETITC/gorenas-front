@@ -53,6 +53,7 @@ import {
   throttleTime
 } from 'rxjs';
 import { TableComponent } from '../table/table.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-base-data',
@@ -111,7 +112,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     readonly cdr: ChangeDetectorRef
-  ) { 
+  ) {
     this.initDefaultActionHandlers();
   }
 
@@ -222,10 +223,10 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     if (!isEdit) {
       this.fieldsService.resetControls();
     }
-    
+
     this.dataForms.forEach((config, index) => {
       const defValues = this.formsDefsValues.get(index);
-      
+
       // Solo restaurar valores por defecto si no es edición
       if (!isEdit) {
         config.fields = config.fields.map((field, fieldIndex) => {
@@ -235,7 +236,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
           return field;
         });
       }
-      
+
       // Asegurar que el dataInitializer esté configurado para edición
       if (isEdit && !config.dataInitializer) {
         config.dataInitializer = this.service;
@@ -265,7 +266,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
   private handleCreateSubmit(): void {
     const formData = this.fieldsService.getObject() as T;
     DebugLogger.log('[BaseData] Creando:', formData);
-    
+
     this.service.create(formData).pipe(
       take(1)
     ).subscribe({
@@ -276,7 +277,10 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
       },
       error: (err) => {
         console.error('[BaseData] Error al crear:', err);
-        this.formDataService.sendComponentEvent({ event: 'error', message: err?.message || 'Error al crear' });
+        if (err instanceof HttpErrorResponse)
+          this.formDataService.sendComponentEvent({ event: 'error', message: err?.message || 'Error al crear', id: err.status });
+        else
+          this.formDataService.sendComponentEvent({ event: 'error', message: err?.message || 'Error al crear' });
       }
     });
   }
@@ -291,7 +295,7 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
       (formData as any).id = id;
     }
     DebugLogger.log('[BaseData] Actualizando:', formData);
-    
+
     this.service.modify(formData).pipe(
       take(1)
     ).subscribe({

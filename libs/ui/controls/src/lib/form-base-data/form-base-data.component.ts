@@ -150,7 +150,9 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
           this.goBack();
         }
         else {
-          this.notificationSevice.showNotification(ErrorConfig('Hubo un error al guardar los datos', ev.message));
+          const possibleStatus = Number(ev.id);
+          if (AppUtil.verifyEmpty(possibleStatus) || possibleStatus !== 406)
+            this.notificationSevice.showNotification(ErrorConfig('Hubo un error al guardar los datos', ev.message));
         }
       })
     } else {

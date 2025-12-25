@@ -8,4 +8,5 @@ export class BranchModel extends GeneralModel implements StateModel {
     earnings?: number;
     created?: Date;
     modified?: Date;
+    restaurantId?: number;
 }
