@@ -63,7 +63,7 @@ stages:
               
   - stage: CleanUp
     displayName: 'Clean Up'
-    dependsOn: [Build, Deploy]
+    dependsOn: [Synchronize]
     jobs:
       - job: CleanupJob
         displayName: 'Clean Workspace'
