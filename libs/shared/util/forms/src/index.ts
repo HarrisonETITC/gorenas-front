@@ -21,5 +21,7 @@ export * from './lib/items/select.options'
 
 export * from './lib/forms/form-data-config.model'
 
+export * from './lib/utils/debug-logger'
+
 // Re-export FormField from domain for convenience
 export type { FormField } from '@gorenas/domain'

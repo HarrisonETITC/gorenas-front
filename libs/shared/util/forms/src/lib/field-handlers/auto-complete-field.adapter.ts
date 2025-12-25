@@ -8,6 +8,7 @@ import {
 import { AppUtil } from "@gorenas/application-core";
 import { debounceTime, distinctUntilChanged, filter, map, Observable, of, take } from "rxjs";
 import { FieldInitializerPort } from "@gorenas/application-core";
+import { DebugLogger } from '../utils/debug-logger';
 
 export class AutocompleteFieldAdapter implements FieldInitializerPort, AutocompleteFieldPort {
     validateField(field: FormField): void {
@@ -24,7 +25,7 @@ export class AutocompleteFieldAdapter implements FieldInitializerPort, Autocompl
             return;
         }
         field.initOptionsSubject();
-        console.log(`[AutocompleteAdapter] Campo inicializado: ${field.name}`);
+        DebugLogger.log(`[AutocompleteAdapter] Campo inicializado: ${field.name}`);
     }
     isFieldType(field: FormField): boolean {
         return field.type === BaseFormItemPort.TYPE_AUTO_COMPLETE;
@@ -52,18 +53,18 @@ export class AutocompleteFieldAdapter implements FieldInitializerPort, Autocompl
 
         // Si el valor es un número (ID), obtener el IdValue correspondiente
         if (typeof val === 'number' && !AppUtil.verifyEmpty(endpoint)) {
-            console.log(`[AutocompleteAdapter] setValue - Obteniendo IdValue para ID: ${val}, campo: ${field.name}`);
+            DebugLogger.log(`[AutocompleteAdapter] setValue - Obteniendo IdValue para ID: ${val}, campo: ${field.name}`);
 
             return endpoint.getIdValueMany([val]).pipe(
                 take(1),
                 map(idValues => {
                     if (idValues && idValues.length > 0) {
                         field.defaultValue = idValues[0];
-                        console.log(`[AutocompleteAdapter] setValue - IdValue obtenido:`, idValues[0]);
+                        DebugLogger.log(`[AutocompleteAdapter] setValue - IdValue obtenido:`, idValues[0]);
                     } else {
                         // Si no se encuentra, crear un IdValue con el ID
                         field.defaultValue = new IdValue(val, String(val));
-                        console.warn(`[AutocompleteAdapter] setValue - No se encontró IdValue para ID: ${val}`);
+                        DebugLogger.warn(`[AutocompleteAdapter] setValue - No se encontró IdValue para ID: ${val}`);
                     }
                     return undefined;
                 })
@@ -83,16 +84,16 @@ export class AutocompleteFieldAdapter implements FieldInitializerPort, Autocompl
         const endpoint = field.endpoint;
 
         if (!AppUtil.verifyEmpty(endpoint)) {
-            console.log(`[AutocompleteAdapter] Buscando: "${query}" para campo: ${field.name}`);
+            DebugLogger.log(`[AutocompleteAdapter] Buscando: "${query}" para campo: ${field.name}`);
 
             endpoint.getAvailable(query).pipe(
                 take(1)
             ).subscribe(options => {
-                console.log(`[AutocompleteAdapter] Opciones recibidas para ${field.name}:`, options);
+                DebugLogger.log(`[AutocompleteAdapter] Opciones recibidas para ${field.name}:`, options);
                 field.updateOptions(options);
             });
         } else {
-            console.warn(`[AutocompleteAdapter] No hay endpoint configurado para campo: ${field.name}`);
+            DebugLogger.warn(`[AutocompleteAdapter] No hay endpoint configurado para campo: ${field.name}`);
         }
     }
 }

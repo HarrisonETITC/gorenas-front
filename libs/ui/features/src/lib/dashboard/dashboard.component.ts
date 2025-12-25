@@ -6,6 +6,7 @@ import { BranchSalesStats, EmployeeSalesStats, PaymentMethodStats } from '@goren
 import { StatsProviders } from '@gorenas/data-access-features';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
+import { DebugLogger } from '@gorenas/shared-util-forms';
 
 @Component({
   selector: 'app-dashboard',
@@ -39,9 +40,9 @@ export class DashboardComponent implements OnInit {
     
     // Debug: Ver qué datos llegan del backend
     this.paymentMethodStats$.subscribe(stats => {
-      console.log('[Dashboard] Payment Method Stats:', stats);
-      console.log('[Dashboard] cashSalesRatio:', stats.cashSalesRatio);
-      console.log('[Dashboard] debitSalesRatio:', stats.debitSalesRatio);
+      DebugLogger.log('[Dashboard] Payment Method Stats:', stats);
+      DebugLogger.log('[Dashboard] cashSalesRatio:', stats.cashSalesRatio);
+      DebugLogger.log('[Dashboard] debitSalesRatio:', stats.debitSalesRatio);
     });
   }
 }

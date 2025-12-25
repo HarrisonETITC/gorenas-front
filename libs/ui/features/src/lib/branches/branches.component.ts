@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ApiServicePort, BaseDataConfig, BRANCH_SERVICE, UseBaseDataComponent } from '@gorenas/application-core';
 import { BaseDataComponent } from '@gorenas/ui-commons';
 import { AppModel, BranchModel, BtnConfig, TableConfig, BranchModelView, FormField } from '@gorenas/domain';
-import { FormDataConfig, BranchFilter, BranchForms } from '@gorenas/shared-util-forms';
+import { FormDataConfig, BranchFilter, BranchForms, DebugLogger } from '@gorenas/shared-util-forms';
 import { Observable, of } from 'rxjs';
 
 @Component({
@@ -58,28 +58,28 @@ export class BranchesComponent implements OnInit, UseBaseDataComponent {
     
     // ✅ Solo definimos acciones específicas de sucursales
     this.actionHandlers.set('disable', (branch: BranchModel) => {
-      console.log('Deshabilitando sucursal:', branch.name);
+      DebugLogger.log('Deshabilitando sucursal:', branch.name);
       if (confirm(`¿Está seguro de deshabilitar la sucursal "${branch.name}"?`)) {
         const updatedBranch = { ...branch, active: false };
         this.service.modify(updatedBranch).subscribe(() => {
-          console.log('Sucursal deshabilitada exitosamente');
+          DebugLogger.log('Sucursal deshabilitada exitosamente');
         });
       }
     });
 
     // ✅ Sobrescribir 'view' con comportamiento específico para sucursales
     this.actionHandlers.set('view', (branch: BranchModel) => {
-      console.log('Viewing branch details:', branch.name);
+      DebugLogger.log('Viewing branch details:', branch.name);
       // Aquí podrías navegar a una vista detallada específica
       // this.router.navigate(['/branch-details', branch.id]);
     });
 
     // ✅ Acción completamente nueva
     this.actionHandlers.set('clone', (branch: BranchModel) => {
-      console.log('Clonando sucursal:', branch.name);
+      DebugLogger.log('Clonando sucursal:', branch.name);
       const clonedBranch = { ...branch, name: `${branch.name} - Copia`, id: undefined };
       this.service.create(clonedBranch).subscribe(() => {
-        console.log('Sucursal clonada exitosamente');
+        DebugLogger.log('Sucursal clonada exitosamente');
       });
     });
   }

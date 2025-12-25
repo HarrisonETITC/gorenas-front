@@ -2,6 +2,22 @@ import { GetAvailablePort } from "../../../ports/get-available.port";
 import { GetIdValueMany } from "../../../ports/get-idvalue-many.port";
 import { IdValue } from "../../general/id-value.model";
 import { BehaviorSubject, Observable } from "rxjs";
+import { isDevMode } from '@angular/core';
+
+/**
+ * Utilidad para logs de debug
+ */
+class DebugLogger {
+  private static isDebugEnabled = isDevMode();
+  static log(message: string, ...optionalParams: any[]): void {
+    if (this.isDebugEnabled) {
+      console.log(message, ...optionalParams);
+    }
+  }
+  static error(message: string, ...optionalParams: any[]): void {
+    console.error(message, ...optionalParams);
+  }
+}
 
 /**
  * Store global de Subjects para autocomplete.
@@ -24,7 +40,7 @@ export class AutocompleteOptions {
 
         if (!AUTOCOMPLETE_SUBJECTS_STORE.has(id)) {
             AUTOCOMPLETE_SUBJECTS_STORE.set(id, new BehaviorSubject<Array<IdValue>>([]));
-            console.log(`[AutocompleteOptions] Subject creado para: ${id}`);
+            DebugLogger.log(`[AutocompleteOptions] Subject creado para: ${id}`);
         }
         
         this.options = AUTOCOMPLETE_SUBJECTS_STORE.get(id)!.asObservable();
@@ -36,13 +52,13 @@ export class AutocompleteOptions {
      * Usa el store global para garantizar que se actualice el Subject correcto.
      */
     updateOptions(options: Array<IdValue>): void {
-        console.log('[AutocompleteOptions] updateOptions llamado con:', options?.length, 'opciones, fieldId:', this._fieldId);
+        DebugLogger.log('[AutocompleteOptions] updateOptions llamado con:', options?.length, 'opciones, fieldId:', this._fieldId);
         
         if (this._fieldId && AUTOCOMPLETE_SUBJECTS_STORE.has(this._fieldId)) {
             AUTOCOMPLETE_SUBJECTS_STORE.get(this._fieldId)!.next(options);
-            console.log('[AutocompleteOptions] Valor emitido en Subject global');
+            DebugLogger.log('[AutocompleteOptions] Valor emitido en Subject global');
         } else {
-            console.error('[AutocompleteOptions] No hay Subject registrado para:', this._fieldId);
+            DebugLogger.error('[AutocompleteOptions] No hay Subject registrado para:', this._fieldId);
         }
     }
 

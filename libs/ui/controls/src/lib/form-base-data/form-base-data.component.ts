@@ -16,7 +16,7 @@ import {
   FormCloseComponentPort,
   DestroySubsPort
 } from '@gorenas/application-core';
-import { FormDataConfig, FormsUtil } from '@gorenas/shared-util-forms';
+import { FormDataConfig, FormsUtil, DebugLogger } from '@gorenas/shared-util-forms';
 import { concatMap, filter, first, Observable, of, Subject, takeUntil, tap } from 'rxjs';
 import { FormBaseComponent } from '../form-base/form-base.component';
 
@@ -92,28 +92,28 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
     this.isEditForm = !AppUtil.verifyEmpty(this.id);
     this.actualForm = this.forms[this.actualFormIndex];
 
-    console.log('[FormBaseData] initForm - isEditForm:', this.isEditForm, 'id:', this.id);
+    DebugLogger.log('[FormBaseData] initForm - isEditForm:', this.isEditForm, 'id:', this.id);
 
     // Filtrar campos que tienen hideOnEdit=true si estamos en modo edición
     this.fieldsToDisplay = this.isEditForm
       ? this.actualForm.fields.filter(f => !f.hideOnEdit)
       : this.actualForm.fields;
 
-    console.log('[FormBaseData] Campos a usar:', this.fieldsToDisplay.map(f => ({ name: f.name, type: f.type })));
+    DebugLogger.log('[FormBaseData] Campos a usar:', this.fieldsToDisplay.map(f => ({ name: f.name, type: f.type })));
 
     if (!this.isEditForm)
       this.fieldsService.updateFields(this.fieldsToDisplay);
     else {
-      console.log('[FormBaseData] Llamando getById con id:', this.id);
+      DebugLogger.log('[FormBaseData] Llamando getById con id:', this.id);
       const options: Map<string, string> = new Map();
       options.set('isEdition', 'true');
       this.actualForm.dataInitializer.getById(this.id, options).pipe(
-        tap(data => console.log('[FormBaseData] Datos recibidos de getById:', data)),
+        tap(data => DebugLogger.log('[FormBaseData] Datos recibidos de getById:', data)),
         concatMap(data => FormsUtil.assignValuesOnFields(data, this.fieldsToDisplay)),
-        tap(() => console.log('[FormBaseData] Campos después de assignValues:', this.fieldsToDisplay.map(f => ({ name: f.name, defaultValue: f.defaultValue }))))
+        tap(() => DebugLogger.log('[FormBaseData] Campos después de assignValues:', this.fieldsToDisplay.map(f => ({ name: f.name, defaultValue: f.defaultValue }))))
       ).subscribe({
         next: () => {
-          console.log('[FormBaseData] Llamando updateFields con preserveValues=false para cargar datos de edición');
+          DebugLogger.log('[FormBaseData] Llamando updateFields con preserveValues=false para cargar datos de edición');
           // En modo edición, forzar actualización de valores de los controles con los datos obtenidos
           this.fieldsService.updateFields(this.fieldsToDisplay, false);
         },
@@ -128,8 +128,8 @@ export class FormBaseDataComponent<T> implements OnInit, OnDestroy, FormCloseCom
   }
   protected handleFormMainButton() {
     // Debug: ver estado del formulario
-    console.log('[FormBaseData] Form valid:', this.formBase.form.valid);
-    console.log('[FormBaseData] Form controls:', Object.keys(this.formBase.form.controls).map(key => ({
+    DebugLogger.log('[FormBaseData] Form valid:', this.formBase.form.valid);
+    DebugLogger.log('[FormBaseData] Form controls:', Object.keys(this.formBase.form.controls).map(key => ({
       name: key,
       valid: this.formBase.form.controls[key].valid,
       errors: this.formBase.form.controls[key].errors,

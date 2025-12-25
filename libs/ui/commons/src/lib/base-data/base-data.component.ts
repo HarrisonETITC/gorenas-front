@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { DebugLogger } from '@gorenas/shared-util-forms';
 import {
   GeneralModel,
   TableConfig,
@@ -263,13 +264,13 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
    */
   private handleCreateSubmit(): void {
     const formData = this.fieldsService.getObject() as T;
-    console.log('[BaseData] Creando:', formData);
+    DebugLogger.log('[BaseData] Creando:', formData);
     
     this.service.create(formData).pipe(
       take(1)
     ).subscribe({
       next: (result) => {
-        console.log('[BaseData] Creado exitosamente:', result);
+        DebugLogger.log('[BaseData] Creado exitosamente:', result);
         this.notificationService.showNotification(SuccessConfig('Registro creado', 'El registro se ha creado exitosamente'));
         this.formDataService.sendComponentEvent({ event: 'done' });
       },
@@ -289,13 +290,13 @@ export class BaseDataComponent<T extends GeneralModel, U = T> implements OnInit,
     if (id !== undefined) {
       (formData as any).id = id;
     }
-    console.log('[BaseData] Actualizando:', formData);
+    DebugLogger.log('[BaseData] Actualizando:', formData);
     
     this.service.modify(formData).pipe(
       take(1)
     ).subscribe({
       next: (result) => {
-        console.log('[BaseData] Actualizado exitosamente:', result);
+        DebugLogger.log('[BaseData] Actualizado exitosamente:', result);
         this.notificationService.showNotification(SuccessConfig('Registro actualizado', 'El registro se ha actualizado exitosamente'));
         this.formDataService.sendComponentEvent({ event: 'done' });
       },

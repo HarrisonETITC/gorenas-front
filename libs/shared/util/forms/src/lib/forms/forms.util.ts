@@ -6,6 +6,7 @@ import { SelectFieldAdapter } from "../field-handlers/select-field.adapter";
 import { BaseFormItemPort, FormField } from "@gorenas/domain";
 import { NumberFieldAdapter } from "../field-handlers/number-field.adapter";
 import { catchError, forkJoin, from, mergeMap, Observable, of } from "rxjs";
+import { DebugLogger } from '../utils/debug-logger';
 
 export class FormsUtil {
     static readonly FORMS_HANDLER = new Map<string, FieldInitializerPort>();
@@ -54,13 +55,13 @@ export class FormsUtil {
     static assignValuesOnFields(val: any, fields: Array<FormField>): Observable<void> {
         const observables = new Array<Observable<void>>();
 
-        console.log('[FormsUtil] assignValuesOnFields - val:', val);
-        console.log('[FormsUtil] assignValuesOnFields - fields:', fields.map(f => f.name));
+        DebugLogger.log('[FormsUtil] assignValuesOnFields - val:', val);
+        DebugLogger.log('[FormsUtil] assignValuesOnFields - fields:', fields.map(f => f.name));
 
         Object.keys(val).forEach((key) => {
             const value = val[key];
             const field = fields.find(field => field.name === key);
-            console.log(`[FormsUtil] Procesando key: ${key}, value:`, value, 'field encontrado:', !!field);
+            DebugLogger.log(`[FormsUtil] Procesando key: ${key}, value:`, value, 'field encontrado:', !!field);
             if (!AppUtil.verifyEmpty(value) && !AppUtil.verifyEmpty(field))
                 observables.push(this.assignValue(value, field));
         });

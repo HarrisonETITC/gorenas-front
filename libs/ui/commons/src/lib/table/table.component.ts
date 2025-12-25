@@ -14,6 +14,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BtnConfig } from '@gorenas/domain';
+import { DebugLogger } from '@gorenas/shared-util-forms';
 
 @Component({
   selector: 'app-table',
@@ -136,7 +137,7 @@ export class TableComponent<T extends GeneralModel> implements OnInit, OnDestroy
     return value;
   }
   protected showElement(el: any) {
-    console.log(el);
+    DebugLogger.log(el);
   }
   protected filterActionsRow(headers: Array<string>) {
     return headers.filter(header => header !== 'actions');
