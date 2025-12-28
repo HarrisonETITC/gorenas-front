@@ -13,4 +13,7 @@ export interface AuthServicePort {
     getToken(): string;
     userHasRole(acceptedRoles: Array<string>): Observable<boolean>;
     userHasPermission(permission: string): Observable<boolean>;
+
+    // It'll return false if the token is invalid or expired, true otherwise
+    validateToken(token: string): Observable<boolean>;
 }

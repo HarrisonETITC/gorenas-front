@@ -10,7 +10,7 @@ import {
     StoragePort,
     AppUtil,
     STORAGE_PROVIDER
-} from "@gorenas/application-core"; 
+} from "@gorenas/application-core";
 import { LoginModel, UserModelView, AuthResponse } from "@gorenas/domain";
 import { BehaviorSubject, catchError, concatMap, ignoreElements, map, Observable, tap, throwError } from "rxjs";
 
@@ -96,5 +96,17 @@ export class AuthServiceAdapter implements AuthServicePort {
         return this.getUser().pipe(
             map(usr => usr.permissions.includes('*') || usr.permissions.includes(permission))
         )
+    }
+    validateToken(token: string): Observable<boolean> {
+        return this.http.get<{valid: boolean}>(`${this.baseUrl}validate-token`, {
+            params: {
+                token
+            }
+        }).pipe(
+            map(response => response.valid),
+            catchError(() => {
+                return throwError(() => new Error('Error checking token expiration'));
+            })
+        );
     }
 }
