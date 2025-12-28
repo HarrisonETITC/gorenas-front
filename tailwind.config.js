@@ -10,6 +10,7 @@ module.exports = {
       backgroundColor: {
         primary: "var(--app-bg)",
         secondary: "var(--sidebar-active-link)",
+        secondary_2: "var(--app-content-secondary-color)",
         btnSecondary: "var(--app-secondary)",
         btnSecondaryHover: "var(--app-secondary-hover)",
         action: "var(--action-color)",

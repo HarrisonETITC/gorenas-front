@@ -21,6 +21,7 @@ import {
 import { APP_CONFIG_PROVIDERS } from './config/app.config';
 import { SaleProviders } from 'libs/data-access/features/src/lib/providers/sale.providers';
 import { UserProviders } from 'libs/data-access/features/src/lib/providers/user.providers';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +31,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([TokenHeaderInterceptor, ParseDataInterceptor, ValidationErrorInterceptor])
     ),
+    provideCharts(withDefaultRegisterables()),
     ...APP_CONFIG_PROVIDERS,
     ...StorageStrategyProviders,
     ...UtilsProviders,
