@@ -11,7 +11,7 @@ stages:
     jobs:
       - job: BuildJob
         container: 
-          image: 'harrison237/node-angular:v3'
+          image: 'harrison237/node-nest:v4'
           env:
             NODE_OPTIONS: '--experimental-require-module'
         displayName: 'Build and Test'
@@ -79,7 +79,7 @@ stages:
         displayName: 'Deploy to Netlify'
         environment: 'development'
         container: 
-          image: 'harrison237/node-angular:v3'
+          image: 'harrison237/node-nest:v4'
           env:
             NODE_OPTIONS: '--experimental-require-module'
         strategy:
